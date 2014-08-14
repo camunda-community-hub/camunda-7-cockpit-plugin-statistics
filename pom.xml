@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.camunda.bpm.extension</groupId>
+    <artifactId>camunda-cockpit-plugin-statistics-root</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>pom</packaging>
+
+    <!-- use camunda-release-parent for relasing to maven central and camunda nexus -->
+    <parent>
+        <groupId>org.camunda</groupId>
+        <artifactId>camunda-release-parent</artifactId>
+        <version>2.2</version>
+        <relativePath />
+    </parent>
+
+    <repositories>
+        <repository>
+            <id>camunda-bpm-nexus</id>
+            <name>camunda-bpm-nexus</name>
+            <url>https://app.camunda.com/nexus/content/groups/public</url>
+        </repository>
+    <!-- uncomment to add custom repositores if you need some
+        <repository>
+            <id>jboss-public-repository</id>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    -->
+    </repositories>
+
+    <build>
+        <defaultGoal>clean install</defaultGoal>
+    </build>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+
+    <scm>
+        <connection>scm:git:git@github.com:camunda/camunda-cockpit-plugin-statistics.git</connection>
+        <url>scm:git:git@github.com:camunda/camunda-cockpit-plugin-statistics.git</url>
+        <developerConnection>scm:git:git@github.com:camunda/camunda-cockpit-plugin-statistics.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- repositories used for distribution of releases and snapshots, DO NOT CHANGE -->
+    <distributionManagement>
+        <repository>
+            <id>camunda-nexus</id>
+            <name>camunda bpm community extensions</name>
+            <url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-community-extensions</url>
+        </repository>
+        <snapshotRepository>
+            <id>camunda-nexus</id>
+            <name>camunda bpm community extensions snapshots</name>
+            <url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-community-extensions-snapshots</url>
+            <!-- for maven 2 compatibility -->
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+  </project>
+
