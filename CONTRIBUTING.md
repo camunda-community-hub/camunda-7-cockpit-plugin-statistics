@@ -12,15 +12,12 @@ Read more on [how to get the project up and running](#project-setup).
 
 If you would like to submit a pull request make sure to 
 
-- add test cases for the problem you are solving
-- stick to project coding conventions
+- talk to us first ... we have so many fancy features in mind ;)
 
 
 ## Project Setup
 
-_Perform the following steps to get a development setup up and running._
+_Perform the following steps to get a development setup up and running:
 
-- step1
-- step2
-- ...
-- stepN
+- no specific steps are required, set up your favourite java/javascript IDE and there you'll go...
+

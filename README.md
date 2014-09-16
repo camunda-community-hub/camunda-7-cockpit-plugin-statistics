@@ -2,35 +2,32 @@ camunda Cockpit Statistics Plugin
 =================================
 
 camunda BPM community extension, which provides a statistics plugin for camunda Cockpit.
+This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
 
 ![Screenshot or code snippet](http://placehold.it/550x350&text=Image%20or%20code%20snippet%20if%20applicable)
 
 
 ## Get started
 
-_A quick description how your project can be used, including where the relevant resources can be obtained from.
-Put into another file if too big._
-
-
-## Resources
-
-* [Issue Tracker](link-to-issue-tracker) _use github unless you got your own_
-* [Roadmap](link-to-issue-tracker-filter) _if in terms of tagged issues_
-* [Changelog](link-to-changelog) _lets users track progress on what has been happening_
-* [Download](link-to-downloadable-archive) _if downloadable_
-* [Contributing](link-to-contribute-guide) _if desired, best to put it into a CONTRIBUTE.md file_
+To include this plugin into your cockpit you can either include it in your custom build on (http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
+Do not forget to customize build.properties in case you choose the latter option.
 
 
 ## Roadmap
 
-_specify a short list of things that yet need to be done (unless you organize it elsewhere)_
-
 **todo**
-- add feature B
-- integrate with technology X
+
+- chart showing start and end times of process instances and user task per process definition
+- charts visualizing process of different attributes like start/end time, duration, count or others
+- tbc. ;)
 
 **done**
-- add feature A
+- piechart of running, ended and failed process instances (all available)
+- piechart of running and ended user tasks (all available)
+- piechart of running and ended user tasks per process definition
+- piechart of running, ended and failed process instances per process definition
+- piechart of finished activities per process definition including information on avg, min, max duration and count
+- chart showing start and end times of process instances and user task (all available)
 
 
 ## Maintainer
