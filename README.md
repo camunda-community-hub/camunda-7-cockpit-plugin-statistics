@@ -4,12 +4,12 @@ camunda Cockpit Statistics Plugin
 camunda BPM community extension, which provides a statistics plugin for camunda Cockpit.
 This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
 
-![Screenshot or code snippet](http://placehold.it/550x350&text=Image%20or%20code%20snippet%20if%20applicable)
+![Screenshot](http://i.imgur.com/B2KMQRR.png)
 
 
 ## Get started
 
-To include this plugin into your cockpit you can either include it in your custom build on (http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
+To include this plugin into your cockpit you can either include it in your custom build on [camunda's plugin store](http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
 Do not forget to customize build.properties in case you choose the latter option.
 
 
@@ -17,10 +17,10 @@ Do not forget to customize build.properties in case you choose the latter option
 
 **todo**
 
-- improve data query service
+- improve DataFactory 
 - chart showing start and end times of process instances and user task per process definition - fix performance issues
 - chart showing start and end times of process instances and user task (all available) - fix performance issues
-- charts visualizing process of different attributes like start/end time, duration, count or others
+- charts visualizing process of different attributes like start/end time, duration, count or others based on the several existing ressources
 - tbc. ;)
 
 
