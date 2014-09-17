@@ -3,28 +3,29 @@ package org.camunda.cockpit.plugin.statistics.db;
 import java.util.Date;
 
 public class ProcessInstanceDto {
-	private String processDefinitionKey;
-	private Date startingTime;
-	private Date endingTime;
+	private String procDefKey;
+	private Date startDate;
+	private Date endDate;
 
 
-	public String getKey() {
-		return processDefinitionKey;
+	
+	public String getProcDefKey() {
+		return procDefKey;
 	}
-	public void setKey(String key) {
-		this.processDefinitionKey = key;
+	public void setProcDefKey(String procDefKey) {
+		this.procDefKey = procDefKey;
 	}
-	public Date getStartingTime() {
-		return startingTime;
+	public Date getStartDate() {
+		return startDate;
 	}
-	public void setStartingTime(Date startingTime) {
-		this.startingTime = startingTime;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
-	public Date getEndingTime() {
-		return endingTime;
+	public Date getEndDate() {
+		return endDate;
 	}
-	public void setEndingTime(Date endingTime) {
-		this.endingTime = endingTime;
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
-
+	
 }

@@ -28,7 +28,7 @@ public class ProcessInstanceResource extends AbstractCockpitPluginResource {
     /**
      * This method read the information of the defined mapping.xml file from
      * myBatis.
-     * {@link com.novatec.camunda.webapp.statistics.queries.processInstances.xml}
+     * {@link org.camunda.cockpit.plugin.statistics.queries.processInstances.xml}
      *
      * @return
      */

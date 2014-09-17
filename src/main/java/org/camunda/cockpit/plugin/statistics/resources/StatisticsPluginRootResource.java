@@ -83,6 +83,21 @@ public class StatisticsPluginRootResource extends
             @QueryParam("procDefKey") String procDefKey) {
         return subResource(new ActivityInstanceResource(engineName, procDefKey), engineName);
     }
+    
+    /**
+     * This method provides information on historic activity instances. Currently name, type and duration
+     *
+     * @param engineName Name the selectable engine.
+     * @return
+     */
+    @Path("{engineName}/historic-activity-information")
+    public HistoricActivityInformationResource getHistoricActivityDurationsResource(
+            @PathParam("engineName") String engineName,
+            @QueryParam("procDefKey") String procDefKey,
+            @QueryParam("activityName") String activityName,
+            @QueryParam("activityType") String activityType) {
+        return subResource(new HistoricActivityInformationResource(engineName, procDefKey,activityName,activityType), engineName);
+    }
 
     /**
      * This method provides aggregated activity instance information.

@@ -72,7 +72,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
                 tooltips: true,
                 tooltipContent: function(key, y, e, graph){
             return '<h3>' + key + '</h3>' +
-            '<p>' +  y + '<br/><br/>average Duration:<b>'+
+            '<p>count:<b>' +  y + '</b><br/>average Duration:<b>'+
             (e.point.avg/1000/60).toFixed(2)+
             ' min</b><br/>minimal Duration:<b>'+
             (e.point.min/1000/60).toFixed(2)+

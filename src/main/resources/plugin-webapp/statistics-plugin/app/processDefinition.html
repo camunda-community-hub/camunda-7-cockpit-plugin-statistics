@@ -659,11 +659,20 @@ svg .title {
 	<div class="span4" id="plot1" ng-controller="processDefinitionCtrl">
 		<nvd3 options="options" data="statesOfDefinition"></nvd3>
 	</div>
-	<div class="span4" id="plot2" ng-controller="slaPieChartCtrl">
-		<nvd3 options="options" data="activitiesForProcDef"></nvd3>
+	<div ng-controller="slaChartCtrl">
+		<div class="span4" id="plot2" >
+			<nvd3 options="options" data="activitiesForProcDef"></nvd3>
+		</div>
+		<div class="span4">
+		    <select ng-model="selectedActivity" ng-options="activity.name for activity in activities" ng-change="selectionChanged()">
+  		    <option value="">-- choose activity --</option>
+		    </select>
+		    <nvd3 options="optionsLineChart" data="historicActivityPlotData"></nvd3>
+		</div>
 	</div>
 </div>
 <div class="row-fluid">
 	<div class="span4"><p class="text-center">instances by state</p></div>
 	<div class="span4"><p class="text-center">finished activities</p></div>
+	<div class="span4"><p class="text-center">duration in seconds (top 100 longest)</p></div>
 </div>

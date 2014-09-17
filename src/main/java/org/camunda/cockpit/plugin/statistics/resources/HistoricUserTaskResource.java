@@ -22,7 +22,7 @@ public class HistoricUserTaskResource extends AbstractCockpitPluginResource {
 	
     /**
      * This method read the information of the defined mapping.xml file from
-     * myBatis. {@link com.novatec.camunda.webapp.statistics.queries.userTasks.xml}
+     * myBatis. {@link org.camunda.cockpit.plugin.statistics.queries.userTasks.xml}
      *
      * @return
      */

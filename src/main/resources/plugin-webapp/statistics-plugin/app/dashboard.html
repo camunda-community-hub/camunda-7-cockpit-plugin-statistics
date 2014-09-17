@@ -691,10 +691,14 @@ svg .title {
 <div ng-controller="dashboardController">
 	<h1>Engine Statistics (Dashboard)</h1>
 	<ul class="nav nav-tabs" id="statisticsNavigationTab">
-		<li class="active"><a href="#processInstances" ng-click="handleTabClick('processInstances')" data-toggle="tab">Processinstances</a></li>
-		<li><a href="#userTasks" ng-click="handleTabClick('userTasks')" data-toggle="tab">Usertasks</a></li>
-		<li><a href="#startEnd" ng-click="handleTabClick('startEnd')" data-toggle="tab">Timing</a></li>
-		<li><a href="#durations" ng-click="handleTabClick('durations')" data-toggle="tab">Analytics</a></li>
+		<li class="active"><a href="#processInstances"
+			ng-click="handleTabClick('processInstances')" data-toggle="tab">Processinstances</a></li>
+		<li><a href="#userTasks" ng-click="handleTabClick('userTasks')"
+			data-toggle="tab">Usertasks</a></li>
+		<li><a href="#startEnd" ng-click="handleTabClick('startEnd')"
+			data-toggle="tab">Timing</a></li>
+		<li><a href="#durations" ng-click="handleTabClick('durations')"
+			data-toggle="tab">Analytics</a></li>
 	</ul>
 	<div class="tab-content">
 		<div class="tab-pane active" id="processInstances">
@@ -702,14 +706,13 @@ svg .title {
 				<div class="span4" id="controlsPlot1"></div>
 			</div>
 			<div class="row-fluid" ng-controller='pieChartCtrl'>
-				<div class="span4"  
-					state="running">
+				<div class="span4" state="running">
 					<nvd3 options="options" data="running" id="running"></nvd3>
 				</div>
 				<div class="span4">
 					<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
 				</div>
-				<div class="span4" >
+				<div class="span4">
 					<nvd3 options="options" data="failed" id="failed"></nvd3>
 				</div>
 			</div>
@@ -728,10 +731,11 @@ svg .title {
 
 
 		</div>
-				<div class="tab-pane" id="userTasks">
-			<div class="row-fluid" ng-controller='pieChartCtrlUsr' >
-				<div class="span6" >
-					<nvd3 options="runningTasksOptions" data="tasksRunning" id="tasksRunning"></nvd3>
+		<div class="tab-pane" id="userTasks">
+			<div class="row-fluid" ng-controller='pieChartCtrlUsr'>
+				<div class="span6">
+					<nvd3 options="runningTasksOptions" data="tasksRunning"
+						id="tasksRunning"></nvd3>
 				</div>
 				<div class="span6">
 					<nvd3 options="endedTasksOptions" data="tasksEnded" id="tasksEnded"></nvd3>
@@ -746,47 +750,16 @@ svg .title {
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="tab-pane" id="startEnd">
-			<div class="row-fluid" ng-controller="process24Ctrl"><!--  -->
+			<div class="row-fluid" ng-controller="timingCtrl">
 				<div class="span8">
-					<div id="chart">
+					<div id="chart3">
 						<nvd3 options="options" data="data"></nvd3>
 					</div>
 				</div>
 				<div class="span4">
 					<start-end-control-element></start-end-control-element>
-				</div>
-			</div>
-			<ul class="nav nav-tabs" id="userTaskNavigationTab">
-				<li class="active"><a href="#globalView" data-toggle="tab">global
-						view</a></li>
-				<li><a href="#processView" data-toggle="tab">Process view</a></li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane active" id="globalView">
-					<div class="row-fluid" ng-controller="userTasks24Ctrl"> <!-- " -->
-						<div class="span8">
-							<div id="chart2">
-								<nvd3 options="options" data="data"></nvd3>
-							</div>
-						</div>
-						<div class="span4">
-							<start-end-control-element></start-end-control-element>
-						</div>
-					</div>
-				</div>
-				<div class="tab-pane" id="processView">
-					<div class="row-fluid" ng-controller="userTasks24Ctrl"><!--  -->
-						<div class="span8">
-							<div id="chart3">
-								<nvd3 options="options" data="data"></nvd3>
-							</div>
-						</div>
-						<div class="span4">
-							<start-end-control-element></start-end-control-element>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -803,11 +776,11 @@ svg .title {
 					<h5>Mark process(es) to plot</h5>
 					<form class="form-horizontal">
 						<div class="control-group">
-								<select ng-model="selected" ng-change="" multiple
-									ng-multiple="true">
-									<option ng-repeat="key in keys"
-										value="{{key.processDefinitionKey}}">{{key.processDefinitionKey}}</option>
-								</select>
+							<select ng-model="selected" ng-change="" multiple
+								ng-multiple="true">
+								<option ng-repeat="key in keys"
+									value="{{key.processDefinitionKey}}">{{key.processDefinitionKey}}</option>
+							</select>
 						</div>
 						<div class="control-group">
 							<label class="checkbox"> <input

@@ -23,7 +23,7 @@ public class IncidentResource extends AbstractCockpitPluginResource {
     /**
      * This method read the information of the defined mapping.xml file from
      * myBatis.
-     * {@link com.novatec.camunda.webapp.statistics.queries.incidentCount.xml}
+     * {@link org.camunda.cockpit.plugin.statistics.queries.incidentCount.xml}
      *
      * @return
      */

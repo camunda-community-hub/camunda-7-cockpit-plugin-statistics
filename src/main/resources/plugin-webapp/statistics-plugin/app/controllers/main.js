@@ -6,9 +6,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', [
   './pieChartCtrl',
   './pieChartCtrlUsr',
   './durationsCtrl',
-  './process24Ctrl',
-  './userTasks24Ctrl',
-  './slaPieChartCtrl'
+  './timingCtrl',
+  './slaChartCtrl',
 ], function(module) {
 
 });

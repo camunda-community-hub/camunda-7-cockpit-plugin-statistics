@@ -22,7 +22,7 @@ public class ProcessInstanceStartEndResource extends AbstractCockpitPluginResour
      * @return
      */
     @GET
-    public List<ProcessInstanceDto> getDurations() {
+    public List<ProcessInstanceDto> getProcessInstanceStartEnds() {
         return getQueryService().executeQuery("cockpit.statistics.selectProcessInstancesStartEnd",
                 new QueryParameters<ProcessInstanceDto>());
 

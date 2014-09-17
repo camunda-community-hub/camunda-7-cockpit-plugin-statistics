@@ -57,8 +57,7 @@ public class StatisticsPlugin extends AbstractCockpitPlugin {
         mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/runningUserTasksTimeSpec.xml");
         mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/historicUserTasksTimeSpec.xml");
         mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/runningProcessInstancesOByProcDefKey.xml");
-        
-        
+        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/historicActivityInformation.xml");
         return mappingFiles;
     }
 }

@@ -2,6 +2,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
     module.factory('DataFactory', ['$http', 'Uri', '$rootScope', function($http, Uri, $rootScope) {
 
             var DataFactory = {};
+            
             DataFactory.allProcessInstanceCountsByState = [];
             DataFactory.processesStartEnd = [];
             DataFactory.allRunningUserTasksCountOByProcDefKey = [];
@@ -9,6 +10,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
             DataFactory.durations = [];
             DataFactory.historicActivityCountsDurationByProcDefKey = [];
             DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
+            DataFactory.allHistoricActivitiesInformationByProcDefKey = [];
+            
             DataFactory.chosenTab = "";
             
             DataFactory.prepForBroadcast = function(chosenTab) {
@@ -23,31 +26,45 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
             
             DataFactory.getAllProcessDefinitions = function() {
             	return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-definitions"))
-        		.success(function(data) {
-        			DataFactory.allProcessDefinitions = data;
-        		})
-                .error(function(){
-                	console.log("error in fetching process definitions");
-                });
+              .success(function(data) {
+              	DataFactory.allProcessDefinitions = data;
+              })
+                  .error(function(){
+                  	console.log("error in fetching process definitions");
+              });
             };
             
             DataFactory.getAllRunningUserTasksCountOByProcDefKey = function() {
             	return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/running-user-tasks"))
-        		.success(function(data) {
-        			DataFactory.allRunningUserTasksCountOByProcDefKey = data;
-        		})
-                .error(function(){
-                	console.log("error in fetching running user tasks count ordered by proc def key");
+                .success(function(data) {
+                	DataFactory.allRunningUserTasksCountOByProcDefKey = data;
+                })
+                    .error(function(){
+                    	console.log("error in fetching running user tasks count ordered by proc def key");
                 });
             }
             DataFactory.getAllEndedUserTasksCountOByProcDefKey = function() {
             	return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/ended-user-tasks"))
-        		.success(function(data) {
-        			DataFactory.allEndedUserTasksCountOByProcDefKey = data;
-        		})
-                .error(function(){
-                	console.log("error in fetching ended user tasks count ordered by proc def key");
-                });
+              .success(function(data) {
+              	DataFactory.allEndedUserTasksCountOByProcDefKey = data;
+              })
+                  .error(function(){
+                  	console.log("error in fetching ended user tasks count ordered by proc def key");
+              });
+            }
+            
+            DataFactory.getAllHistoricActivitiesInformationByProcDefKey = function(procDefKey, activityName, activityType) {
+              return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/historic-activity-information?procDefKey="+procDefKey+"&activityName="+activityName+"&activityType="+activityType))
+              .success(function(data) {
+                if(procDefKey!=undefined) {
+                  DataFactory.allHistoricActivitiesInformationByProcDefKey[procDefKey] = data;
+                } else {
+                  DataFactory.allHistoricActivitiesInformationByProcDefKey["data"] = data;
+                  }
+              })
+              .error(function(){
+                    console.log("error in fetching historic activity information");
+              });
             }
 
 
@@ -63,16 +80,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
         		return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-instance?procDefKey="+procDefKeyProc))
         		.success(function(data) {
-        			if(procDefKeyProc!=undefined) {
-        				DataFactory.allProcessInstanceCountsByState[procDefKeyProc] = data;
-        			} else {
-        				DataFactory.allProcessInstanceCountsByState["data"] = data;
-        			}
-        			
-        		})
-                .error(function(){
-                	console.log("error in fetching process instance counts by state");
-                });	
+              if(procDefKeyProc!=undefined) {
+              	DataFactory.allProcessInstanceCountsByState[procDefKeyProc] = data;
+              } else {
+              	DataFactory.allProcessInstanceCountsByState["data"] = data;
+              	}
+              	
+              })
+            .error(function(){
+            	console.log("error in fetching process instance counts by state");
+            });	
 
 
             };
@@ -101,24 +118,31 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
             DataFactory.userTaskCounts = function() {
                 return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/historic-user-tasks"));
             };
-
+            
+            DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification = function(procDefKey, dateSpec){
+            	var key = "";
+            	
+            	if(procDefKey!=undefined && dateSpec!=undefined) {
+            		key = ""+procDefKey+dateSpec;
+            	}
+            	if(procDefKey!=undefined && dateSpec==undefined) {
+            		key = ""+procDefKey;
+            	}
+            	if(procDefKey==undefined && dateSpec!=undefined) {
+            		key = ""+dateSpec;
+            	}
+            	if(procDefKey==undefined && dateSpec==undefined) {
+            		key = "data";
+            	}
+            	
+            	return key;
+            };
+            
             DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification = function(procDefKey, dateSpec) {
                 return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/all-user-tasks?procDefKey="+procDefKey+"&dateSpecifier="+dateSpec))
                 .success(function(data) {
-                	var key = "";
                 	
-                	if(procDefKey!=undefined && dateSpec!=undefined) {
-                		key = ""+procDefKey+dateSpec;
-                	}
-                	if(procDefKey!=undefined && dateSpec==undefined) {
-                		key = ""+procDefKey;
-                	}
-                	if(procDefKey==undefined && dateSpec!=undefined) {
-                		key = ""+dateSpec;
-                	}
-                	if(procDefKey==undefined && dateSpec==undefined) {
-                		key = "data";
-                	}
+                	var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(procDefKey, dateSpec);
                 	DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key] = data;
         		})
                 .error(function(){
@@ -166,7 +190,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
                     else
                         String = String + "&processdefkey=" + processDefKeys[i];
                 };
-//            return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/durations?processdefkey=calledProcess&processdefkey=invoice"));
                 return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/durations" + String))
                 .success(function (data){
                 	DataFactory.durations = data;

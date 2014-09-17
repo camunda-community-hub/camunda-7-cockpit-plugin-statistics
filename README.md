@@ -18,13 +18,16 @@ Do not forget to customize build.properties in case you choose the latter option
 **todo**
 
 - improve DataFactory 
-- chart showing start and end times of process instances and user task per process definition - fix performance issues
-- chart showing start and end times of process instances and user task (all available) - fix performance issues
+- chart showing start and end times of process instances and activities per process definition - fix performance issues
+- chart showing start and end times of process instances and activities (all available) - fix performance issues
 - charts visualizing process of different attributes like start/end time, duration, count or others based on the several existing ressources
+- implement connection to Rserve to do more advanced stuff
 - tbc. ;)
 
 
 **done**
+- chart showing start and end times of process instances and activities per process definition
+- chart showing start and end times of process instances and activities (all available)
 - piechart of running, ended and failed process instances (all available)
 - piechart of running and ended user tasks (all available)
 - piechart of running and ended user tasks per process definition

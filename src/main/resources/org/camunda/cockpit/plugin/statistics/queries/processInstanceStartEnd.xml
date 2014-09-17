@@ -6,9 +6,9 @@
 
 	<resultMap id="processInstanceStartEndMap"
 		type="org.camunda.cockpit.plugin.statistics.db.ProcessInstanceDto">
-		<result property="processDefinitionKey" column="KEY_" />
-		<result property="startingTime" column="START_TIME_" />
-		<result property="endingTime" column="END_TIME_" />
+		<result property="procDefKey" column="KEY_" />
+		<result property="startDate" column="START_TIME_" />
+		<result property="endDate" column="END_TIME_" />
 	</resultMap>
 
 	<select id="selectProcessInstancesStartEnd"

@@ -27,7 +27,7 @@
                     ACT_RE_PROCDEF def
                 ON
                     def.ID_ = T.PROC_DEF_ID_
-           WHERE T.DELETE_REASON_="completed" AND PARENT_TASK_ID_ IS NULL
+           WHERE T.DELETE_REASON_='completed' AND PARENT_TASK_ID_ IS NULL
            group by PDKEY
            order by COUNT DESC;
 	</select>
