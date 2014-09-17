@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cockpit.statistics">
+
+	<resultMap id="activityInstanceCountMap"
+		type="org.camunda.cockpit.plugin.statistics.db.ActivityInstanceCountDto">
+		<result property="activityName" column="ACT_NAME" />
+		<result property="count" column="COUNT" />
+		<result property="procDefKey" column="PROC_DEF_KEY" />
+		<result property="avgDuration" column="AVG_DURATION" />
+		<result property="minDuration" column="MIN_DURATION" />
+		<result property="maxDuration" column="MAX_DURATION" />
+		<result property="type" column="ACT_TYPE" />
+	</resultMap>
+
+	<select id="selectActivityInstanceCountsOByProcessDefinition"
+		resultMap="activityInstanceCountMap">
+		SELECT count(*) as COUNT, 
+			ACT_NAME_ as ACT_NAME, 
+			ACT_TYPE_ as ACT_TYPE, 
+			def.KEY_ as PROC_DEF_KEY, 
+			AVG(TIMESTAMPDIFF(SECOND, START_TIME_, END_TIME_)) as AVG_DURATION, 
+			MIN(TIMESTAMPDIFF(SECOND, START_TIME_, END_TIME_)) as MIN_DURATION, 
+			MAX(TIMESTAMPDIFF(SECOND, START_TIME_, END_TIME_)) as MAX_DURATION
+		FROM act_hi_actinst A 
+			LEFT JOIN
+				ACT_RE_PROCDEF def
+			ON 
+				def.ID_ = A.PROC_DEF_ID_
+		WHERE
+			ACT_TYPE_ in ('userTask', 'callActivity', 'serviceTask', 'subProcess', 'transaction', 'sendTask', 'receiveTask') 
+		group by ACT_NAME, ACT_TYPE, PROC_DEF_KEY;
+	</select>
+
+</mapper>

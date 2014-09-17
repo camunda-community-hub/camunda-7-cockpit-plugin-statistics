@@ -1,45 +1,96 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.camunda.bpm.extension</groupId>
     <artifactId>camunda-cockpit-plugin-statistics-root</artifactId>
     <version>1.0.0</version>
+    <name>Camunda Web App Statistics Plugin</name>
+    <description>NovaTec`s fancy statitstics plugin</description>
 
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <!-- use camunda-release-parent for relasing to maven central and camunda nexus -->
     <parent>
         <groupId>org.camunda</groupId>
         <artifactId>camunda-release-parent</artifactId>
         <version>2.2</version>
         <relativePath />
     </parent>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <camunda.version>7.1.0-Final</camunda.version>
+        <!-- This property must be present for the pom.xml to be recognized as a plugin -->
+        <camunda.plugin.category>Monitoring</camunda.plugin.category>
+        <camunda.plugin.screenshot></camunda.plugin.screenshot>
+        <camunda.plugin.testedOnVersion>7.1.0-Final</camunda.plugin.testedOnVersion>
+        <camunda.plugin.language>EN</camunda.plugin.language>
+        
+    </properties>
 
+    <dependencies>
+	    <dependency>
+	        <groupId>org.camunda.bpm.webapp</groupId>
+	        <artifactId>camunda-webapp-core</artifactId>
+	        <version>${camunda.version}</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.jboss.spec</groupId>
+	        <artifactId>jboss-javaee-web-6.0</artifactId>
+	        <version>3.0.2.Final</version>
+	        <type>pom</type>
+	        <scope>provided</scope>
+	        <exclusions>
+	            <exclusion>
+	                <artifactId>xalan</artifactId>
+	                <groupId>xalan</groupId>
+	            </exclusion>
+	        </exclusions>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.camunda.bpm</groupId>
+	        <artifactId>camunda-engine</artifactId>
+	        <version>${camunda.version}</version>
+	        <scope>provided</scope>
+	    </dependency>
+
+
+	    <!-- provide the jars for RServe -->
+	    <dependency>
+	        <groupId>net.rforge</groupId>
+	        <artifactId>Rserve</artifactId>
+	        <version>0.6-8.1</version>
+	    </dependency>
+	    
+	    <!-- Test dependencies--> 
+	    <dependency>
+	        <groupId>com.h2database</groupId>
+	        <artifactId>h2</artifactId>
+	        <version>1.3.171</version>
+	        <scope>test</scope>
+	    </dependency>
+	
+	    <dependency>
+	        <groupId>mysql</groupId>
+	        <artifactId>mysql-connector-java</artifactId>
+	        <version>5.1.30</version>
+	        <scope>test</scope>
+	    </dependency>
+	    
+	    <dependency>
+	        <groupId>junit</groupId>
+	        <artifactId>junit</artifactId>
+	        <version>4.11</version>
+	        <scope>test</scope>
+	    </dependency>
+    </dependencies>
+    
     <repositories>
         <repository>
             <id>camunda-bpm-nexus</id>
             <name>camunda-bpm-nexus</name>
             <url>https://app.camunda.com/nexus/content/groups/public</url>
         </repository>
-    <!-- uncomment to add custom repositores if you need some
-        <repository>
-            <id>jboss-public-repository</id>
-            <name>JBoss Repository</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    -->
     </repositories>
-
-    <build>
-        <defaultGoal>clean install</defaultGoal>
-    </build>
 
     <licenses>
         <license>
@@ -71,5 +122,44 @@
             <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
-  </project>
 
+    <build>
+        <defaultGoal>clean install</defaultGoal>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

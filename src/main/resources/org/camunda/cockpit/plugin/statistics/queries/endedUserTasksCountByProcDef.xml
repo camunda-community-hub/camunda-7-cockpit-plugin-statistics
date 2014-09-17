@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cockpit.statistics">
+
+	<resultMap id="endedUserTaskMap"
+		type="org.camunda.cockpit.plugin.statistics.db.EndedUserTaskDto">
+		<result property="count" column="COUNT" />
+		<result property="procDefKey" column="PDKEY" />
+		<result property="duration" column="AVG_DURATION" />
+		<result property="minDuration" column="MIN_DURATION" />
+		<result property="maxDuration" column="MAX_DURATION" />
+	</resultMap>
+
+	<select id="selectEndedUserTasksCountByProcDefKey"
+		resultMap="endedUserTaskMap">
+           SELECT
+	          	count(*) AS COUNT,
+	          	def.KEY_ AS PDKEY,
+	          	AVG(DURATION_) AS DURATION,
+			    MIN(DURATION_) AS MIN_DURATION,
+			    MAX(DURATION_) AS MAX_DURATION
+           FROM
+      			ACT_HI_TASKINST T
+                LEFT JOIN
+                    ACT_RE_PROCDEF def
+                ON
+                    def.ID_ = T.PROC_DEF_ID_
+           WHERE T.DELETE_REASON_="completed" AND PARENT_TASK_ID_ IS NULL
+           group by PDKEY
+           order by COUNT DESC;
+	</select>
+
+</mapper>

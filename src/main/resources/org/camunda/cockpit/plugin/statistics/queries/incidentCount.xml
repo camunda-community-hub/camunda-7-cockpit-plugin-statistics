@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cockpit.statistics">
+
+	<resultMap id="incidentCountMap"
+		type="org.camunda.cockpit.plugin.statistics.db.IncidentInstanceCountDto">
+		<result property="incidentMsg" column="INCIDENT_MSG_" />
+		<result property="messageCount" column="MASSAGE_COUNT" />
+		<result property="incidentType" column="INCIDENT_TYPE_" />
+		<result property="activityId" column="ACTIVITY_ID_" />
+		<result property="processKey" column="KEY_" />
+		<result property="processName" column="NAME_" />
+		<result property="createTime" column="CREATE_TIME_" />
+	</resultMap>
+
+	<select id="selectIncidentCountsByProcessDefinition"
+		resultMap="incidentCountMap">
+	SELECT
+      T.INCIDENT_MSG_,
+	  Count(T.INCIDENT_MSG_) AS MASSAGE_COUNT,
+      T.INCIDENT_TYPE_,
+      T.ACTIVITY_ID_,
+	  T.KEY_,
+	  T.NAME_,
+	  T.CREATE_TIME_
+ 	FROM 
+	  	( SELECT  
+	  		E.INCIDENT_MSG_, 
+	  		E.INCIDENT_TYPE_, 
+	  		E.ACTIVITY_ID_, 
+	  		F.KEY_, 
+	  		F.NAME_,
+	  		E.CREATE_TIME_
+	  	FROM
+  			ACT_HI_INCIDENT E
+  		INNER JOIN
+  			ACT_RE_PROCDEF F
+  		ON 
+  			F.ID_=E.PROC_DEF_ID_
+  		) T
+  	GROUP BY
+  		INCIDENT_MSG_, 
+  		ACTIVITY_ID_, 
+  		INCIDENT_TYPE_,
+  		T.KEY_,
+	  	T.NAME_,
+	  	CREATE_TIME_ 
+	ORDER BY
+		CREATE_TIME_
+	  </select>
+
+</mapper>

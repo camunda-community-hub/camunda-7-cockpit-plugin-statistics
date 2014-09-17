@@ -1,0 +1,20 @@
+package com.novatec.camunda.webapp.statistics.test;
+
+import org.camunda.bpm.cockpit.Cockpit;
+import org.camunda.bpm.cockpit.plugin.spi.CockpitPlugin;
+import org.camunda.bpm.cockpit.plugin.test.AbstractCockpitPluginTest;
+import org.camunda.cockpit.plugin.statistics.StatisticsPlugin;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class StatisticsPluginTest extends AbstractCockpitPluginTest {
+
+    @Test
+    public void testPluginDiscovery() {
+        CockpitPlugin thisPlugin = Cockpit.getRuntimeDelegate().getAppPluginRegistry().getPlugin(StatisticsPlugin.ID);
+        Assert.assertNotNull(thisPlugin);
+    }
+
+
+
+}
