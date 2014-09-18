@@ -21,10 +21,13 @@
         <camunda.version>7.1.0-Final</camunda.version>
         <!-- This property must be present for the pom.xml to be recognized as a plugin -->
         <camunda.plugin.category>Monitoring</camunda.plugin.category>
-        <camunda.plugin.screenshot></camunda.plugin.screenshot>
+        <camunda.plugin.screenshot>screenshot-process-instances.png</camunda.plugin.screenshot>
+        <camunda.plugin.screenshot.1>screenshot-user-tasks.png</camunda.plugin.screenshot.1>
+        <camunda.plugin.screenshot.2>screenshot-timing.png</camunda.plugin.screenshot.2>
+        <camunda.plugin.screenshot.3>screenshot-analytics.png</camunda.plugin.screenshot.3>
+        <camunda.plugin.screenshot.4>screenshot-process-definition.png</camunda.plugin.screenshot.4>
         <camunda.plugin.testedOnVersion>7.1.0-Final</camunda.plugin.testedOnVersion>
         <camunda.plugin.language>EN</camunda.plugin.language>
-        
     </properties>
 
     <dependencies>
