@@ -41,62 +41,37 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
         
         if((processDefinitionKey==null || processDefinitionKey.equals("undefined")) && (dateSpecifier==null || dateSpecifier.equals("undefined"))) {
         	//no param set, return all
-        	List<UserTaskTimeSpecDto> runningResultsByQuery=getQueryService().executeQuery("cockpit.statistics.selectRunningUserTaskTimeSpec",
-                    new QueryParameters<UserTaskTimeSpecDto>());
         	
-        	taskInstances.addAll(runningResultsByQuery);
-        	taskInstances.addAll(historicResultsByQuery);
+        	return historicResultsByQuery;
 
         } else if(dateSpecifier==null || dateSpecifier.equals("undefined")) {
 
         	//only date spec missing
-        	List<UserTaskTimeSpecDto> runningResultsByQuery=getQueryService().executeQuery("cockpit.statistics.selectRunningUserTaskTimeSpec",
-                    new QueryParameters<UserTaskTimeSpecDto>());
         	
-    		//do Filter
-        	for(UserTaskTimeSpecDto timeSpecDto: runningResultsByQuery) {
-        		if(timeSpecDto.getProcDefKey().equals(processDefinitionKey)) {
-        			taskInstances.add(timeSpecDto);
-        		}
-        	}
-        	
-    		//do Filter
-	    	for(UserTaskTimeSpecDto timeSpecDto: historicResultsByQuery) {
-	    		if(timeSpecDto.getProcDefKey().equals(processDefinitionKey)) {
-	    			taskInstances.add(timeSpecDto);
-	    		}
-	    	}
-        	
-        	
-        	
+      		//do Filter
+  	    	for(UserTaskTimeSpecDto timeSpecDto: historicResultsByQuery) {
+  	    		if(timeSpecDto.getProcDefKey().equals(processDefinitionKey)) {
+  	    			taskInstances.add(timeSpecDto);
+  	    		}
+  	    	}
         } else {
         
-	        if(dateSpecifier.equals("endTime")) {
+	          if(dateSpecifier.equals("endTime")) {
 
-	        	if(processDefinitionKey!=null && !processDefinitionKey.equals("undefined")) {
-	        		//do Filter, if proc definition is set
-			    	for(UserTaskTimeSpecDto timeSpecDto: historicResultsByQuery) {
-			    		if(timeSpecDto.getProcDefKey().equals(processDefinitionKey)) {
-			    			taskInstances.add(timeSpecDto);
-			    		}
-			    	}
-	        	} else {
-	        		//only all old user tasks
-	        		taskInstances.addAll(historicResultsByQuery);
-	        	}
+  	        	if(processDefinitionKey!=null && !processDefinitionKey.equals("undefined")) {
+  	        		//do Filter, if proc definition is set
+    			    	for(UserTaskTimeSpecDto timeSpecDto: historicResultsByQuery) {
+    			    		if(timeSpecDto.getProcDefKey().equals(processDefinitionKey)) {
+    			    			taskInstances.add(timeSpecDto);
+    			    		}
+    			    	}
+  	        	} else {
+  	        		//only all old user tasks
+  	        		taskInstances.addAll(historicResultsByQuery);
+  	        	}
 	
-	        } else if(dateSpecifier.equals("startTime")) {
-	        	
-	        	List<UserTaskTimeSpecDto> runningResultsByQuery=getQueryService().executeQuery("cockpit.statistics.selectRunningUserTaskTimeSpec",
-	                    new QueryParameters<UserTaskTimeSpecDto>());
-	        	
-	        	if(processDefinitionKey!=null && !processDefinitionKey.equals("undefined")) {
-	        		//do Filter, if proc definition is set
-		        	for(UserTaskTimeSpecDto timeSpecDto: runningResultsByQuery) {
-		        		if(timeSpecDto.getProcDefKey().equals(processDefinitionKey)) {
-		        			taskInstances.add(timeSpecDto);
-		        		}
-		        	}
+	          } else if(dateSpecifier.equals("startTime")) {
+
 		        	
 	        		//do Filter, if proc definition is set
 		        	for(UserTaskTimeSpecDto timeSpecDto: historicResultsByQuery) {
@@ -106,12 +81,10 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
 		        	}
 	        	} else {
 	        		//no proc definition is set -> take all
-	        		taskInstances.addAll(runningResultsByQuery);
-	        		taskInstances.addAll(historicResultsByQuery);
+	        		return historicResultsByQuery;
 	        	}
 
 	        }
-        }
         
         return taskInstances;
     }
