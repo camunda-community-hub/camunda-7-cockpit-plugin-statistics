@@ -6,6 +6,15 @@ This plugin provides a set of charts helping you to understand what is and what 
 
 ![Screenshot](http://i.imgur.com/B2KMQRR.png)
 
+![Screenshot: Process Instances](screenshot-process-instances.png)
+
+![Screenshot: User Tasks](screenshot-user-tasks.png)
+
+![Screenshot: Timing](screenshot-timing.png)
+
+![Screenshot: Analytics](screenshot-analytics.png)
+
+![Screenshot: Process Definition](screenshot-process-definition.png)
 
 ## Get started
 
