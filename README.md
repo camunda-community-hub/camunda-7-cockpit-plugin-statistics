@@ -16,10 +16,28 @@ This plugin provides a set of charts helping you to understand what is and what 
 
 ![Screenshot: Process Definition](screenshot-process-definition.png)
 
+
 ## Get started
 
 To include this plugin into your cockpit you can either include it in your custom build on [camunda's plugin store](http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
 Do not forget to customize build.properties in case you choose the latter option.
+
+
+### Giving it a quick Try
+
+If you want to have a quick look at this project, you can start a running instance of camunda BPM cockpit in the following way:
+
+* Cone the project using git: `git clone https://github.com/camunda/camunda-cockpit-plugin-statistics.git`
+* Start the camunda Webapp from the commandline: 
+
+```bash
+cd camunda-cockpit-plugin-statistics
+mvn clean jetty:run -Pdevelop
+```
+* go to [http://localhost:8080/camunda](http://localhost:8080/camunda)
+* Login with `demo:demo`
+
+In Cockpit you will see a couple of plugins which display statistics about your process definitions and so on.
 
 
 ## Roadmap
@@ -48,6 +66,7 @@ Do not forget to customize build.properties in case you choose the latter option
 
 [Eric Klieme](https://github.com/eklieme) ([NovaTec Consulting GmbH](http://www.novatec-gmbh.de/))
 
+
 ## Contributors
 
 Within NovaTec Consulting GmbH the following persons are contributing
@@ -58,6 +77,7 @@ Within NovaTec Consulting GmbH the following persons are contributing
 
 
 ![NovaTec Consulting GmbH](http://www.novatec-gmbh.de/fileadmin/styles/novatec_v5.5/images/header-logo.jpg)
+
 
 ## License
 
