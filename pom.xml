@@ -5,7 +5,9 @@
     <artifactId>camunda-cockpit-plugin-statistics-root</artifactId>
     <version>1.0.0</version>
     <name>Camunda Web App Statistics Plugin</name>
-    <description>NovaTec`s fancy statitstics plugin</description>
+    <description>NovaTec Consulting's cockpit statistics plugin provides several feature for an easy overview on running and finished process instances or activities.
+        In Addition to some easier aggregations like min, max or mean values, several analytics functionality is available. In the tab 'Timing' you can analyze start and end times
+        on an either instance or activity level providing valuable insights on your processes.</description>
 
     <packaging>jar</packaging>
 
