@@ -3,7 +3,7 @@
 
 	<property file="build.properties" />
 	<property file="${user.home}/.camunda/build.properties" />
-	<property name="camunda-cockpit-plugin-statistics-root-1.0.0" value="target" />
+	<property name="camunda-cockpit-plugin-statistics-root-1.0.0-jar-with-dependencies" value="target" />
 
 	<condition property="mvn.executable" value="mvn.bat" else="mvn">
 		<os family="windows" />
