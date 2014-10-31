@@ -2,7 +2,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', [
     './DataFactory',
     '../lib/simple_statistics',
     './Format',
-    './GraphFactory'
+    './GraphFactory',
+    './TimingFactory'
 ], function(module) {
 
 });

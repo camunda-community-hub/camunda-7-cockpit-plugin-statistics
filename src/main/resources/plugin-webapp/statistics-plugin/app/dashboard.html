@@ -699,89 +699,155 @@ svg .title {
 			data-toggle="tab">Timing</a></li>
 		<li><a href="#durations" ng-click="handleTabClick('durations')"
 			data-toggle="tab">Analytics</a></li>
+		<li><a href="#" data-toggle="modal" data-target="#feedbackModal"><em>Feedback</em></a></li>
 	</ul>
-	<div class="tab-content">
-		<div class="tab-pane active" id="processInstances">
-			<div class="row" id="controlsTopPlotRow">
-				<div class="span4" id="controlsPlot1"></div>
-			</div>
-			<div class="row-fluid" ng-controller='pieChartCtrl'>
-				<div class="span4" state="running">
-					<nvd3 options="options" data="running" id="running"></nvd3>
+	<div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="feedbackController">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Feedback</h4>
 				</div>
-				<div class="span4">
-					<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
-				</div>
-				<div class="span4">
-					<nvd3 options="options" data="failed" id="failed"></nvd3>
-				</div>
-			</div>
-			<div class="row-fluid">
-				<div class="span4">
-					<p class="text-center">Running Instances</p>
-				</div>
-				<div class="span4">
-					<p class="text-center">Ended Instances</p>
-				</div>
-				<div class="span4">
-					<p class="text-center">Failed Instances</p>
-				</div>
-			</div>
-
-
-
-		</div>
-		<div class="tab-pane" id="userTasks">
-			<div class="row-fluid" ng-controller='pieChartCtrlUsr'>
-				<div class="span6">
-					<nvd3 options="runningTasksOptions" data="tasksRunning"
-						id="tasksRunning"></nvd3>
-				</div>
-				<div class="span6">
-					<nvd3 options="endedTasksOptions" data="tasksEnded" id="tasksEnded"></nvd3>
-				</div>
-			</div>
-			<div class="row-fluid">
-				<div class="span6">
-					<p class="text-center">Running Tasks</p>
-				</div>
-				<div class="span6">
-					<p class="text-center">Ended Tasks</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="tab-pane" id="startEnd">
-			<div class="row-fluid" ng-controller="timingCtrl">
-				<div class="span8">
-					<div id="chart3">
-						<nvd3 options="options" data="data"></nvd3>
-					</div>
-				</div>
-				<div class="span4">
-					<start-end-control-element></start-end-control-element>
-				</div>
-			</div>
-		</div>
-		<div class="tab-pane" id="durations">
-			<div class="row-fluid" ng-controller="regCtrl">
-				<div class="span8" id="plot4">
-					<div id="regPlotDiv">
-						<regression-plot data="data" options="options">
-
-						</regression-plot>
-					</div>
-				</div>
-				<div class="span4" id="plot6">
-					<h5>Mark process(es) to plot</h5>
+				<div class="modal-body">
 					<form class="form-horizontal">
+					  <div class="control-group">
+              <label class="control-label" for="inputCategory">Category</label>
+              <div class="controls">
+                <select ng-model="feedbackCategory" id="inputCategory" class="form-control">
+                  <option>Bug</option>
+                  <option>Feature-Request</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
 						<div class="control-group">
-							<select ng-model="selected" ng-change="" multiple
-								ng-multiple="true">
-								<option ng-repeat="key in keys"
-									value="{{key.processDefinitionKey}}">{{key.processDefinitionKey}}</option>
-							</select>
+							<label class="control-label" for="inputSubject">subject</label>
+							<div class="controls">
+								<select ng-model="feedbackSubject" id="inputSubject" class="form-control">
+		              <option>Tab-Processinstances</option>
+		              <option>Tab-Usertasks</option>
+		              <option>Tab-Timing</option>
+		              <option>Tab-Analytics</option>
+		              <option>Tab-Statistics (Within process definition
+		                view)</option>
+		            </select>
+							</div>
 						</div>
+						<div class="control-group">
+              <label class="control-label" for="feedbackText">Feedback</label>
+              <div class="controls">
+                <textarea ng-model="feedbackText" class="form-control" rows="8" id="feedbackText"></textarea>
+              </div>
+            </div>
+					</form>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" ng-click="sendFeedback()" data-toggle="tooltip" title="via email">Give Feedback!</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<div class="tab-content">
+	<div class="tab-pane active" id="processInstances">
+		<div class="row" id="controlsTopPlotRow">
+			<div class="span4" id="controlsPlot1"></div>
+		</div>
+		<div class="row-fluid" ng-controller='pieChartCtrl'>
+			<div class="span4" state="running">
+				<nvd3 options="options" data="running" id="running"></nvd3>
+			</div>
+			<div class="span4">
+				<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
+			</div>
+			<div class="span4">
+				<nvd3 options="options" data="failed" id="failed"></nvd3>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span4">
+				<p class="text-center">Running Instances</p>
+			</div>
+			<div class="span4">
+				<p class="text-center">Ended Instances</p>
+			</div>
+			<div class="span4">
+				<p class="text-center">Failed Instances</p>
+			</div>
+		</div>
+
+
+
+	</div>
+	<div class="tab-pane" id="userTasks">
+		<div class="row-fluid" ng-controller='pieChartCtrlUsr'>
+			<div class="span6">
+				<nvd3 options="runningTasksOptions" data="tasksRunning"
+					id="tasksRunning"></nvd3>
+			</div>
+			<div class="span6">
+				<nvd3 options="endedTasksOptions" data="tasksEnded" id="tasksEnded"></nvd3>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span6">
+				<p class="text-center">Running Tasks</p>
+			</div>
+			<div class="span6">
+				<p class="text-center">Ended Tasks</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="tab-pane" id="startEnd">
+		<div class="row-fluid" ng-controller="timingCtrl">
+			<div class="span8">
+				<div id="chart3">
+					<nvd3 options="options" data="data"></nvd3>
+				</div>
+			</div>
+			<div class="span4">
+				<start-end-control-element></start-end-control-element>
+			</div>
+		</div>
+	</div>
+	<div class="tab-pane" id="durations">
+		<div class="row-fluid" ng-controller="durationsCtrl">
+			<div class="span8" id="plot4">
+				<div id="regPlotDiv" ng-if="selectedView.name== views[0].name">
+					<regression-plot data="data" options="options"> </regression-plot>
+				</div>
+				<div id="stackChart" ng-if="selectedView.name== views[1].name">
+					<nvd3 options="options" data="data"></nvd3>
+				</div>
+			</div>
+			<div class="span4" id="plot6">
+				<h5>Mark process(es) to plot</h5>
+				<form class="form-horizontal">
+					<div class="control-group">
+						<select ng-model="selected"
+							ng-options="key.processDefinitionKey for key in processDefWithRunningInstances"
+							ng-change="getDurations()" multiple ng-multiple="true">
+						</select>
+					</div>
+					<h5>select view</h5>
+					<div class="control-group">
+						<select ng-model="selectedView"
+							ng-options="view.name for view in views"
+							ng-change="getDurations()">
+						</select> 
+						<!-- <a ng-href='' ng-click="showInfo()"> <i
+							class="icon-info-sign"></i>
+							follows in a later version
+						</a> -->
+						<!-- 							<div ng-if = "showInfo"> -->
+						<!-- 								{{selectedView.info}}</div> -->
+					</div>
+					<div ng-if="selectedView.name== views[0].name">
 						<div class="control-group">
 							<label class="checkbox"> <input
 								ng-model="options.scatter" ng-checked="1" type="checkbox">
@@ -799,9 +865,17 @@ svg .title {
 								draw regression
 							</label>
 						</div>
-					</form>
-				</div>
+					</div>
+					<div ng-if="selectedView.name==views[1].name">
+						<h6>
+							adjust number of bins
+							<h6>
+								<input type="number" min="1" step="1" value="10"
+									ng-model="numberOfBins.number" ng-change="getDurations()">
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
+</div>
 </div>

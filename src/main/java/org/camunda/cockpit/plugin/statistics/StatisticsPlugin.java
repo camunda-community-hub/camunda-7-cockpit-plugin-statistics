@@ -43,21 +43,65 @@ public class StatisticsPlugin extends AbstractCockpitPlugin {
     @Override
     public List<String> getMappingFiles() {
         List<String> mappingFiles = new ArrayList<String>();
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/processInstanceCountByState.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/processInstanceVersions.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/activityInstances.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/historicUserTasks.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/variablesSize.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/incidentCount.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/durations.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/processesWithFinishedInstances.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/processInstanceStartEnd.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/runningUserTasksCountByProcDef.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/endedUserTasksCountByProcDef.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/runningUserTasksTimeSpec.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/historicUserTasksTimeSpec.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/runningProcessInstancesOByProcDefKey.xml");
-        mappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/historicActivityInformation.xml");
+        
+        //add all activity related mapping files
+        mappingFiles.addAll(getActivityRelatedMappingFiles());
+        
+        //add all process instance related mapping files
+        mappingFiles.addAll(getProcessInstanceRelatedMappingFiles());
+        
+        //add all user task related mapping files
+        mappingFiles.addAll(getUserTaskRelatedMappingFiles());
+        
+        //add other mapping files
+        mappingFiles.addAll(getOtherMappingFiles());
+        
         return mappingFiles;
     }
+    
+    private List<String> getOtherMappingFiles() {
+      List<String> getOtherMappingFiles = new ArrayList<String>();
+
+      //variable sizes
+      getOtherMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/other/variablesSize.xml");
+      return getOtherMappingFiles;
+    }
+    
+    private List<String> getActivityRelatedMappingFiles() {
+      List<String> activityRelatedMappingFiles = new ArrayList<String>();
+      
+      activityRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/activity/activityInstances.xml");
+      activityRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/activity/activityInstancesFilterByProcDefKey.xml");
+      activityRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/activity/historicActivityInformation.xml");
+      
+      return activityRelatedMappingFiles;
+    }
+    
+    private List<String> getProcessInstanceRelatedMappingFiles() {
+      List<String> procinstRelatedMappingFiles = new ArrayList<String>();
+      
+      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/processInstanceCountByState.xml");
+      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/processInstanceVersions.xml");
+      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/runningProcessInstancesOByProcDefKey.xml");
+      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/processesWithFinishedInstances.xml");
+      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/processInstanceStartEnd.xml");
+      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/processInstancesWithIncidentCount.xml");
+      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/durationsOfChosenProcess.xml");
+      return procinstRelatedMappingFiles;
+    }
+    
+    private List<String> getUserTaskRelatedMappingFiles() {
+      List<String> usertaskRelatedMappingFiles = new ArrayList<String>();
+      
+      usertaskRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/usertask/historicUserTasks.xml");
+      usertaskRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/usertask/runningUserTasksCountByProcDef.xml");
+      usertaskRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/usertask/endedUserTasksCountByProcDef.xml");
+      usertaskRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/usertask/runningUserTasksTimeSpec.xml");
+      usertaskRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/usertask/historicUserTasksTimeSpec.xml");
+      usertaskRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/usertask/historicUserTasksTimeSpecFilterByProcDefKey.xml");
+      usertaskRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/usertask/historicUserTasksTimeSpecFilterByProcDefKeyAndTimeSpec.xml");
+      
+      return usertaskRelatedMappingFiles;
+    }
+    
 }

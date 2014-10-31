@@ -78,13 +78,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
         }
     };
 		
-		$scope.procDefKey = document.URL.substring(document.URL.indexOf("process-definition")+19, document.URL.indexOf(":", document.URL.indexOf("process-definition")+19));
-		
 		DataFactory
-		.getHistoricActivityCountsDurationByProcDefKey($scope.procDefKey)
+		.getHistoricActivityCountsDurationByProcDefKey($scope.processDefinition.key)
 		.then(function() {
 			
-			activityCount = DataFactory.historicActivityCountsDurationByProcDefKey[$scope.procDefKey];
+			activityCount = DataFactory.historicActivityCountsDurationByProcDefKey[$scope.processDefinition.key];
 			activitiesToPlotForPieChart=[];
 			for(i in activityCount){
 				if(activityCount[i].count) {
@@ -111,8 +109,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 		
 		$scope.showLinePlot = function() {
-      DataFactory.getAllHistoricActivitiesInformationByProcDefKey($scope.procDefKey,$scope.selectedActivity.name, $scope.selectedActivity.type).then(function() {
-        var historicActivityInformation = DataFactory.allHistoricActivitiesInformationByProcDefKey[$scope.procDefKey];
+      DataFactory.getAllHistoricActivitiesInformationByProcDefKey($scope.processDefinition.key,$scope.selectedActivity.name, $scope.selectedActivity.type).then(function() {
+        var historicActivityInformation = DataFactory.allHistoricActivitiesInformationByProcDefKey[$scope.processDefinition.key];
         var filteredData = [];
         for(i in historicActivityInformation) {
           if(historicActivityInformation[i].duration) {

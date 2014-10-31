@@ -2,36 +2,68 @@
 
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('regCtrl',['$scope','DataFactory','Format', function($scope,DataFactory,Format){
+	module.controller('durationsCtrl',['$scope','DataFactory','Format','GraphFactory', function($scope,DataFactory,Format,GraphFactory){
 
-		$scope.selected = [];
-		DataFactory.keys().success(function(data){
-			$scope.keys = data;
-			if(typeof $scope.keys[0] != "undefined"){
-				$scope.selected = [ $scope.keys[0].processDefinitionKey];
+		var shownPlot = false;
+
+		$scope.$on('chosenTabChangedBroadcast', function() {
+			if(DataFactory.chosenTab=="durations") {
+				showPlot();
 			}
-			getDurations();
 		});
 
-		//maybe outsource all the formatting in an extra service
-		function getDurations() {
-			DataFactory.getDurations($scope.selected).then(function () {
-				$scope.durations = DataFactory.durations;
-				$scope.data = [];
-				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-				$scope.data = Format.bringSortedDataInPlotFormat($scope.durations,"processDefinitionKey","startingTime","duration",parseDate,function(d){return d/1000/60;});
-				$scope.options = {
-						outerRegion:[5,95],
-						scatter  : true,
-						regression : false,
-						spline : true
+		var showPlot = function() {
+			if(!shownPlot) {
+				
+				$scope.showInfo = true;
+				$scope.views = GraphFactory.timeDistViews;
+				$scope.selectedView = $scope.views[1]; 
+				//we do that so that can adress this variable from inside the ng-if
+				//elsewise we would have to adress it with $parent.numberOfBins
+				//bcz ng-if produces a childscope
+				$scope.numberOfBins = {"number": 10};
+
+//				$scope.selected = [];
+				DataFactory.getProcessDefWithRunningInstances().then(function(){
+					$scope.processDefWithRunningInstances = DataFactory.processDefWithRunningInstances;
+					if(typeof $scope.processDefWithRunningInstances[0] != "undefined"){
+						$scope.selected = [{processDefinitionKey: $scope.processDefWithRunningInstances[0].processDefinitionKey}];
+					}
+					$scope.getDurations();
+				});
+
+				$scope.getDurations = function() {
+					DataFactory.getDurations($scope.selected).then(function () {
+						var durations = DataFactory.durations;
+						if($scope.selectedView.name=='chronological development'){
+							var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
+							$scope.data = Format.bringSortedDataInPlotFormat(durations,"processDefinitionKey","startingTime","duration",parseDate,function(d){return d/1000/60;});
+							$scope.options = {
+									outerRegion:[5,95],
+									scatter  : true,
+									regression : false,
+									spline : true
+							};
+						}
+						//no string here!
+						else if ($scope.selectedView.name=='distribution'){
+							var result = Format.bringDataIntoBarPlotFormat(durations,"processDefinitionKey","duration",function(d){return d/1000/60;},$scope.numberOfBins.number);
+							$scope.data = result[0].data;
+							var thresholds = result[0].thresholds;
+							$scope.options = GraphFactory.getOptionsForTimeDistributionGraph($scope.numberOfBins.number,thresholds);
+
+						}
+					});
+
 				};
-
-			});
-
-		};
-		$scope.$watch('selected',function(){
-			getDurations();
-		});
+				
+				$scope.showInfo = function(){
+					if($scope.showInfo) $scope.showInfo = false;
+					else $scope.showInfo = true;
+					console.log($scope.showInfo);
+				};
+				shownPlot = true;
+			}
+		}
 	}]);
 });

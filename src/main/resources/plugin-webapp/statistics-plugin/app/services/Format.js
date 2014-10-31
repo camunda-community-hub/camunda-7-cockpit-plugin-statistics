@@ -108,8 +108,62 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 			return formatedData;
 		};
-		
-		
+
+		Format.bringDataIntoBarPlotFormat = function(startData,key,x,parseX,numberOfBins){
+			var all=[];
+//			console.log(startData);
+			for (var i =0; i<startData.length; i++){
+				all[i]=parseX(eval("startData["+i+"]." + x));
+			};
+//			console.log(all);
+			var formatedData = [];
+			var data = Format.bringSortedDataInPlotFormat(startData,key,x,undefined,parseX,undefined);
+			//put them into one long array to be able to use d3.layout.histogram
+			
+
+			var minMax = [];
+			var min = d3.min(all);
+			var max = d3.max(all);
+			var range = max - min;
+			var binSize = range/numberOfBins;
+//			minMax[0]={"min": min , "max": min + binSize };
+			var thresholds = [];
+			for(var i = 0;i<=numberOfBins;i++){
+//				$scope.minMax[i] = {"min": $scope.minMax[i-1].max , "max": $scope.minMax[i-1].max + binSize };
+				thresholds[i]= i*binSize+min;
+			};
+//			console.log(thresholds);
+			var dataInBins = [];
+			for( var i = 0; i< data.length; i++){
+				formatedData.push({"key": data[i].key , "values": []});
+				allInOne = [];
+				for(var j = 0; j<data[i].values.length; j++){
+					allInOne[j] = data[i].values[j].x;
+				};
+//				console.log(allInOne);
+				dataInBins = d3.layout.histogram()
+				.bins(thresholds)
+				(allInOne);
+				
+				
+				 var array = [1,1.5,3,4];
+				  var dataInBins2 = d3.layout.histogram()
+				    .bins([1,2,4])
+								(array);
+//				  console.log(dataInBins2);
+				  
+				  
+//				console.log(dataInBins);
+				for(var j = 0; j< numberOfBins; j++){
+					formatedData[i].values.push({"x": j, "y": dataInBins[j].length});
+				};
+			};
+			var result = [];
+			result.push({"data":formatedData, "thresholds": thresholds});
+			return result;
+//			return formatedData;
+		}
+
 		/**
 		 * var parseTime = d3.time.format("%yy%jd%Hh%Mm%Ss").parse;
 		 * this is the output format: %yy%jd%Hh%Mm%Ss
@@ -123,6 +177,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 			return numyears + "y" +  numdays + "d" + numhours + "h" + numminutes + "m" + numseconds + "s";
 		};
+
 		return Format;
 	});
 });

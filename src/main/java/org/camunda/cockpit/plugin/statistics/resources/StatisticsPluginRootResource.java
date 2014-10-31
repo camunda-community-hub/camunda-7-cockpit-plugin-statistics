@@ -8,6 +8,25 @@ import javax.ws.rs.QueryParam;
 
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginRootResource;
 import org.camunda.cockpit.plugin.statistics.StatisticsPlugin;
+import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityInstanceResource;
+import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityStatisticInstanceResource;
+import org.camunda.cockpit.plugin.statistics.resources.activity.HistoricActivityInformationResource;
+import org.camunda.cockpit.plugin.statistics.resources.other.JobDefinitionsResource;
+import org.camunda.cockpit.plugin.statistics.resources.other.OpLogResource;
+import org.camunda.cockpit.plugin.statistics.resources.other.VariablesDataResource;
+import org.camunda.cockpit.plugin.statistics.resources.other.VariablesSizeResource;
+import org.camunda.cockpit.plugin.statistics.resources.process.DurationsResource;
+import org.camunda.cockpit.plugin.statistics.resources.process.IncidentResource;
+import org.camunda.cockpit.plugin.statistics.resources.process.ProcessDefinitionRessource;
+import org.camunda.cockpit.plugin.statistics.resources.process.ProcessDefinitionsWithFinishedInstancesResource;
+import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceResource;
+import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceStartEndResource;
+import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceVersionResource;
+import org.camunda.cockpit.plugin.statistics.resources.rServe.RserveResource;
+import org.camunda.cockpit.plugin.statistics.resources.usertask.AllTaskInstanceResource;
+import org.camunda.cockpit.plugin.statistics.resources.usertask.EndedUserTaskResource;
+import org.camunda.cockpit.plugin.statistics.resources.usertask.HistoricUserTaskResource;
+import org.camunda.cockpit.plugin.statistics.resources.usertask.RunningUserTaskResource;
 import org.camunda.cockpit.plugin.statistics.util.UtilParser;
 
 /**
@@ -52,24 +71,6 @@ public class StatisticsPluginRootResource extends
       return subResource(new ProcessInstanceVersionResource(engineName), engineName);
     }
 
-    /**
-     * This method provides the process instances with the selected Time.
-     *
-     * @param engineName Name the selectable engine.
-     * @param start Define the start time: yyyy-MM-dd'T'HH:mm:ss
-     * @param end Define the end time: yyyy-MM-dd'T'HH:mm:ss
-     * @return
-     *
-     */
-    @Path("{engineName}/all-process-instance")
-    public AllProcessInstanceResource getAllProcessInstanceResource(
-            @PathParam("engineName") String engineName,
-            @QueryParam("startdate") String start,
-            @QueryParam("enddate") String end) {
-
-        return subResource(new AllProcessInstanceResource(engineName, UtilParser.getDateFromString(start),
-                UtilParser.getDateFromString(end)), engineName);
-    }
 
     /**
      * This method provides aggregated activity instance information.
@@ -117,25 +118,6 @@ public class StatisticsPluginRootResource extends
         return subResource(new ActivityStatisticInstanceResource(engineName, processInstance, firstResult, maxResults), engineName);
     }
 
-    /**
-     * This method provides the activity instances with the selected Time.
-     *
-     * @param engineName Name the selectable engine.
-     * @param start Define the start time: yyyy-MM-dd'T'HH:mm:ss (required)
-     * @param end Define the end time: yyyy-MM-dd'T'HH:mm:ss (required)
-     * @param processDefinition
-     * @return
-     *
-     */
-    @Path("{engineName}/all-activity-instance")
-    public AllActivityInstanceResource getAllActivityInstanceResource(
-            @PathParam("engineName") String engineName,
-            @QueryParam("startdate") String start,
-            @QueryParam("enddate") String end,
-            @QueryParam("processdefinition") String processDefinition) {
-        return subResource(new AllActivityInstanceResource(engineName, UtilParser.getDateFromString(start),
-                UtilParser.getDateFromString(end), processDefinition), engineName);
-    }
 
     /**
      * This method provides aggregated historic user task information.
@@ -192,13 +174,6 @@ public class StatisticsPluginRootResource extends
         return subResource(new AllTaskInstanceResource(engineName, procDefKey, dateSpecifier), engineName);
     }
     
-    @Path("{engineName}/all-user-tasks-ig")
-    public AllTaskInstanceResourceIG getAllTaskInstanceResourceIG(
-            @PathParam("engineName") String engineName,
-            @QueryParam("processDefinition") String processDefinition,
-            @QueryParam("time") String time) {
-        return subResource(new AllTaskInstanceResourceIG(engineName, time ,processDefinition), engineName);
-    }
 
     /**
      * This method provides aggregated variable size information.
@@ -275,8 +250,8 @@ public class StatisticsPluginRootResource extends
      * @return
      */
     @Path("{engineName}/keys")
-    public KeyResource getKeyResource(@PathParam("engineName") String engineName) {
-        return subResource(new KeyResource(engineName), engineName);
+    public ProcessDefinitionsWithFinishedInstancesResource getKeyResource(@PathParam("engineName") String engineName) {
+        return subResource(new ProcessDefinitionsWithFinishedInstancesResource(engineName), engineName);
     }
 
     /**
@@ -285,8 +260,10 @@ public class StatisticsPluginRootResource extends
      * @return
      */
     @Path("{engineName}/rserve")
-    public RserveResource getRserveResource(@PathParam("engineName") String engineName) {
-        return subResource(new RserveResource(engineName), engineName);
+    public RserveResource getRserveResource(
+    		@PathParam("engineName") String engineName, 
+    	@QueryParam("processdefkey") List<String> processDefKeys) {
+        return subResource(new RserveResource(engineName, processDefKeys), engineName);
     }
 
     /**

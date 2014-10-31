@@ -8,6 +8,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', [
   './durationsCtrl',
   './timingCtrl',
   './slaChartCtrl',
+  './feedbackController'
 ], function(module) {
 
 });

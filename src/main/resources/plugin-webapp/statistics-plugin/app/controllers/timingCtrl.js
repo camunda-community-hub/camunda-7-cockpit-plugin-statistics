@@ -1,8 +1,8 @@
-'use strict'; //camunda guys are using strict mode as well, might make sense for us, too
+'use strict'; 
 
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('timingCtrl',['$scope','DataFactory','Format','GraphFactory', function($scope,DataFactory,Format,GraphFactory){
+	module.controller('timingCtrl',['$scope','TimingFactory','DataFactory', function($scope,TimingFactory,DataFactory){
 	  
 	  $scope.shownPlot = false;
 	    
@@ -14,80 +14,42 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	  
     $scope.showPlot = function() {
       if(!$scope.shownPlot) {
-    		$scope.info = "activities";
     		$scope.width = 1000;
-    		$scope.allUserTasksIG = DataFactory.allUserTasksIG;
-    		$scope.data = [];
+    		$scope.data = TimingFactory.data;
     		
-    		$scope.times = [{distribution:"weekly", format: "%a %H:%M"},{distribution: "dayly", format: "%H:%M" }];
-    		$scope.time = $scope.times[0];
+    		$scope.timeFrames = TimingFactory.timeFrames;
+    		$scope.currentFrame = $scope.timeFrames[0];
     
-    		$scope.views = [{parameter: "startTime",xProperty:"startDate"}, {parameter: "endTime", xProperty:"endDate"}];
-    		$scope.view = $scope.views[0];
+    		$scope.xValueSpecifiers = TimingFactory.xValueSpecifiers;
+    		$scope.currentXValue = $scope.xValueSpecifiers[0];
     		
-    		$scope.processOrUserTask = [{choice:"process instances"}, {choice: "activities"}];
-    		$scope.choice = $scope.processOrUserTask[0];
-    		$scope.disabled = ($scope.choice.choice == "process instances")?true : false;
+    		$scope.levelSpecifiers = TimingFactory.levelSpecifiers;
+    		$scope.currentLevel = $scope.levelSpecifiers[0];
     		
-    		$scope.processInstances = [];	//modifizierte key query hier
-    		$scope.processInstances.push({processDefKey: "all"});
+    		$scope.processInstances = TimingFactory.processInstancesList;
     		
-    		var i = $scope.processInstances.length;
-    		$scope.processInstance = $scope.processInstances[i-1];
-    		
+    		$scope.processInstance = TimingFactory.processInstance;	
     		
     		$scope.getDataAndDrawGraph= function(){
-    			$scope.disabled = ($scope.choice.choice == "process instances")?true : false;
-    			getData($scope.disabled,$scope.processInstance.processDefKey, $scope.time.distribution, $scope.view.parameter);
+    			TimingFactory.getData($scope.currentLevel,$scope.processInstance.processDefKey, $scope.currentFrame, $scope.currentXValue,$scope.width)
+    			.then(function(){
+    				$scope.processInstances = TimingFactory.processInstancesList;
+    				$scope.options = TimingFactory.options;
+    				$scope.data = TimingFactory.data;
+//    				$scope.processInstance = TimingFactory.processInstance;	
+    			});
     		};
     		
-    		var getData = function(process, userTaskProcessSpecifier, distribution, viewParameter){
-    			//TODO: früher gesuchtes rauschlöschen!!! aus DataFactory
-    			var xProperty = (viewParameter == "startTime")? "startDate" : "endDate";
-    			var data = [];
-    			var timeString = (distribution =="dayly")?"24h":"Week";
-    			if(process){
-    				DataFactory.getProcessesStartEnd()
-    		        .then(function () {
-    		            $scope.data=Format.bringNotSortedDataInPlotFormat(DataFactory.processesStartEnd,"procDefKey",xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
-    	    			$scope.options = GraphFactory.getOptionsForStartEndTimeGraph($scope.time.format,$scope.width);
-    	    			if($scope.processInstances[0].processDefKey == "all"){
-    	    				$scope.processInstances = [];
-    	    				for(var i =0; i < $scope.data.length; i++){
-    	    					$scope.processInstances.push({processDefKey: $scope.data[i].key});
-    	    				};
-    	    				$scope.processInstances.push({processDefKey: "all"});
-    	    				var i = $scope.processInstances.length;
-    	    	    		$scope.processInstance = $scope.processInstances[i-1];
-    	    			};
-    		        })
-    			}
-    			else if(userTaskProcessSpecifier == "all"){
-    				var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(undefined, viewParameter);
-    				DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification(undefined,viewParameter)
-    				.then(function(){
-    					$scope.data=Format.bringNotSortedDataInPlotFormat
-    							(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"procDefKey",xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
-     	    			$scope.options = GraphFactory.getOptionsForStartEndTimeGraph($scope.time.format,$scope.width);
-    				});
-    				
-    			}	
-    			else{
-    				var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(userTaskProcessSpecifier, viewParameter);
-    				DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification(userTaskProcessSpecifier,viewParameter)
-    				.then(function(){
-    					$scope.data=Format.bringNotSortedDataInPlotFormat
-    							(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"userTaskName",xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
-     	    			$scope.options = GraphFactory.getOptionsForStartEndTimeGraph($scope.time.format,$scope.width);
-    				});
-    			};	
-    		};
+
     		
-    		
-    		var processView = ($scope.choice.choice == "process instances")?true : false;
-			getData(processView,$scope.processInstance.processDefKey, $scope.time.distribution, $scope.view.parameter);
-    		
-    		
+			TimingFactory.getData($scope.currentLevel,"all", $scope.currentFrame, $scope.currentXValue,$scope.width)
+			.then(function(){
+				$scope.processInstances = TimingFactory.processInstancesList;
+				$scope.options = TimingFactory.options;
+				$scope.data = TimingFactory.data;
+				$scope.processInstance = TimingFactory.processInstance;	
+			});
+
         $scope.shownPlot = true;
       }
     }
