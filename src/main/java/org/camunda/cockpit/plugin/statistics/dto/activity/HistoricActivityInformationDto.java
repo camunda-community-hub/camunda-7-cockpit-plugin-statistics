@@ -1,16 +1,14 @@
 package org.camunda.cockpit.plugin.statistics.dto.activity;
 
-import java.util.Date;
+import org.camunda.cockpit.plugin.statistics.dto.common.CommonDatesDto;
 
-public class HistoricActivityInformationDto {
+public class HistoricActivityInformationDto extends CommonDatesDto {
   
   private String procDefKey;
   private int duration;
   private String type;
   private String activityName;
   private String id;
-  private Date startTime;
-  private Date endTime;
   
   public String getProcDefKey() {
     return procDefKey;
@@ -41,18 +39,6 @@ public class HistoricActivityInformationDto {
   }
   public void setId(String id) {
     this.id = id;
-  }
-  public Date getStartTime() {
-    return startTime;
-  }
-  public void setStartTime(Date startTime) {
-    this.startTime = startTime;
-  }
-  public Date getEndTime() {
-    return endTime;
-  }
-  public void setEndTime(Date endTime) {
-    this.endTime = endTime;
   }
 
 }

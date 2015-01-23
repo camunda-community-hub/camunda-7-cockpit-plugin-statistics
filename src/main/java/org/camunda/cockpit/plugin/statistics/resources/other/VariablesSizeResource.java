@@ -29,7 +29,8 @@ public class VariablesSizeResource extends AbstractCockpitPluginResource {
      */
     @GET
     public List<VariablesSizeDto> getActivityInstanceCounts() {
-        return getQueryService().executeQuery(
+      
+       return getQueryService().executeQuery(
                 "cockpit.statistics.selectVariblesSizes",
                 new QueryParameters<VariablesSizeDto>());
     }

@@ -4,9 +4,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		TimingFactory.timeFrames = [{frame:"weekly", format: "%a %H:%M"},{frame: "dayly", format: "%H:%M" }]; 
 
-		TimingFactory.xValueSpecifiers = [{xValue: "startTime",xProperty:"startDate"}, {xValue: "endTime", xProperty:"endDate"}];
+		TimingFactory.xValueSpecifiers = [{xValue: "startTime",xProperty:"startTime"}, {xValue: "endTime", xProperty:"endTime"}];
 
-		TimingFactory.levelSpecifiers = [{level:"process instances", moreOptions: false}, {level: "activities", moreOptions: true}];
+		TimingFactory.levelSpecifiers = [{level:"process instances", moreOptions: false}, {level: "usertasks", moreOptions: true}];
 
 		TimingFactory.processInstancesList = [];
 		TimingFactory.processInstancesList.push({processDefKey: "all"});
@@ -37,7 +37,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			if(currentLevel.level  == "process instances"){
 				return DataFactory.getProcessesStartEnd()
 				.then(function () {
-					TimingFactory.data=Format.bringNotSortedDataInPlotFormat(DataFactory.processesStartEnd,"procDefKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
+					TimingFactory.data=Format.bringNotSortedDataInPlotFormat(DataFactory.processesStartEnd,"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
 					if(TimingFactory.processInstancesList[0].processDefKey == "all"){
 						TimingFactory.processInstancesList = initProcessList(TimingFactory.data);
@@ -49,7 +49,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				return DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification(undefined,currentXValue.xValue)
 				.then(function(){
 					TimingFactory.data=Format.bringNotSortedDataInPlotFormat
-					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"procDefKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
+					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
 
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
 				});

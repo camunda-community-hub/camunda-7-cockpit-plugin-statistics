@@ -26,11 +26,15 @@ ngDefine('cockpit.plugin.statistics-plugin', ['module:cockpit.plugin.statistics-
 			id: 'statistics-plugin',
 			label: 'History Statistics',
 			url: 'plugin://statistics-plugin/static/app/dashboard.html',
-		//	controller: 'dashboardController',
-
 			// make sure we have a higher priority than the default plugin
 			priority: 12
 		});
+		
+    ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.action', {
+      id: 'overlay',
+      priority: 20, 
+      url: 'plugin://statistics-plugin/static/app/overlay.html'
+    });
 
 		ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.tab', {
 			id: 'runtime',

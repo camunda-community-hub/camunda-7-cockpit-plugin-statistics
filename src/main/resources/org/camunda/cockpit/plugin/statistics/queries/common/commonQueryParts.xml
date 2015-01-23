@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cockpit.statistics">
+  <sql id="commonAggregations">
+      COUNT(*) AS COUNT,
+      AVG(DURATION_) AS AVG_DURATION,
+      MIN(DURATION_) AS MIN_DURATION,
+      MAX(DURATION_) AS MAX_DURATION
+  </sql>
+  <sql id="commonDates">
+      START_TIME_ as START_TIME,
+      END_TIME_ as END_TIME
+  </sql>
+</mapper>
+  

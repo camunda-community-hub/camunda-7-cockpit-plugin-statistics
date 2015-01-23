@@ -1,0 +1,16 @@
+# Copy this file to 'testdbs.properties' and modify it to match your system
+
+# mysql connection credentials
+mysql.username=user
+mysql.password=password
+mysql.servername=localhost
+mysql.port=50000
+mysql.db=camunda
+
+# db2 connection credentials
+db2.username=user
+db2.password=password
+db2.servername=localhost
+db2.port=50000
+db2.db=camunda
+

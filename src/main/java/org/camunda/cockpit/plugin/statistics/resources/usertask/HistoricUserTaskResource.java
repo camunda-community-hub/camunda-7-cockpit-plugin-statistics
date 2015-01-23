@@ -17,6 +17,7 @@ import org.camunda.cockpit.plugin.statistics.dto.usertask.HistoricUserTaskDto;
 public class HistoricUserTaskResource extends AbstractCockpitPluginResource {
 	
 	public HistoricUserTaskResource(String engineName) {
+	  
 		super(engineName);
     }
 	
@@ -29,7 +30,7 @@ public class HistoricUserTaskResource extends AbstractCockpitPluginResource {
     @GET
     public List<HistoricUserTaskDto> getActivityInstanceCounts() {
     	
-        return getQueryService().executeQuery("cockpit.statistics.selectHistoricUserTasksCount",
+        return getQueryService().executeQuery("cockpit.statistics.selectHistoricUserTasksCountByTaskDefAndName",
                 new QueryParameters<HistoricUserTaskDto>());
     }
 

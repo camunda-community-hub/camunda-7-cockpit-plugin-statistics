@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="cockpit.statistics">
-
 	<resultMap id="historicActivityInformationMap"
 		type="org.camunda.cockpit.plugin.statistics.dto.activity.HistoricActivityInformationDto">
 		<result property="activityName" column="ACT_NAME" />
@@ -14,25 +11,23 @@
 		<result property="endTime" column="END_TIME" />
 		<result property="id" column="ID" />
 	</resultMap>
-
 	<select id="selectHistoricActivityInformationWithProcDefKey"
 		resultMap="historicActivityInformationMap">
-    SELECT  
-      ACT_NAME_ as ACT_NAME, 
-      ACT_TYPE_ as ACT_TYPE,
-      def.KEY_ as PROC_DEF_KEY, 
-      DURATION_ as DURATION,
-      START_TIME_ as START_TIME,
-      END_TIME_ as END_TIME,
-      A.ID_ as ID
-    FROM act_hi_actinst A 
-      LEFT JOIN
-        ACT_RE_PROCDEF def
-      ON 
-        def.ID_ = A.PROC_DEF_ID_
-    WHERE
-      ACT_TYPE_ in ('userTask', 'callActivity', 'serviceTask', 'subProcess', 'transaction', 'sendTask', 'receiveTask') 
-    ORDER by duration desc;
+		SELECT
+			ACT_NAME_ as ACT_NAME,
+			ACT_TYPE_ as ACT_TYPE,
+			def.KEY_ as PROC_DEF_KEY,
+			DURATION_ as DURATION,
+			A.ID_ as ID,
+			<!-- start,end time -->
+			<include refid="cockpit.statistics.commonDates"/>
+		FROM act_hi_actinst A
+		  LEFT JOIN
+		    ACT_RE_PROCDEF def
+		  ON
+		    def.ID_ = A.PROC_DEF_ID_
+		  WHERE
+				ACT_TYPE_ in ('userTask', 'callActivity', 'serviceTask', 'subProcess','transaction', 'sendTask', 'receiveTask')
+				ORDER by DURATION_ desc
 	</select>
-
 </mapper>

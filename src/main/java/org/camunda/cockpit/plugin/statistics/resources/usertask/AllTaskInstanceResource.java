@@ -50,7 +50,7 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
         	//no param set, return all
           params.put("procDefSpec", "");
           params.put("timeSpec", "");
-          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpecFByProcDefKeyAndTimeSpec", params));
+          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
 
         } else if(dateSpecifier==null || dateSpecifier.equals("undefined")) {
 
@@ -59,7 +59,7 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
           params.put("procDefSpec", "WHERE def.KEY_ = \'"+processDefinitionKey+"\'");
           params.put("timeSpec", "");
           
-          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpecFByProcDefKeyAndTimeSpec", params));
+          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
 
         } else {
         
@@ -72,12 +72,12 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
                 params.put("procDefSpec", "WHERE def.KEY_ = \'"+processDefinitionKey+"\'");
                 params.put("timeSpec", "AND END_TIME_ IS NOT NULL");
                 
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpecFByProcDefKeyAndTimeSpec", params));
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
                 
   	        	} else {
   	        	  params.put("procDefSpec", "");
   	        	  params.put("timeSpec", "WHERE END_TIME_ IS NOT NULL");
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpecFByProcDefKeyAndTimeSpec", params));
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
   	        	}
 	
 	          } else if(dateSpecifier.equals("startTime")) {
@@ -89,14 +89,14 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
                 params.put("procDefSpec", "WHERE def.KEY_ = \'"+processDefinitionKey+"\'");
                 params.put("timeSpec", "AND START_TIME_ IS NOT NULL");
                 
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpecFByProcDefKeyAndTimeSpec", params));
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
                 
               } else {
                 
                 params.put("procDefSpec", "");
                 params.put("timeSpec", "WHERE START_TIME_ IS NOT NULL");
                 
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpecFByProcDefKeyAndTimeSpec", params));
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
                 
               }
 	        	} 
@@ -106,19 +106,6 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
         return taskInstances;
     }
 
-    private Command<List<UserTaskTimeSpecDto>> getParameterizedQueryCommand(final String queryId) {
-      
-      //do query with parameters to filter
-      Command<List<UserTaskTimeSpecDto>> command = new Command<List<UserTaskTimeSpecDto>>() {
-        @SuppressWarnings("unchecked")
-        public List<UserTaskTimeSpecDto> execute(CommandContext commandContext) {
-          // select the first 100 elements for this query
-          return (List<UserTaskTimeSpecDto>) commandContext.getDbSqlSession().selectList("cockpit.statistics."+queryId, processDefinitionKey);
-        }
-      };
-      
-      return command;
-    }
     
     private Command<List<UserTaskTimeSpecDto>> getParameterizedQueryCommandWithParamsMap(final String queryId, final Map<String, String> params) {
       

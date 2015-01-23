@@ -22,10 +22,10 @@ import org.camunda.cockpit.plugin.statistics.resources.process.ProcessDefinition
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceStartEndResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceVersionResource;
-import org.camunda.cockpit.plugin.statistics.resources.rServe.RserveResource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.AllTaskInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.EndedUserTaskResource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.HistoricUserTaskResource;
+import org.camunda.cockpit.plugin.statistics.resources.usertask.RunningTaskInstancesAByProcDefKeyRessource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.RunningUserTaskResource;
 import org.camunda.cockpit.plugin.statistics.util.UtilParser;
 
@@ -249,22 +249,20 @@ public class StatisticsPluginRootResource extends
      * @param engineName Name the selectable engine. (required)
      * @return
      */
-    @Path("{engineName}/keys")
+    @Path("{engineName}/keys2")
     public ProcessDefinitionsWithFinishedInstancesResource getKeyResource(@PathParam("engineName") String engineName) {
         return subResource(new ProcessDefinitionsWithFinishedInstancesResource(engineName), engineName);
     }
-
+    
     /**
-     *
-     * @param engineName Name the selectable engine. (required)
-     * @return
-     */
-    @Path("{engineName}/rserve")
-    public RserveResource getRserveResource(
-    		@PathParam("engineName") String engineName, 
-    	@QueryParam("processdefkey") List<String> processDefKeys) {
-        return subResource(new RserveResource(engineName, processDefKeys), engineName);
-    }
+    *
+    * @param engineName Name the selectable engine. (required)
+    * @return
+    */
+   @Path("{engineName}/pdkeysruninst")
+   public ProcessDefinitionsWithFinishedInstancesResource getPdKeysOfPdsWithFinishedInstances(@PathParam("engineName") String engineName) {
+       return subResource(new ProcessDefinitionsWithFinishedInstancesResource(engineName), engineName);
+   }
 
     /**
      * This method provides the business data.
@@ -302,6 +300,17 @@ public class StatisticsPluginRootResource extends
    @Path("{engineName}/process-definitions")
    public ProcessDefinitionRessource getProcessDefinitions(@PathParam("engineName") String engineName) {
        return subResource(new ProcessDefinitionRessource(engineName), engineName);
+   }
+   
+   /**
+    * 
+    * 
+    */
+   
+   @Path("{engineName}/aggregated-user-tasks")
+   public RunningTaskInstancesAByProcDefKeyRessource getAggregatedUserTasksByProcDefKey(@PathParam("engineName") String engineName,
+           @QueryParam("procDefKey") String procDefKey) {
+     return subResource(new RunningTaskInstancesAByProcDefKeyRessource(engineName, procDefKey), engineName);
    }
     
     

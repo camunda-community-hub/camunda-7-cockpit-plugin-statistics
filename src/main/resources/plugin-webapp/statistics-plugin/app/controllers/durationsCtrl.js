@@ -37,7 +37,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						var durations = DataFactory.durations;
 						if($scope.selectedView.name=='chronological development'){
 							var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-							$scope.data = Format.bringSortedDataInPlotFormat(durations,"processDefinitionKey","startingTime","duration",parseDate,function(d){return d/1000/60;});
+							$scope.data = Format.bringSortedDataInPlotFormat(durations,"processDefinitionKey","startTime","duration",parseDate,function(d){return d/1000/60;});
 							$scope.options = {
 									outerRegion:[5,95],
 									scatter  : true,

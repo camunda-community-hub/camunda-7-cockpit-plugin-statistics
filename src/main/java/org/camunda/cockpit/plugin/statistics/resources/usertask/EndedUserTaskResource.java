@@ -17,7 +17,7 @@ public class EndedUserTaskResource extends AbstractCockpitPluginResource {
     @GET
     public List<EndedUserTaskDto> getEndedUserTaskCounts() {
     	
-    	return getQueryService().executeQuery("cockpit.statistics.selectEndedUserTasksCountByProcDefKey",
+    	return getQueryService().executeQuery("cockpit.statistics.selectHistoricUserTasksCountByProcDefKey",
                 new QueryParameters<EndedUserTaskDto>());
     	
     }

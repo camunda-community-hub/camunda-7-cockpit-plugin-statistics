@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cockpit.statistics">
+	<resultMap id="singleUserTaskTimeSpecMap"
+	  type="org.camunda.cockpit.plugin.statistics.dto.usertask.UserTaskTimeSpecDto">
+	  <result property="userTaskName" column="ACT_NAME" />
+	  <result property="procDefKey" column="PROC_DEF_KEY" />
+	  <result property="startTime" column="START_TIME" />
+	  <result property="endTime" column="END_TIME" />
+	</resultMap>
+	
+	<select id="selectRunningUserTaskTimeSpec"
+	  resultMap="singleUserTaskTimeSpecMap">
+	SELECT 
+	  A.NAME_ as ACT_NAME, 
+	  CREATE_TIME_ as START_TIME,
+	  def.KEY_ as PROC_DEF_KEY
+	FROM act_ru_task A 
+	  LEFT JOIN
+	    ACT_RE_PROCDEF def
+	  ON 
+	    def.ID_ = A.PROC_DEF_ID_
+	ORDER BY def.KEY_, A.NAME_
+	</select>
+	
+	<select id="selectHistoricUserTaskTimeSpec"
+	  resultMap="singleUserTaskTimeSpecMap">
+	  SELECT 
+	    A.NAME_ as ACT_NAME, 
+	    def.KEY_ as PROC_DEF_KEY,
+	    <!-- start,end time -->
+	    <include refid="cockpit.statistics.commonDates"/>
+	  FROM act_hi_taskinst A 
+	    LEFT JOIN
+	      ACT_RE_PROCDEF def
+	    ON 
+	      def.ID_ = A.PROC_DEF_ID_
+	    <if test="parameter != null">
+	    ${parameter.procDefSpec} ${parameter.timeSpec}
+	    </if>
+	  ORDER BY def.KEY_,A.NAME_
+	</select>
+
+  
+</mapper>

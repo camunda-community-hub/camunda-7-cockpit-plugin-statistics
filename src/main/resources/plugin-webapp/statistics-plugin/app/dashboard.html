@@ -689,12 +689,10 @@ svg .title {
 }
 </style>
 <div ng-controller="dashboardController">
-	<h1>Engine Statistics (Dashboard)</h1>
+	<h1>Statistics & Analytics</h1>
 	<ul class="nav nav-tabs" id="statisticsNavigationTab">
 		<li class="active"><a href="#processInstances"
-			ng-click="handleTabClick('processInstances')" data-toggle="tab">Processinstances</a></li>
-		<li><a href="#userTasks" ng-click="handleTabClick('userTasks')"
-			data-toggle="tab">Usertasks</a></li>
+			ng-click="handleTabClick('processInstances')" data-toggle="tab">Dashboard</a></li>
 		<li><a href="#startEnd" ng-click="handleTabClick('startEnd')"
 			data-toggle="tab">Timing</a></li>
 		<li><a href="#durations" ng-click="handleTabClick('durations')"
@@ -753,13 +751,10 @@ svg .title {
 </div>
 <!-- /.modal -->
 <div class="tab-content">
-	<div class="tab-pane active" id="processInstances">
-		<div class="row" id="controlsTopPlotRow">
-			<div class="span4" id="controlsPlot1"></div>
-		</div>
-		<div class="row-fluid" ng-controller='pieChartCtrl'>
+	<div class="tab-pane active" id="processInstances" ng-controller='pieChartCtrl'>
+		<div class="row-fluid">
 			<div class="span4" state="running">
-				<nvd3 options="options" data="running" id="running"></nvd3>
+				<nvd3 options="options" data="running" id="running" api="api"></nvd3>
 			</div>
 			<div class="span4">
 				<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
@@ -770,39 +765,16 @@ svg .title {
 		</div>
 		<div class="row-fluid">
 			<div class="span4">
-				<p class="text-center">Running Instances</p>
+				<p class="text-center">{{runningPlotLabel}}</p>
 			</div>
 			<div class="span4">
-				<p class="text-center">Ended Instances</p>
+				<p class="text-center">{{endedPlotLabel}}</p>
 			</div>
 			<div class="span4">
-				<p class="text-center">Failed Instances</p>
-			</div>
-		</div>
-
-
-
-	</div>
-	<div class="tab-pane" id="userTasks">
-		<div class="row-fluid" ng-controller='pieChartCtrlUsr'>
-			<div class="span6">
-				<nvd3 options="runningTasksOptions" data="tasksRunning"
-					id="tasksRunning"></nvd3>
-			</div>
-			<div class="span6">
-				<nvd3 options="endedTasksOptions" data="tasksEnded" id="tasksEnded"></nvd3>
-			</div>
-		</div>
-		<div class="row-fluid">
-			<div class="span6">
-				<p class="text-center">Running Tasks</p>
-			</div>
-			<div class="span6">
-				<p class="text-center">Ended Tasks</p>
+				<p class="text-center">{{failedPlotLabel}}</p>
 			</div>
 		</div>
 	</div>
-
 	<div class="tab-pane" id="startEnd">
 		<div class="row-fluid" ng-controller="timingCtrl">
 			<div class="span8">

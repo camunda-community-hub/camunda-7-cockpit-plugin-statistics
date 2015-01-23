@@ -1,0 +1,68 @@
+<style>
+#btn-Menu {
+	width: 32px;
+}
+
+#menu {
+	position: absolute;
+	height: auto;
+	width: auto;
+	left: 50%;
+	top: 5%;
+}
+ul.dropdown-menu {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+ul.dropdown-menu li{
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+input[type=checkbox]{
+	margin-bottom: 2px;
+}
+
+#wrench-button{
+	padding-left: 7px;
+}
+
+</style>
+<div ng-controller="overlayCtrl">
+	<button type="button" class="btn btn-toolbar" id="btn-Menu" ng-click="toggleMenu()" help="" help-text="Enable Processdiagram Overlay" help-placement="'left'">
+		<i class="icon-tasks"></i>
+	</button>
+	<br>
+
+	<div id="menu" class="modal" ng-show="menuVisible">
+		<div class="modal-header"><h4>Processdiagram Overlay</h4></div>
+		<div class="modal-body">
+			<form>
+				 <input type="checkbox" ng-model="toggleC" ng-change="toggleColors()"> color Processdiagram    			
+				 <div class="btn-group" id="wrench-button">
+			  <button type="button" class="btn btn-default btn-mini dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			    <div align="center"><i class="icon-wrench"></i></span></div>
+			  </button>
+			  <ul class="dropdown-menu pull-right" role="menu">
+				<li ng-repeat="t in types" class="typeCheckbox" on-finish-render="renderingDone">
+			     <input type="checkbox" name="{{ t }}" ng-model="wdasdfe" ng-change="redrawColors()" ng-checked="true"/> {{ t }}
+				</li>
+			  </ul>
+			</div>
+			</form>
+			<hr>
+			<form>
+				<input type="checkbox" ng-model="toggleT" ng-change="toggleTooltips()" > Enable Tooltips
+			</form>
+			<hr>
+			<form>
+				 <input type="checkbox" ng-model="toggleH" ng-change="toggleHeatmap()" disabled> Toggle Heatmap
+			</form>
+			<form>
+				<div align="center">Threshold: {{Math.round(threshold)}}ms - {{Math.round(percent)}}%</div> <br />
+				<input id="range" type="range" min="{{min}}" max="{{max}}" value="{{Math.round(threshold)}}" ng-model="t" ng-change="changeThreshold()" disabled>
+			</form>
+		</div>
+	</div>
+</div>

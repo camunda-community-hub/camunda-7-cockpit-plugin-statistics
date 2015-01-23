@@ -6,7 +6,7 @@ import javax.ws.rs.GET;
 
 import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
-import org.camunda.cockpit.plugin.statistics.dto.process.ProcessInstanceDto;
+import org.camunda.cockpit.plugin.statistics.dto.process.ProcessInstanceDurationDto;
 
 /**
  *
@@ -22,9 +22,9 @@ public class ProcessInstanceStartEndResource extends AbstractCockpitPluginResour
      * @return
      */
     @GET
-    public List<ProcessInstanceDto> getProcessInstanceStartEnds() {
+    public List<ProcessInstanceDurationDto> getProcessInstanceStartEnds() {
         return getQueryService().executeQuery("cockpit.statistics.selectProcessInstancesStartEnd",
-                new QueryParameters<ProcessInstanceDto>());
+                new QueryParameters<ProcessInstanceDurationDto>());
 
     }
 

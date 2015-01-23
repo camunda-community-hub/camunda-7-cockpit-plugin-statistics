@@ -12,6 +12,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
 		DataFactory.allHistoricActivitiesInformationByProcDefKey = [];
 		DataFactory.processDefWithRunningInstances = [];
+		DataFactory.aggregatedUsertasksByProcDef = [];
 
 		DataFactory.chosenTab = "";
 
@@ -34,6 +35,17 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.log("error in fetching process definitions");
 			});
 		};
+		
+		DataFactory.test = function(procDefKey) {
+      console.log("do http get..."+procDefKey);
+      $http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-instance-start-end"))
+      .success(function (data){
+        console.log(data);
+      })
+      .error(function(){        
+        console.log("error in getting processes with start and end time");
+      });
+		}
 
 		DataFactory.getAllRunningUserTasksCountOByProcDefKey = function() {
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/running-user-tasks"))
@@ -107,10 +119,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});	
 
 
-		};
-
-		DataFactory.userTaskCounts = function() {
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/historic-user-tasks"));
 		};
 
 		DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification = function(procDefKey, dateSpec){
@@ -196,8 +204,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		};
 
 		DataFactory.getProcessDefWithRunningInstances = function() {
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/keys"))
+			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/pdkeysruninst"))
 			.success(function (data){
+			  console.log(data);
 				DataFactory.processDefWithRunningInstances = data;
 			})
 			.error(function(){
@@ -214,6 +223,20 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.log("error in getting processes with start and end time");
 			});
 		};
+		
+		DataFactory.getAggregatedUserTasksByProcDefinition = function(procDefKey) {
+      return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/aggregated-user-tasks?procDefKey="+procDefKey))
+      .success(function (data){
+        if(procDefKey!=undefined) {
+          DataFactory.aggregatedUsertasksByProcDef[procDefKey] = data;
+        } else {
+          DataFactory.aggregatedUsertasksByProcDef["data"] = data;
+        }
+      })
+      .error(function(){        
+        console.log("error in getting processes with start and end time");
+      });
+		}
 
 
 

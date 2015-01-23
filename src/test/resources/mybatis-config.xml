@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+      
+  <mappers>
+      <!-- for activities -->
+    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/activity/singleActivities.xml"/>
+    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/activity/aggregatedActivities.xml"/>
+      <!-- for user tasks -->
+    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/usertask/singleUserTasks.xml"/>
+    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/usertask/aggregatedUserTasks.xml"/>
+      <!-- for process instances -->
+    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/process/singleProcessInstances.xml"/>
+    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/process/aggregatedProcessInstances.xml"/>
+    
+      <!-- common query parts -->
+    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/common/commonQueryParts.xml"/>
+    
+  </mappers>
+  
+</configuration>
+
+
+
+
+  

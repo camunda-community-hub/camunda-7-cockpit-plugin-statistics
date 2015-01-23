@@ -39,10 +39,11 @@ public class DurationsResource extends AbstractCockpitPluginResource {
 		//else durations corresponding to all process definitions will be retrieved
 		if((processDefKeys!=null || !processDefKeys.equals("undefined"))){
 			for(int i = 0; i<processDefKeys.size(); i++){
-				if(i == 0) 
-					processParam.append("AND KEY_ =\'"+processDefKeys.get(i)+"\'");
-				else
+				if(i == 0) {
+					  processParam.append("AND KEY_ =\'"+processDefKeys.get(i)+"\'");
+				}	else {
 					processParam.append("OR KEY_ =\'"+processDefKeys.get(i)+"\'");
+				}
 			}
 		}
 		params.put("procDefSpec", processParam.toString());

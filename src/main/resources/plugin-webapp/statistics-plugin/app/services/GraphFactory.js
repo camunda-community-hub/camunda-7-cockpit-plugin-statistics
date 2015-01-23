@@ -14,12 +14,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			                x: function(d){return d.x;},
 			                y: function(d){return d.y;},
 			                showLabels: true,
+			                interactive:false,
 			                transitionDuration: 500,
 			                labelThreshold: 0.01,
 			                tooltips: true,
 			                tooltipContent: function(key, y, e, graph){
 			                				return '<h3>' + key + '</h3>' +
-			                				'<p>' +  y + '</p><br/> Click for Versioninfo'
+			                				'<p>' +  y + '</p><br/> Click for Versioninfo';
 			                				},
 			                xAxis: {
 			                	tickFormat: function(d) {return d3.time.format(timeFormat)(new Date(d))}
