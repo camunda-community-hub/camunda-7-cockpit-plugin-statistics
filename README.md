@@ -3,7 +3,7 @@ camunda Cockpit Statistics Plugin
 
 camunda BPM community extension, which provides a statistics plugin for camunda Cockpit.
 This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
-The current master release was successfully tested on an H2 and MySQL database with Camunda 7.1.0 Final.
+The current master release was successfully tested on an H2, MySQL, MSSQL and DB2 database with Camunda 7.1.0 Final.
 
 ![Screenshot](http://i.imgur.com/B2KMQRR.png)
 
@@ -24,29 +24,29 @@ Do not forget to customize build.properties in case you choose the latter option
 
 ## Known issues
 
-- Problems with queries on db2 
 - Problems with "timing"-tab concerning a high count of activity or process instance start or end events
 
 ## Roadmap
 
 **features we are working on**
 
-- feedback mechanism
-- drill-in/out for process instance / activity pie charts
 - overlay information for rendered process diagram
 - more analytics graphs
-- general refactoring
-- tests
+- migration to version 7.2.0
 
 **todo**
 
 - implement some kind of caching mechanism
 - implement a generic dashboard mechanism
 - implement further graphs
-- migration to version 7.2.0
 - more tests
 
 **done**
+
+- db query tests for different databases
+- drill-in/out for process instance / activity pie charts
+- feedback mechanism
+- general refactoring
 - chart showing start and end times of process instances and activities per process definition
 - chart showing start and end times of process instances and activities (all available)
 - piechart of running, ended and failed process instances (all available)
