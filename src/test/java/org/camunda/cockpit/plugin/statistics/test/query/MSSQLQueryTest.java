@@ -3,9 +3,11 @@ package org.camunda.cockpit.plugin.statistics.test.query;
 import javax.sql.DataSource;
 
 import org.camunda.cockpit.plugin.statistics.test.util.AbstractDBQueryTest;
+import org.junit.Ignore;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
+@Ignore
 public class MSSQLQueryTest extends AbstractDBQueryTest {
 
   @Override

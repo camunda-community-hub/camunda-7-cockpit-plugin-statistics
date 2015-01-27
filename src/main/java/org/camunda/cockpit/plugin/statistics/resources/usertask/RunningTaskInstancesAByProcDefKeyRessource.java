@@ -29,8 +29,6 @@ public class RunningTaskInstancesAByProcDefKeyRessource extends
   @GET
   public List<RunningUserTaskAByProcDefDto> getRunningUserTasksAByProcDefKey() {
   
-    System.out.println(procDefKey);
-
     Command<List<RunningUserTaskAByProcDefDto>> command = new Command<List<RunningUserTaskAByProcDefDto>>() {
       @SuppressWarnings("unchecked")
       public List<RunningUserTaskAByProcDefDto> execute(CommandContext commandContext) {

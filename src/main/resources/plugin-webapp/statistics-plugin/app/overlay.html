@@ -56,11 +56,11 @@ input[type=checkbox]{
 				<input type="checkbox" ng-model="toggleT" ng-change="toggleTooltips()" > Enable Tooltips
 			</form>
 			<hr>
-			<form>
+ 			<form>
 				 <input type="checkbox" ng-model="toggleH" ng-change="toggleHeatmap()" disabled> Toggle Heatmap
 			</form>
 			<form>
-				<div align="center">Threshold: {{Math.round(threshold)}}ms - {{Math.round(percent)}}%</div> <br />
+				<!-- <div align="center">Threshold: {{Math.round(threshold)}}ms - {{Math.round(percent)}}%</div> <br /> -->
 				<input id="range" type="range" min="{{min}}" max="{{max}}" value="{{Math.round(threshold)}}" ng-model="t" ng-change="changeThreshold()" disabled>
 			</form>
 		</div>
