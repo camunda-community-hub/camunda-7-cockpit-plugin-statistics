@@ -1,4 +1,4 @@
-# Copy this file to 'testdbs.properties' and modify it to match your system
+# rename this file to 'testdbs.properties' and modify it to match your system
 
 # mysql connection credentials
 mysql.username=user
@@ -13,4 +13,17 @@ db2.password=password
 db2.servername=localhost
 db2.port=50000
 db2.db=camunda
+
+
+# h2 connection credentials
+h2.username=sa
+h2.password=sa
+h2.url=jdbc:h2:mem:camunda;DB_CLOSE_DELAY=1000
+
+# mssql connection credentials
+mssql.username=sa
+mssql.password=sa
+mssql.server=localhost
+mssql.database=camunda
+mssql.selectMethod=cursor
 
