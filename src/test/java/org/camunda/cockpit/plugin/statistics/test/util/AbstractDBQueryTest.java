@@ -17,7 +17,7 @@ import org.camunda.bpm.engine.impl.db.ListQueryParameterObject;
 import org.camunda.cockpit.plugin.statistics.test.StatisticsPluginTest;
 import org.junit.Test;
 
-public abstract class AbstractDBQueryTest extends AbstractCockpitPluginTest implements GeneralStatisticsPluginQueries, DBConnectionBootstrapper {
+public abstract class AbstractDBQueryTest extends AbstractCockpitPluginTest implements DBConnectionBootstrapper {
   
   protected SqlSessionFactory testSqlSessionFactory;
   protected Environment testDBEnvironment;
