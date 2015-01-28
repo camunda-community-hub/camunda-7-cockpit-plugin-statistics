@@ -20,7 +20,7 @@ The current master release was successfully tested on an H2, MySQL, MSSQL and DB
 ## Get started
 
 To include this plugin into your cockpit you can either include it in your custom build on [camunda's plugin store](http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
-Do not forget to customize build.properties in case you choose the latter option.
+Do not forget to customize build.properties in case you choose the latter option. Please customize testdbs.properties.example, too to get the tests running on your system. For that you may remove // comment out test classes and/or dependencies you dont need/have (e.g. DB2 driver).
 
 ## Known issues
 
