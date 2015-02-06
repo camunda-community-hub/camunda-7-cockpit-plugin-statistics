@@ -2,7 +2,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('TimingFactory',['DataFactory','Format','GraphFactory', function(DataFactory,Format, GraphFactory) {
 		var TimingFactory = {};
 
-		TimingFactory.timeFrames = [{frame:"weekly", format: "%a %H:%M"},{frame: "dayly", format: "%H:%M" }]; 
+		TimingFactory.timeFrames = [{frame:"weekly", format: "%a %H:%M"},{frame: "daily", format: "%H:%M" }]; 
 
 		TimingFactory.xValueSpecifiers = [{xValue: "startTime",xProperty:"startTime"}, {xValue: "endTime", xProperty:"endTime"}];
 
@@ -33,7 +33,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			//(for example if we periodically update all data) 
 			//then we have to remove this
 			DataFactory.allUserTasksByProcDefKeyAndDateSpecification=[];
-			var timeString = (currentFrame.frame =="dayly")?"24h":"Week";
+			var timeString = (currentFrame.frame =="daily")?"24h":"Week";
 			if(currentLevel.level  == "process instances"){
 				return DataFactory.getProcessesStartEnd()
 				.then(function () {

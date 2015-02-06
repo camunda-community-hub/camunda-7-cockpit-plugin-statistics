@@ -10,7 +10,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		    	 		'<select ng-model="currentXValue" ng-options="currentXValue.xValue for currentXValue in xValueSpecifiers" ng-change="getDataAndDrawGraph()">'+
 		    	 		'</select>'+
 		    	 	'</div>'+
-		    	 	'<h5>{{currentXValue.xValue}} on a weekly or dayly basis</h5>'+
+		    	 	'<h5>{{currentXValue.xValue}} on a weekly or daily basis</h5>'+
 		    	 	'<div class="control-group">'+
 		    	 		'<select ng-model="currentFrame" ng-options="currentFrame.frame for currentFrame in timeFrames" ng-change="getDataAndDrawGraph()">'+
 		    	 		'</select>'+
