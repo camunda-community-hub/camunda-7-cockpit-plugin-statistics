@@ -16,7 +16,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		Format.breakDateDown = function(date,breakDownFormat){
 			var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 			var changedDate = date.substr(10);
-			if(breakDownFormat == "24h" || breakDownFormat == "dayly")
+			if(breakDownFormat == "24h" || breakDownFormat == "daily")
 				changedDate = "1991-05-05" + changedDate;
 
 			else if(breakDownFormat == "week" || breakDownFormat == "weekly")
