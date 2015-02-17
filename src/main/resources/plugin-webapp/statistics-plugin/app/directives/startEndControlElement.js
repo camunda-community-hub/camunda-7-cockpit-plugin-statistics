@@ -27,12 +27,6 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
     	 			'</div>'+
 		    	 	'<h5>adjust width<h5>'+
 		    	 	'<input type="number" name="points" min="0" step="10" value="1000" ng-model = "width" ng-change="getDataAndDrawGraph()">'+
-//		    	 	'<h5>adjust cluster threshold<h5>'+
-//		    	 	'<input type="number" name="cluster" min="0" step="10" value="10" ng-model = "clusterThreshold" ng-change="getDataAndDrawGraph()">'+
-		    	 	'<div style="visibility:hidden;">'+
-		    	 	'<h5>kmeans<h5>'+
-		    	 	'<input type="number" name="kmeans" min="1" step="1" value="5" ng-model = "kMeans" ng-change="getDataAndDrawGraph()">'+
-		    	 	'</div>'+
 		    	 '</form>'
 		    };		
 	});

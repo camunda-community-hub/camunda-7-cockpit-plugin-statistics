@@ -210,11 +210,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.debug(cluster);
 				console.debug(cluster.length);
 				for(var k=0; k<cluster.length; k++){
-				  if(cluster[k].cluster) {
-				    var clusterSize = cluster[k].cluster.length;
-	          var size = clusterSize/formatedData[i].values.length ;
-	          clusterArray[i].values.push({"x": cluster[k].centroid , "y" : formatedData[i].values[0].y, "size": size, "clusterSize":clusterSize });
-				  }
+					var clusterSize = cluster[k].cluster.length;
+					var size = clusterSize/formatedData[i].values.length ;
+					clusterArray[i].values.push({"x": cluster[k].centroid , "y" : formatedData[i].values[0].y, "size": size, "clusterSize":clusterSize });
 				}; 
 			};
 			return clusterArray;
