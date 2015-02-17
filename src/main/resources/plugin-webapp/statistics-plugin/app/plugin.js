@@ -3,6 +3,7 @@ ngDefine('cockpit.plugin.statistics-plugin', ['module:cockpit.plugin.statistics-
                                               'module:cockpit.plugin.statistics-plugin.services:./services/main',
                                               './lib/d3',
                                               './lib/nv.d3',
+                                              './lib/clusterfck-0.1', //cluster
                                               'module:nvd3:./lib/angular-nvd3',
                                               ], function(module) {
 

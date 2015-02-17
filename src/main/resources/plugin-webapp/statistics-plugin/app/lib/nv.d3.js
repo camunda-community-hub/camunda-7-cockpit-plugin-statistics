@@ -13424,7 +13424,10 @@ nv.models.scatterChart = function() {
       var g = wrap.select('g');
 
       // background for pointer events
-      gEnter.append('rect').attr('class', 'nvd3 nv-background');
+      //https://github.com/novus/nvd3/pull/426/files
+	  //fixes tooltips issue in scatter
+//      gEnter.append('rect').attr('class', 'nvd3 nv-background');
+      gEnter.append('rect').attr('class', 'nvd3 nv-background').style("pointer-events","none");
 
       gEnter.append('g').attr('class', 'nv-x nv-axis');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
@@ -13610,7 +13613,9 @@ nv.models.scatterChart = function() {
         x.distortion(fisheye).focus(mouse[0]);
         y.distortion(fisheye).focus(mouse[1]);
 
+		//https://github.com/novus/nvd3/pull/426/files
         g.select('.nv-scatterWrap')
+        	.datum(data.filter(function(d) { return !d.disabled }))
             .call(scatter);
 
         if (showXAxis)
