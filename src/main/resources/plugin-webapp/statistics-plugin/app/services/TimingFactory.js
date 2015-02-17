@@ -13,7 +13,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		TimingFactory.data = [];
 		TimingFactory.options = [];
-
+		
 		var i = TimingFactory.processInstancesList.length;
 		TimingFactory.processInstance = TimingFactory.processInstancesList[i-1];
 
@@ -28,7 +28,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return processInstancesList;
 		};
 
-		TimingFactory.getData = function(currentLevel, userTaskProcessSpecifier, currentFrame, currentXValue,width){
+		TimingFactory.getData = function(currentLevel, userTaskProcessSpecifier, currentFrame, currentXValue,width, kMeans){
 			//if we decide to store data and not make an asynchronous call each time the table is build
 			//(for example if we periodically update all data) 
 			//then we have to remove this
@@ -37,7 +37,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			if(currentLevel.level  == "process instances"){
 				return DataFactory.getProcessesStartEnd()
 				.then(function () {
-					TimingFactory.data=Format.bringNotSortedDataInPlotFormat(DataFactory.processesStartEnd,"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
+					TimingFactory.data=Format.bringNotSortedDataInPlotFormat(DataFactory.processesStartEnd,"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
+//					TimingFactory.data = Format.getClusterFromFormatedData(data,$scope.clusterThreshold);
+					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data,kMeans);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
 					if(TimingFactory.processInstancesList[0].processDefKey == "all"){
 						TimingFactory.processInstancesList = initProcessList(TimingFactory.data);
@@ -50,7 +52,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				.then(function(){
 					TimingFactory.data=Format.bringNotSortedDataInPlotFormat
 					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
-
+					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data, kMeans);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
 				});
 
@@ -61,6 +63,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				.then(function(){
 					TimingFactory.data=Format.bringNotSortedDataInPlotFormat
 					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"userTaskName",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
+					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data, kMeans);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
 				});
 			};	

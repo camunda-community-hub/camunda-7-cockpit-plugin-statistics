@@ -119,7 +119,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var formatedData = [];
 			var data = Format.bringSortedDataInPlotFormat(startData,key,x,undefined,parseX,undefined);
 			//put them into one long array to be able to use d3.layout.histogram
-			
+
 
 			var minMax = [];
 			var min = d3.min(all);
@@ -144,15 +144,15 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				dataInBins = d3.layout.histogram()
 				.bins(thresholds)
 				(allInOne);
-				
-				
-				 var array = [1,1.5,3,4];
-				  var dataInBins2 = d3.layout.histogram()
-				    .bins([1,2,4])
-								(array);
-//				  console.log(dataInBins2);
-				  
-				  
+
+
+				var array = [1,1.5,3,4];
+				var dataInBins2 = d3.layout.histogram()
+				.bins([1,2,4])
+				(array);
+//				console.log(dataInBins2);
+
+
 //				console.log(dataInBins);
 				for(var j = 0; j< numberOfBins; j++){
 					formatedData[i].values.push({"x": j, "y": dataInBins[j].length});
@@ -162,6 +162,60 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			result.push({"data":formatedData, "thresholds": thresholds});
 			return result;
 //			return formatedData;
+		}
+
+		/**
+		 * takes formated data as input and return a cluster
+		 */
+		Format.getClusterFromFormatedData = function(formatedData, threshold){
+			var metric = function(x1,x2){
+				return (x1.getTime() - x2.getTime())/100;
+			};
+			var clusterArray = [];
+			//later the user can say what threshold will be used
+			//for each key do:
+			for(var i=0; i<formatedData.length; i++){
+				clusterArray.push({"key":formatedData[i].key, "values":[]});
+				var dataArray =[];
+				//bring x values in the format used by cluster algo
+				for(var j=0; j<formatedData[i].values.length; j++){
+					dataArray[j] = formatedData[i].values[j].x;
+				};
+				console.log(dataArray);
+				var cluster = clusterfck.hcluster(dataArray,metric,clusterfck.AVERAGE_LINKAGE,threshold);
+				//canonical vlaues as new values, old y
+				for(var k=0; k<cluster.length; k++){
+					var size = (cluster[k].size > 1? 10 : 1);
+					clusterArray[i].values.push({"x": cluster[k].canonical , "y" : formatedData[i].values[0].y, "size": size});
+				};
+			};
+			console.log("cluster:");
+			console.log(formatedData);
+			return clusterArray;
+		}
+		
+		Format.getKMeansClusterFromFormatedData = function(formatedData, kmeans){
+			var clusterArray = [];
+			for(var i=0; i<formatedData.length; i++){
+				if(formatedData[i].values.length == 0) continue;
+				clusterArray.push({"key":formatedData[i].key, "values":[]});
+				var dataArray =[];
+				//bring x values in the format used by cluster algo
+				for(var j=0; j<formatedData[i].values.length; j++){
+					dataArray[j] =[formatedData[i].values[j].x.getTime()];
+				};
+				var cluster = clusterfck.kmeans(dataArray,kmeans);
+
+				//canonical vlaues as new values, old y
+				console.log(cluster);
+				console.log(cluster.length);
+				for(var k=0; k<cluster.length; k++){
+					var clusterSize = cluster[k].cluster.length;
+					var size = clusterSize/formatedData[i].values.length ;
+					clusterArray[i].values.push({"x": cluster[k].centroid , "y" : formatedData[i].values[0].y, "size": size, "clusterSize":clusterSize });
+				}; 
+			};
+			return clusterArray;
 		}
 
 		/**

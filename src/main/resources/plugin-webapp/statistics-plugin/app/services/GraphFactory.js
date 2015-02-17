@@ -11,23 +11,38 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			                height: 400,
 			                width: width,
 			                color: d3.scale.category10().range(),
-			                x: function(d){return d.x;},
-			                y: function(d){return d.y;},
+//						sizeDomain: [1,10],	//see https://github.com/krispo/angular-nvd3/issues/49 for more info
+
+						size : function(d){
+							return d.size;
+						},
 			                showLabels: true,
-			                interactive:false,
 			                transitionDuration: 500,
 			                labelThreshold: 0.01,
+//						useInteractiveGuideline: true,
+						interactive: true,
+
 			                tooltips: true,
-			                tooltipContent: function(key, y, e, graph){
+						tooltipContent : function(key, x, y, e, graph) {
+							var d = e.series.values[e.pointIndex];
 			                				return '<h3>' + key + '</h3>' +
-			                				'<p>' +  y + '</p><br/> Click for Versioninfo';
+							'<p>cluster Size:<b>' + d.clusterSize;
+						},
+						tooltipYContent : function(key, x, y) { return '<strong>' + key + '</strong>' },
+						tooltipXContent : function(key, x, y, e) { 
+							var time = d3.time.format(timeFormat)(new Date(e.point.x[0]));
+							return '<strong>' + time + '</strong>' 
 			                				},
 			                xAxis: {
-			                	tickFormat: function(d) {return d3.time.format(timeFormat)(new Date(d))}
+							tickFormat : function(d) {
+								return d3.time.format(timeFormat)(new Date(d))
+							}
 			                },
 			                
 			                yAxis: {
-			                	tickFormat: function(){return""}
+							tickFormat : function() {
+								return ""
+							}
 			                },
 			                noData:"sorry data not yet available",
 			                legend: {
