@@ -51,7 +51,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				return DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification(undefined,currentXValue.xValue)
 				.then(function(){
 					TimingFactory.data=Format.bringNotSortedDataInPlotFormat
-					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
+					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"userTaskName",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
 					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data, kMeans);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
 				});
