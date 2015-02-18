@@ -23,7 +23,7 @@
 		<camunda.version>7.1.0-Final</camunda.version>
 		<!-- This property must be present for the pom.xml to be recognized as 
 			a plugin -->
-		<camunda.plugin.category>Monitoring</camunda.plugin.category>
+		<!-- camunda.plugin.category>Monitoring</camunda.plugin.category -->
 		<camunda.plugin.screenshot>screenshot-process-instances.png</camunda.plugin.screenshot>
 		<camunda.plugin.screenshot.1>screenshot-user-tasks.png</camunda.plugin.screenshot.1>
 		<camunda.plugin.screenshot.2>screenshot-timing.png</camunda.plugin.screenshot.2>
@@ -88,24 +88,23 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- make sure, that you push the respective jar into your local rep in 
-			case you test db2. -->
-		<dependency>
-			<groupId>com.ibm.db2.jcc</groupId>
-			<artifactId>db2jccT</artifactId>
-			<version>97</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
 		
-		<dependency>
-			<groupId>com.microsoft.sqlserver</groupId>
-			<artifactId>sqljdbc4</artifactId>
-			<version>4.0</version>
-			<scope>test</scope>
-		</dependency>
-		
+		<!-- TODO: Move to profiles and use proper test cases using the profiles and not being dependant on the database drivers availabe
+		  check how we do dtabase tests in the camunda engine -->
+				<dependency>
+					<groupId>com.ibm.db2.jcc</groupId>
+					<artifactId>db2jccT</artifactId>
+					<version>97</version>
+					<type>jar</type>
+					<scope>test</scope>
+				</dependency>
+	  		<dependency>
+					<groupId>com.microsoft.sqlserver</groupId>
+					<artifactId>sqljdbc4</artifactId>
+					<version>4.0</version>
+					<scope>test</scope>
+				</dependency>
+		<!-- END TODO -->
 	</dependencies>
 
 	<repositories>
@@ -161,4 +160,44 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+  <profiles>
+    <profile>
+      <id>db2</id>
+      <activation>
+        <property>
+          <name>database</name>
+          <value>db2</value>
+        </property>
+      </activation>
+      <dependencies>
+				<dependency>
+					<groupId>com.ibm.db2.jcc</groupId>
+					<artifactId>db2jccT</artifactId>
+					<version>97</version>
+					<type>jar</type>
+					<scope>test</scope>
+				</dependency>
+      </dependencies>
+    </profile>  
+    <profile>
+      <id>mssql</id>
+      <activation>
+        <property>
+          <name>database</name>
+          <value>mssql</value>
+        </property>
+      </activation>
+      <dependencies>
+	  		<dependency>
+					<groupId>com.microsoft.sqlserver</groupId>
+					<artifactId>sqljdbc4</artifactId>
+					<version>4.0</version>
+					<scope>test</scope>
+				</dependency>
+      </dependencies>
+    </profile>      
+  </profiles>	
+  
+ 
 </project>
