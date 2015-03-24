@@ -20,7 +20,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<camunda.version>7.1.0-Final</camunda.version>
+		<camunda.version>7.2.0</camunda.version>
 		<!-- This property must be present for the pom.xml to be recognized as 
 			a plugin -->
 		<!-- camunda.plugin.category>Monitoring</camunda.plugin.category -->
@@ -29,15 +29,36 @@
 		<camunda.plugin.screenshot.2>screenshot-timing.png</camunda.plugin.screenshot.2>
 		<camunda.plugin.screenshot.3>screenshot-analytics.png</camunda.plugin.screenshot.3>
 		<camunda.plugin.screenshot.4>screenshot-process-definition.png</camunda.plugin.screenshot.4>
-		<camunda.plugin.testedOnVersion>7.1.0-Final</camunda.plugin.testedOnVersion>
+		<camunda.plugin.testedOnVersion>7.2.0</camunda.plugin.testedOnVersion>
 		<camunda.plugin.language>EN</camunda.plugin.language>
 	</properties>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.camunda.bpm</groupId>
+				<artifactId>camunda-bom</artifactId>
+				<version>${camunda.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
+			<!-- Cockpit Plugin API, needs to be provided -->
 			<groupId>org.camunda.bpm.webapp</groupId>
 			<artifactId>camunda-webapp-core</artifactId>
+			<!-- not part of camunda bom -->
 			<version>${camunda.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<!-- process engine, needs to be provided -->
+			<groupId>org.camunda.bpm</groupId>
+			<artifactId>camunda-engine</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.spec</groupId>
@@ -53,12 +74,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.camunda.bpm</groupId>
-			<artifactId>camunda-engine</artifactId>
-			<version>${camunda.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
@@ -67,7 +82,6 @@
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
-			<version>3.1.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -87,6 +101,27 @@
 			</activation>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default-testCompile</id>
+								<phase>test-compile</phase>
+								<configuration>
+									<testExcludes>
+										<exclude>**/StatisticsPluginTestSuite.java</exclude>
+										<exclude>**/DB2QueryTest.java</exclude>
+										<exclude>**/MSSQLQueryTest.java</exclude>
+										<exclude>**/MySQLQueryTest.java</exclude>
+									</testExcludes>
+								</configuration>
+								<goals>
+									<goal>testCompile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
@@ -109,7 +144,8 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<dependencies>
-				<!-- other db dependencies -->
+				<!-- other db dependencies, in case you only need one additional you 
+					could customize the excludes above -->
 				<dependency>
 					<groupId>mysql</groupId>
 					<artifactId>mysql-connector-java</artifactId>
@@ -123,7 +159,6 @@
 					<type>jar</type>
 					<scope>test</scope>
 				</dependency>
-
 				<dependency>
 					<groupId>com.microsoft.sqlserver</groupId>
 					<artifactId>sqljdbc4</artifactId>

@@ -31,7 +31,7 @@ rect {
 }
 
 }
-.axis path, .axis line {
+.axis path,.axis line {
 	fill: none;
 	stroke: #000;
 	shape-rendering: crispEdges;
@@ -115,7 +115,7 @@ div.tooltip {
 	overflow: hidden
 }
 
-.nvtooltip.with-3d-shadow, .with-3d-shadow .nvtooltip {
+.nvtooltip.with-3d-shadow,.with-3d-shadow .nvtooltip {
 	-moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 	box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
@@ -143,7 +143,7 @@ div.tooltip {
 	user-select: none
 }
 
-.nvtooltip.with-transitions, .with-transitions .nvtooltip {
+.nvtooltip.with-transitions,.with-transitions .nvtooltip {
 	transition: opacity 250ms linear;
 	-moz-transition: opacity 250ms linear;
 	-webkit-transition: opacity 250ms linear;
@@ -152,7 +152,7 @@ div.tooltip {
 	-webkit-transition-delay: 250ms
 }
 
-.nvtooltip.x-nvtooltip, .nvtooltip.y-nvtooltip {
+.nvtooltip.x-nvtooltip,.nvtooltip.y-nvtooltip {
 	padding: 8px
 }
 
@@ -291,7 +291,7 @@ svg .title {
 	shape-rendering: crispEdges
 }
 
-.nvd3 .nv-axis .zero line, .nvd3 .nv-axis line.zero {
+.nvd3 .nv-axis .zero line,.nvd3 .nv-axis line.zero {
 	stroke-opacity: .75
 }
 
@@ -299,8 +299,8 @@ svg .title {
 	font-weight: 700
 }
 
-.nvd3 .x .nv-axis .nv-axisMaxMin text, .nvd3 .x2 .nv-axis .nv-axisMaxMin text,
-	.nvd3 .x3 .nv-axis .nv-axisMaxMin text {
+.nvd3 .x .nv-axis .nv-axisMaxMin text,.nvd3 .x2 .nv-axis .nv-axisMaxMin text,.nvd3 .x3 .nv-axis .nv-axisMaxMin text
+	{
 	text-anchor: middle
 }
 
@@ -337,20 +337,20 @@ svg .title {
 	fill: rgba(0, 0, 0, 1)
 }
 
-.nvd3 .nv-multibar .nv-groups rect, .nvd3 .nv-multibarHorizontal .nv-groups rect,
-	.nvd3 .nv-discretebar .nv-groups rect {
+.nvd3 .nv-multibar .nv-groups rect,.nvd3 .nv-multibarHorizontal .nv-groups rect,.nvd3 .nv-discretebar .nv-groups rect
+	{
 	stroke-opacity: 0;
 	transition: fill-opacity 250ms linear;
 	-moz-transition: fill-opacity 250ms linear;
 	-webkit-transition: fill-opacity 250ms linear
 }
 
-.nvd3 .nv-multibar .nv-groups rect:hover, .nvd3 .nv-multibarHorizontal .nv-groups rect:hover,
-	.nvd3 .nv-discretebar .nv-groups rect:hover {
+.nvd3 .nv-multibar .nv-groups rect:hover,.nvd3 .nv-multibarHorizontal .nv-groups rect:hover,.nvd3 .nv-discretebar .nv-groups rect:hover
+	{
 	fill-opacity: 1
 }
 
-.nvd3 .nv-discretebar .nv-groups text, .nvd3 .nv-multibarHorizontal .nv-groups text
+.nvd3 .nv-discretebar .nv-groups text,.nvd3 .nv-multibarHorizontal .nv-groups text
 	{
 	font-weight: 700;
 	fill: rgba(0, 0, 0, 1);
@@ -425,7 +425,7 @@ svg .title {
 		linear
 }
 
-.nvd3.nv-scatter .nv-groups .nv-point.hover, .nvd3 .nv-groups .nv-point.hover
+.nvd3.nv-scatter .nv-groups .nv-point.hover,.nvd3 .nv-groups .nv-point.hover
 	{
 	stroke-width: 7px;
 	fill-opacity: .95 !important;
@@ -553,7 +553,7 @@ svg .title {
 	stroke-width: 1.5px
 }
 
-.nvd3.nv-sparklineplus, .nvd3.nv-sparklineplus g {
+.nvd3.nv-sparklineplus,.nvd3.nv-sparklineplus g {
 	pointer-events: all
 }
 
@@ -562,7 +562,7 @@ svg .title {
 	stroke-opacity: 0
 }
 
-.nvd3.nv-sparklineplus .nv-xValue, .nvd3.nv-sparklineplus .nv-yValue {
+.nvd3.nv-sparklineplus .nv-xValue,.nvd3.nv-sparklineplus .nv-yValue {
 	stroke-width: 0;
 	font-size: .9em;
 	font-weight: 400
@@ -670,7 +670,7 @@ svg .title {
 	shape-rendering: crispEdges
 }
 
-.nvd3 .axis line, .axis path {
+.nvd3 .axis line,.axis path {
 	fill: none;
 	stroke: #000;
 	shape-rendering: crispEdges
@@ -690,171 +690,145 @@ svg .title {
 </style>
 <div ng-controller="dashboardController">
 	<h1>Statistics & Analytics</h1>
-	<ul class="nav nav-tabs" id="statisticsNavigationTab">
-		<li class="active"><a href="#processInstances"
-			ng-click="handleTabClick('processInstances')" data-toggle="tab">Dashboard</a></li>
-		<li><a href="#startEnd" ng-click="handleTabClick('startEnd')"
-			data-toggle="tab">Timing</a></li>
-		<li><a href="#durations" ng-click="handleTabClick('durations')"
-			data-toggle="tab">Analytics</a></li>
-		<li><a href="#" data-toggle="modal" data-target="#feedbackModal"><em>Feedback</em></a></li>
-	</ul>
-	<div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog"
-		aria-labelledby="myModalLabel" aria-hidden="true"
-		ng-controller="feedbackController">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">Feedback</h4>
-				</div>
-				<div class="modal-body">
-					<form class="form-horizontal">
-						<div class="control-group">
-							<label class="control-label" for="inputCategory">Category</label>
-							<div class="controls">
-								<select ng-model="feedbackCategory" id="inputCategory"
-									class="form-control">
-									<option>Bug</option>
-									<option>Feature-Request</option>
-									<option>Other</option>
-								</select>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" for="inputSubject">subject</label>
-							<div class="controls">
-								<select ng-model="feedbackSubject" id="inputSubject"
-									class="form-control">
-									<option>Tab-Processinstances</option>
-									<option>Tab-Usertasks</option>
-									<option>Tab-Timing</option>
-									<option>Tab-Analytics</option>
-									<option>Tab-Statistics (Within process definition
-										view)</option>
-								</select>
-							</div>
-						</div>
-						<div class="control-group">
-							<label class="control-label" for="feedbackText">Feedback</label>
-							<div class="controls">
-								<textarea ng-model="feedbackText" class="form-control" rows="8"
-									id="feedbackText"></textarea>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary"
-					ng-click="sendFeedback()" data-toggle="tooltip" title="via email">Give
-					Feedback!</button>
-			</div>
+	<tabset> <tab heading="Overview"
+		select="handleTabClick('overview')" ng-controller="pieChartCtrl">
+	<div class="row-fluid">
+		<div class="span4" state="running">
+			<nvd3 options="options" data="running" id="running" api="api"></nvd3>
 		</div>
-		<!-- /.modal-content -->
-	</div>
-	<!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-<div class="tab-content">
-	<div class="tab-pane active" id="processInstances"
-		ng-controller='pieChartCtrl'>
-		<div class="row-fluid">
-			<div class="span4" state="running">
-				<nvd3 options="options" data="running" id="running" api="api"></nvd3>
-			</div>
-			<div class="span4">
-				<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
-			</div>
-			<div class="span4">
-				<nvd3 options="options" data="failed" id="failed"></nvd3>
-			</div>
+		<div class="span4">
+			<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
 		</div>
-		<div class="row-fluid">
-			<div class="span4">
-				<p class="text-center">{{runningPlotLabel}}</p>
-			</div>
-			<div class="span4">
-				<p class="text-center">{{endedPlotLabel}}</p>
-			</div>
-			<div class="span4">
-				<p class="text-center">{{failedPlotLabel}}</p>
-			</div>
+		<div class="span4">
+			<nvd3 options="options" data="failed" id="failed"></nvd3>
 		</div>
 	</div>
-	<div class="tab-pane" id="startEnd">
-		<div class="row-fluid" ng-controller="timingCtrl">
-			<div class="span8">
-				<div id="chart3">
-					<nvd3 options="options" data="data"></nvd3>
-				</div>
-			</div>
-			<div class="span4">
-				<start-end-control-element></start-end-control-element>
-			</div>
+	<div class="row-fluid">
+		<div class="span4">
+			<p class="text-center">{{runningPlotLabel}}</p>
+		</div>
+		<div class="span4">
+			<p class="text-center">{{endedPlotLabel}}</p>
+		</div>
+		<div class="span4">
+			<p class="text-center">{{failedPlotLabel}}</p>
 		</div>
 	</div>
-	<div class="tab-pane" id="durations">
-		<div class="row-fluid" ng-controller="durationsCtrl">
-			<div class="span8" id="plot4">
-				<div id="regPlotDiv" ng-if="selectedView.name== views[0].name">
-					<regression-plot data="data" options="options"> </regression-plot>
+	</tab> <tab heading="Timing" select="handleTabClick('startEnd')"
+		ng-controller="timingCtrl">
+		  <div class="row-fluid">
+				<div class="span8">
+					<div id="chart3">
+						<nvd3 options="options" data="data"></nvd3>
+					</div>
 				</div>
-				<div id="stackChart" ng-if="selectedView.name== views[1].name">
-					<nvd3 options="options" data="data"></nvd3>
+				<div class="span4">
+					<start-end-control-element></start-end-control-element>
 				</div>
+      </div>
+	</tab>
+	<tab heading="Durations" select="handleTabClick('durations')">
+	<div class="row-fluid" ng-controller="durationsCtrl">
+		<div class="span8" id="plot4">
+			<div id="regPlotDiv" ng-if="selectedView.name== views[0].name">
+				<regression-plot data="data" options="options"> </regression-plot>
 			</div>
-			<div class="span4" id="plot6">
-				<h5>Mark process(es) to plot</h5>
-				<form class="form-horizontal">
+			<div id="stackChart" ng-if="selectedView.name== views[1].name">
+				<nvd3 options="options" data="data"></nvd3>
+			</div>
+		</div>
+		<div class="span4" id="plot6">
+			<h5>Mark process(es) to plot</h5>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<select ng-model="selected"
+						ng-options="key.processDefinitionKey for key in processDefWithRunningInstances"
+						ng-change="getDurations()" multiple ng-multiple="true">
+					</select>
+				</div>
+				<h5>select view</h5>
+				<div class="control-group">
+					<select ng-model="selectedView"
+						ng-options="view.name for view in views"
+						ng-change="getDurations()">
+					</select>
+					<!-- <a ng-href='' ng-click="showInfo()"> <i
+	              class="icon-info-sign"></i>
+	              follows in a later version
+	            </a> -->
+					<!--              <div ng-if = "showInfo"> -->
+					<!--                {{selectedView.info}}</div> -->
+				</div>
+				<div ng-if="selectedView.name== views[0].name">
 					<div class="control-group">
-						<select ng-model="selected"
-							ng-options="key.processDefinitionKey for key in processDefWithRunningInstances"
-							ng-change="getDurations()" multiple ng-multiple="true">
-						</select>
+						<label class="checkbox"> <input ng-model="options.scatter"
+							ng-checked="1" type="checkbox"> show scatter plot
+						</label>
 					</div>
-					<h5>select view</h5>
 					<div class="control-group">
-						<select ng-model="selectedView"
-							ng-options="view.name for view in views"
-							ng-change="getDurations()">
-						</select>
-						<!-- <a ng-href='' ng-click="showInfo()"> <i
-							class="icon-info-sign"></i>
-							follows in a later version
-						</a> -->
-						<!-- 							<div ng-if = "showInfo"> -->
-						<!-- 								{{selectedView.info}}</div> -->
+						<label class="checkbox"> <input ng-model="options.spline"
+							ng-checked="1" type="checkbox" /> show splines
+						</label>
 					</div>
-					<div ng-if="selectedView.name== views[0].name">
-						<div class="control-group">
-							<label class="checkbox"> <input
-								ng-model="options.scatter" ng-checked="1" type="checkbox">
-								show scatter plot
-							</label>
-						</div>
-						<div class="control-group">
-							<label class="checkbox"> <input ng-model="options.spline"
-								ng-checked="1" type="checkbox" /> show splines
-							</label>
-						</div>
-						<div class="control-group">
-							<label class="checkbox"> <input
-								ng-model="options.regression" ng-checked="0" type="checkbox" />
-								draw regression
-							</label>
-						</div>
+					<div class="control-group">
+						<label class="checkbox"> <input
+							ng-model="options.regression" ng-checked="0" type="checkbox" />
+							draw regression
+						</label>
 					</div>
-					<div ng-if="selectedView.name==views[1].name">
+				</div>
+				<div ng-if="selectedView.name==views[1].name">
+					<h6>
+						adjust number of bins
 						<h6>
-							adjust number of bins
-							<h6>
-								<input type="number" min="1" step="1" value="10"
-									ng-model="numberOfBins.number" ng-change="getDurations()">
-					</div>
-				</form>
-			</div>
+							<input type="number" min="1" step="1" value="10"
+								ng-model="numberOfBins.number" ng-change="getDurations()">
+				</div>
+			</form>
 		</div>
 	</div>
-</div>
+	</tab> <tab heading="Feedback" ng-controller="feedbackCtrl">
+	<div class="row-fluid">
+		<div class="span3">
+			<p class="text-right">Category</p>
+		</div>
+		<div class="span5">
+			<select ng-model="feedbackCategory" id="inputCategory">
+				<option>Bug</option>
+				<option>Feature-Request</option>
+				<option>Other</option>
+			</select>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span3">
+			<p class="text-right">Subject</p>
+		</div>
+		<div class="span5">
+			<select ng-model="feedbackSubject" id="inputSubject">
+				<option>Tab - Overview</option>
+				<option>Tab - Timing</option>
+				<option>Tab - Durations</option>
+				<option>Tab - Statistics (Within process definition view)</option>
+			</select>
+		</div>
+	</div>
+	<div class="row-fluid">
+
+		<div class="span3">
+			<p class="text-right">Feedback</p>
+		</div>
+		<div class="span5">
+			<textarea ng-model="feedbackText" rows="8" id="feedbackText" class="span12"></textarea>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<div class="span9 offset3">
+			<button type="button" class="btn btn-primary"
+				ng-click="sendFeedback()" data-toggle="tooltip" title="via email">Give
+				Feedback!</button>
+		</div>
+	</div>
+	</tab>
+	</tabset>
 </div>

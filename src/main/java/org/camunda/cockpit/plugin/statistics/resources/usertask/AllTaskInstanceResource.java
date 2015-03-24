@@ -9,6 +9,7 @@ import javax.ws.rs.GET;
 
 import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.camunda.bpm.engine.impl.db.ListQueryParameterObject;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.cockpit.plugin.statistics.dto.usertask.UserTaskTimeSpecDto;
@@ -39,6 +40,7 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
     public List<UserTaskTimeSpecDto> getAllTaskInstances() {
         List<UserTaskTimeSpecDto> taskInstances = new ArrayList<UserTaskTimeSpecDto>();
         
+        String param ="";
         //allways needed
         List<UserTaskTimeSpecDto> historicResultsByQuery=getQueryService().executeQuery("cockpit.statistics.selectHistoricUserTaskTimeSpec",
                 new QueryParameters<UserTaskTimeSpecDto>());
@@ -50,7 +52,7 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
         	//no param set, return all
           params.put("procDefSpec", "");
           params.put("timeSpec", "");
-          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
+          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", param));
 
         } else if(dateSpecifier==null || dateSpecifier.equals("undefined")) {
 
@@ -58,8 +60,8 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
 
           params.put("procDefSpec", "WHERE def.KEY_ = \'"+processDefinitionKey+"\'");
           params.put("timeSpec", "");
-          
-          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
+          param = " WHERE def.KEY_ = \'"+processDefinitionKey+"\'";
+          return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", param));
 
         } else {
         
@@ -71,13 +73,14 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
 
                 params.put("procDefSpec", "WHERE def.KEY_ = \'"+processDefinitionKey+"\'");
                 params.put("timeSpec", "AND END_TIME_ IS NOT NULL");
-                
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
+                param = " WHERE def.KEY_ = \'"+processDefinitionKey+"\' AND END_TIME_ IS NOT NULL";
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", param));
                 
   	        	} else {
   	        	  params.put("procDefSpec", "");
   	        	  params.put("timeSpec", "WHERE END_TIME_ IS NOT NULL");
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
+  	        	  param = " WHERE END_TIME_ IS NOT NULL";
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", param));
   	        	}
 	
 	          } else if(dateSpecifier.equals("startTime")) {
@@ -88,15 +91,15 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
                 //do Filter, if proc definition is set
                 params.put("procDefSpec", "WHERE def.KEY_ = \'"+processDefinitionKey+"\'");
                 params.put("timeSpec", "AND START_TIME_ IS NOT NULL");
-                
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
+                param = " WHERE def.KEY_ = \'"+processDefinitionKey+"\' AND START_TIME_ IS NOT NULL";
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", param));
                 
               } else {
                 
                 params.put("procDefSpec", "");
                 params.put("timeSpec", "WHERE START_TIME_ IS NOT NULL");
-                
-                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", params));
+                param =" WHERE START_TIME_ IS NOT NULL";
+                return getCommandExecutor().executeCommand(getParameterizedQueryCommandWithParamsMap("selectHistoricUserTaskTimeSpec", param));
                 
               }
 	        	} 
@@ -107,13 +110,15 @@ public class AllTaskInstanceResource extends AbstractCockpitPluginResource {
     }
 
     
-    private Command<List<UserTaskTimeSpecDto>> getParameterizedQueryCommandWithParamsMap(final String queryId, final Map<String, String> params) {
+    private Command<List<UserTaskTimeSpecDto>> getParameterizedQueryCommandWithParamsMap(final String queryId, final String param) {
       
+
       //do query with parameters to filter
       Command<List<UserTaskTimeSpecDto>> command = new Command<List<UserTaskTimeSpecDto>>() {
         @SuppressWarnings("unchecked")
         public List<UserTaskTimeSpecDto> execute(CommandContext commandContext) {
-          return (List<UserTaskTimeSpecDto>) commandContext.getDbSqlSession().selectList("cockpit.statistics."+queryId, params);
+           List<UserTaskTimeSpecDto> results = (List<UserTaskTimeSpecDto>) commandContext.getDbSqlSession().selectList("cockpit.statistics."+queryId, new ListQueryParameterObject(param, 0, 2147483647));
+           return results;
         }
       };
       

@@ -59,6 +59,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			}	
 			else{
 				var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(userTaskProcessSpecifier, currentXValue.xValue);
+				console.debug("key to lookup: "+key);
 				return DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification(userTaskProcessSpecifier,currentXValue.xValue)
 				.then(function(){
 					TimingFactory.data=Format.bringNotSortedDataInPlotFormat
