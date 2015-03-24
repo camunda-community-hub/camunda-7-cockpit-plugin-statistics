@@ -24,9 +24,6 @@ Do not forget to customize build.properties in case you choose the latter option
 
 ## Known issues
 
-- Problems with queries on db2 
-- Problems with "timing"-tab concerning a high count of activity or process instance start or end events
-
 ## Roadmap
 
 **features we are working on**
@@ -65,7 +62,6 @@ Do not forget to customize build.properties in case you choose the latter option
 Within NovaTec Consulting GmbH the following persons are contributing
 
 - Ingo G&uuml;hring
-- Benedict Gish
 - Eberhard Heber
 
 
