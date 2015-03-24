@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 
 import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.camunda.bpm.engine.impl.db.ListQueryParameterObject;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.cockpit.plugin.statistics.dto.activity.ActivityInstanceCountDto;
@@ -35,7 +36,6 @@ public class ActivityInstanceResource extends AbstractCockpitPluginResource {
     public List<ActivityInstanceCountDto> getActivityInstanceCounts() {
       
       final String mappingId = "cockpit.statistics.selectActivityInstanceCountsByProcessDefinition";
-      
     	if(procDefKey==null || procDefKey.equals("undefined")) {
     		return getQueryService().executeQuery(mappingId,
                     new QueryParameters<ActivityInstanceCountDto>());
@@ -46,7 +46,7 @@ public class ActivityInstanceResource extends AbstractCockpitPluginResource {
             @SuppressWarnings("unchecked")
             public List<ActivityInstanceCountDto> execute(CommandContext commandContext) {
                   
-              return (List<ActivityInstanceCountDto>) commandContext.getDbSqlSession().selectList(mappingId, procDefKey);
+              return (List<ActivityInstanceCountDto>) commandContext.getDbSqlSession().selectList(mappingId, new ListQueryParameterObject(procDefKey, 0, 2147483647));
               
             }
           };

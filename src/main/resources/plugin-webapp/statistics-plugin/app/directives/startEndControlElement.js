@@ -15,7 +15,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		    	 		'<select ng-model="currentFrame" ng-options="currentFrame.frame for currentFrame in timeFrames" ng-change="getDataAndDrawGraph()">'+
 		    	 		'</select>'+
 		    	 	'</div>'+
-		    	 	'<h5>of process instances or activities<h5>'+
+		    	 	'<h5>of process instances or user tasks<h5>'+
 		    	 	'<div class="control-group">'+
 	    	 			'<select ng-model="currentLevel" ng-options="currentLevel.level for currentLevel in levelSpecifiers" ng-change="getDataAndDrawGraph()">'+
 	    	 			'</select>'+
@@ -29,8 +29,10 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		    	 	'<input type="number" name="points" min="0" step="10" value="1000" ng-model = "width" ng-change="getDataAndDrawGraph()">'+
 //		    	 	'<h5>adjust cluster threshold<h5>'+
 //		    	 	'<input type="number" name="cluster" min="0" step="10" value="10" ng-model = "clusterThreshold" ng-change="getDataAndDrawGraph()">'+
+		    	 	'<div style="visibility:hidden;">'+
 		    	 	'<h5>kmeans<h5>'+
 		    	 	'<input type="number" name="kmeans" min="1" step="1" value="5" ng-model = "kMeans" ng-change="getDataAndDrawGraph()">'+
+		    	 	'</div>'+
 		    	 '</form>'
 		    };		
 	});

@@ -26,7 +26,7 @@
 	</select>
 	
 	<select id="selectHistoricUserTaskTimeSpec"
-	  resultMap="singleUserTaskTimeSpecMap">
+	  resultMap="singleUserTaskTimeSpecMap" parameterType="org.camunda.bpm.engine.impl.db.ListQueryParameterObject">
 	  SELECT 
 	    A.NAME_ as ACT_NAME, 
 	    def.KEY_ as PROC_DEF_KEY,
@@ -38,7 +38,7 @@
 	    ON 
 	      def.ID_ = A.PROC_DEF_ID_
 	    <if test="parameter != null">
-	    ${parameter.procDefSpec} ${parameter.timeSpec}
+	        ${parameter}
 	    </if>
 	  ORDER BY def.KEY_,A.NAME_
 	</select>

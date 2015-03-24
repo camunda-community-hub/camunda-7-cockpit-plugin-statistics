@@ -17,7 +17,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.chosenTab = "";
 
 		DataFactory.prepForBroadcast = function(chosenTab) {
-			console.log("changing currently opened tab to: "+chosenTab);
+			console.debug("changing currently opened tab to: "+chosenTab);
 			this.chosenTab = chosenTab;
 			this.broadcastItem();
 		};
@@ -32,18 +32,18 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				DataFactory.allProcessDefinitions = data;
 			})
 			.error(function(){
-				console.log("error in fetching process definitions");
+				console.debug("error in fetching process definitions");
 			});
 		};
 		
 		DataFactory.test = function(procDefKey) {
-      console.log("do http get..."+procDefKey);
+      console.debug("do http get..."+procDefKey);
       $http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-instance-start-end"))
       .success(function (data){
-        console.log(data);
+        console.debug(data);
       })
       .error(function(){        
-        console.log("error in getting processes with start and end time");
+        console.debug("error in getting processes with start and end time");
       });
 		}
 
@@ -53,7 +53,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				DataFactory.allRunningUserTasksCountOByProcDefKey = data;
 			})
 			.error(function(){
-				console.log("error in fetching running user tasks count ordered by proc def key");
+				console.debug("error in fetching running user tasks count ordered by proc def key");
 			});
 		}
 		DataFactory.getAllEndedUserTasksCountOByProcDefKey = function() {
@@ -62,7 +62,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				DataFactory.allEndedUserTasksCountOByProcDefKey = data;
 			})
 			.error(function(){
-				console.log("error in fetching ended user tasks count ordered by proc def key");
+				console.debug("error in fetching ended user tasks count ordered by proc def key");
 			});
 		}
 
@@ -76,7 +76,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				}
 			})
 			.error(function(){
-				console.log("error in fetching historic activity information");
+				console.debug("error in fetching historic activity information");
 			});
 		}
 
@@ -98,7 +98,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 			})
 			.error(function(){
-				console.log("error in fetching process instance counts by state");
+				console.debug("error in fetching process instance counts by state");
 			});	
 
 
@@ -115,7 +115,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				}
 			})
 			.error(function(){
-				console.log("error in fetching process instance counts by state and proc Def Key");
+				console.debug("error in fetching process instance counts by state and proc Def Key");
 			});	
 
 
@@ -141,14 +141,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		};
 
 		DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification = function(procDefKey, dateSpec) {
-			console.log(procDefKey + dateSpec);
+			console.debug(procDefKey + dateSpec);
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/all-user-tasks?procDefKey="+procDefKey+"&dateSpecifier="+dateSpec))
 			.success(function(data) {
+			  console.debug(data);
 				var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(procDefKey, dateSpec);
+				console.debug("key where stored: "+key);
 				DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key] = data;
 			})
 			.error(function(){
-				console.log("error in fetching user task time spec by proc def");
+				console.debug("error in fetching user task time spec by proc def");
 			});
 		};
 
@@ -159,7 +161,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				DataFactory.allUserTasksIG = data;
 			})
 			.error(function(){				
-				console.log("error in fetching user tasks by start time");
+				console.debug("error in fetching user tasks by start time");
 			});
 		};
 
@@ -199,18 +201,18 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				DataFactory.durations = data;
 			})
 			.error(function(){				
-				console.log("error in getting durations");
+				console.debug("error in getting durations");
 			});
 		};
 
 		DataFactory.getProcessDefWithRunningInstances = function() {
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/pdkeysruninst"))
 			.success(function (data){
-			  console.log(data);
+			  console.debug(data);
 				DataFactory.processDefWithRunningInstances = data;
 			})
 			.error(function(){
-				console.log("error in getting process definitions with running instances")
+				console.debug("error in getting process definitions with running instances")
 			})
 		};
 
@@ -220,7 +222,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				DataFactory.processesStartEnd = data;
 			})
 			.error(function(){				
-				console.log("error in getting processes with start and end time");
+				console.debug("error in getting processes with start and end time");
 			});
 		};
 		
@@ -234,7 +236,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
         }
       })
       .error(function(){        
-        console.log("error in getting processes with start and end time");
+        console.debug("error in getting processes with start and end time");
       });
 		}
 

@@ -13,7 +13,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		    }
 		});
 	
-	module.controller('overlayCtrl', ['$scope','DataFactory', function($scope, DataFactory){
+	module.controller('overlayCtrl', ['$scope','DataFactory','$position', function($scope, DataFactory, $position){
 		'use strict';
 
 		var elements = $scope.$parent.$parent.processDiagram.bpmnElements;
@@ -49,30 +49,28 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.toggleTooltips = function(){
 			if($scope.toggleT){
-				jQuery.each(heatmap, function(){
+				$.each(heatmap, function(){
 					if(!isNaN(this.min) && !isNaN(this.max) && !isNaN(this.avg)){
-						jQuery("[data-activity-id='" + this.id + "']").attr({ 
-							"data-toggle": "popover" ,
-							"data-original-title": this.name, 
-							"data-content": 'Minimal Duration: ' + (this.min / 1000 / 60).toFixed(2)
-								+ ' min</br>Maximal Duration: ' + (this.max / 1000 / 60).toFixed(2)
-								+ ' min</br>Average Duration: ' + (this.avg / 1000 / 60).toFixed(2)
+					    $("[data-activity-id='" + this.id + "']").attr({ 
+							"popover-title": this.name, 
+							"popover": 'Minimal Duration: ' + (this.min / 1000 / 60).toFixed(2)
+								+ ' min,Maximal Duration: ' + (this.max / 1000 / 60).toFixed(2)
+								+ ' min,Average Duration: ' + (this.avg / 1000 / 60).toFixed(2)
 								+' min',
-							"data-html":true, 
-							"data-trigger":'hover focus'
+//							"popover-html":true, 
+							"popover-trigger":"mouseenter"
 						});
-						jQuery("[data-activity-id='" + this.id + "']").popover();
 					}
 				});
 			}else{
-				jQuery.each(heatmap, function(){
-					jQuery("[data-activity-id='" + this.id + "']").popover('destroy');
+				$.each(heatmap, function(){
+					$("[data-activity-id='" + this.id + "']").removeAttr('popover-title popover popover-html popover-trigger');
 				});
 			}
 		}
 		
 		$scope.$on('renderingDone', function(ngRepeatFinishedEvent) {
-				jQuery.each($('.typeCheckbox > *'), function() {
+				$.each($('.typeCheckbox > *'), function() {
 					this.addEventListener("change",checkboxListener);
 				});
 	    });
@@ -80,7 +78,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		function checkboxListener(){
 			var type = this.name;
 			var draw = this.checked;
-			jQuery.each(bpmnElements, function() {
+			$.each(bpmnElements, function() {
 				if(this.type == type) this.draw = draw;
 			});
 		}
@@ -210,7 +208,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$(document).ready(function() {
 			
-			jQuery.each(elements, function() {
+			$.each(elements, function() {
 				if(this.type == 'userTask'){
 					heatmap.push({name:this.name,bounds:this.bounds,id:this.id});
 				}

@@ -26,7 +26,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						tooltipContent : function(key, x, y, e, graph) {
 							var d = e.series.values[e.pointIndex];
 			                				return '<h3>' + key + '</h3>' +
-							'<p>cluster Size:<b>' + d.clusterSize;
+							'<p>instances started/ended around that time: <b>' + d.clusterSize;
 						},
 						tooltipYContent : function(key, x, y) { return '<strong>' + key + '</strong>' },
 						tooltipXContent : function(key, x, y, e) { 
@@ -74,7 +74,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			                reduceXTicks : false, //we want all ticks to be displayed!
 			                // e is the mouse event
 			                tooltip : function(key, x, y, e, graph) {
-			                	var String = thresholds[e.point.x].toPrecision(2) + ' - ' + thresholds[e.point.x+1].toPrecision(2);
+			                	var String = (thresholds[e.point.x]).toFixed(2) + ' min - ' + (thresholds[e.point.x+1]).toFixed(2)+" min";
 			                	return '<h3>' + key + '</h3>' +
 			                	'<p>' + y + ' on ' +  String + '</p>'
 			                	},

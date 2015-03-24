@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.ws.rs.GET;
 
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.camunda.bpm.engine.impl.db.ListQueryParameterObject;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.cockpit.plugin.statistics.dto.process.ProcessDurationDto;
@@ -57,7 +58,7 @@ public class DurationsResource extends AbstractCockpitPluginResource {
 		Command<List<ProcessDurationDto>> command = new Command<List<ProcessDurationDto>>() {
 			@SuppressWarnings("unchecked")
 			public List<ProcessDurationDto> execute(CommandContext commandContext) {
-				return (List<ProcessDurationDto>)commandContext.getDbSqlSession().selectList("cockpit.statistics."+queryId, params);
+				return (List<ProcessDurationDto>)commandContext.getDbSqlSession().selectList("cockpit.statistics."+queryId, new ListQueryParameterObject(params, 0,2147483647 ));
 			}
 		};
 

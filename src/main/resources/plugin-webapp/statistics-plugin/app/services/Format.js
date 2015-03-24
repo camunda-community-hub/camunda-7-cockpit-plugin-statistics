@@ -111,11 +111,11 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		Format.bringDataIntoBarPlotFormat = function(startData,key,x,parseX,numberOfBins){
 			var all=[];
-//			console.log(startData);
+//			console.debug(startData);
 			for (var i =0; i<startData.length; i++){
 				all[i]=parseX(eval("startData["+i+"]." + x));
 			};
-//			console.log(all);
+//			console.debug(all);
 			var formatedData = [];
 			var data = Format.bringSortedDataInPlotFormat(startData,key,x,undefined,parseX,undefined);
 			//put them into one long array to be able to use d3.layout.histogram
@@ -132,7 +132,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 //				$scope.minMax[i] = {"min": $scope.minMax[i-1].max , "max": $scope.minMax[i-1].max + binSize };
 				thresholds[i]= i*binSize+min;
 			};
-//			console.log(thresholds);
+//			console.debug(thresholds);
 			var dataInBins = [];
 			for( var i = 0; i< data.length; i++){
 				formatedData.push({"key": data[i].key , "values": []});
@@ -140,7 +140,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				for(var j = 0; j<data[i].values.length; j++){
 					allInOne[j] = data[i].values[j].x;
 				};
-//				console.log(allInOne);
+//				console.debug(allInOne);
 				dataInBins = d3.layout.histogram()
 				.bins(thresholds)
 				(allInOne);
@@ -150,10 +150,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				var dataInBins2 = d3.layout.histogram()
 				.bins([1,2,4])
 				(array);
-//				console.log(dataInBins2);
+//				console.debug(dataInBins2);
 
 
-//				console.log(dataInBins);
+//				console.debug(dataInBins);
 				for(var j = 0; j< numberOfBins; j++){
 					formatedData[i].values.push({"x": j, "y": dataInBins[j].length});
 				};
@@ -181,7 +181,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				for(var j=0; j<formatedData[i].values.length; j++){
 					dataArray[j] = formatedData[i].values[j].x;
 				};
-				console.log(dataArray);
+				console.debug(dataArray);
 				var cluster = clusterfck.hcluster(dataArray,metric,clusterfck.AVERAGE_LINKAGE,threshold);
 				//canonical vlaues as new values, old y
 				for(var k=0; k<cluster.length; k++){
@@ -189,8 +189,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					clusterArray[i].values.push({"x": cluster[k].canonical , "y" : formatedData[i].values[0].y, "size": size});
 				};
 			};
-			console.log("cluster:");
-			console.log(formatedData);
+			console.debug("cluster:");
+			console.debug(formatedData);
 			return clusterArray;
 		}
 		
@@ -207,8 +207,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				var cluster = clusterfck.kmeans(dataArray,kmeans);
 
 				//canonical vlaues as new values, old y
-				console.log(cluster);
-				console.log(cluster.length);
+				console.debug(cluster);
+				console.debug(cluster.length);
 				for(var k=0; k<cluster.length; k++){
 					var clusterSize = cluster[k].cluster.length;
 					var size = clusterSize/formatedData[i].values.length ;

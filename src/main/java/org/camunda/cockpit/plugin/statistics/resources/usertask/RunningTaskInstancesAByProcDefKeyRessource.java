@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 
-import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.camunda.bpm.engine.impl.db.ListQueryParameterObject;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.cockpit.plugin.statistics.dto.usertask.RunningUserTaskAByProcDefDto;
@@ -32,7 +32,7 @@ public class RunningTaskInstancesAByProcDefKeyRessource extends
     Command<List<RunningUserTaskAByProcDefDto>> command = new Command<List<RunningUserTaskAByProcDefDto>>() {
       @SuppressWarnings("unchecked")
       public List<RunningUserTaskAByProcDefDto> execute(CommandContext commandContext) {
-        return (List<RunningUserTaskAByProcDefDto>) commandContext.getDbSqlSession().selectList("cockpit.statistics.selectRunningUserTaskCountGroupedByTaskNameFilteredByProcDefKey", _this.procDefKey);
+        return (List<RunningUserTaskAByProcDefDto>) commandContext.getDbSqlSession().selectList("cockpit.statistics.selectRunningUserTaskCountGroupedByTaskNameFilteredByProcDefKey", new ListQueryParameterObject(_this.procDefKey, 0,2147483647));
       }
     };
     
