@@ -7,7 +7,6 @@ import org.junit.Ignore;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
-@Ignore
 public class MSSQLQueryTest extends AbstractDBQueryTest {
 
   @Override
