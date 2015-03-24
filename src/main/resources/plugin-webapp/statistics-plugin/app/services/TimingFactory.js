@@ -6,7 +6,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		TimingFactory.xValueSpecifiers = [{xValue: "startTime",xProperty:"startTime"}, {xValue: "endTime", xProperty:"endTime"}];
 
-		TimingFactory.levelSpecifiers = [{level:"process instances", moreOptions: false}, {level: "usertasks", moreOptions: true}];
+		TimingFactory.levelSpecifiers = [{level:"process instances", moreOptions: false}, {level: "activities", moreOptions: true}];
 
 		TimingFactory.processInstancesList = [];
 		TimingFactory.processInstancesList.push({processDefKey: "all"});
