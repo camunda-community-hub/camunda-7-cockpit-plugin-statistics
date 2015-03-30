@@ -172,7 +172,7 @@
 			<activation>
 				<activeByDefault>false</activeByDefault>
 				<property>
-        		  		<name>database</name>
+        	<name>database</name>
 					<value>db2</value>
 				</property>
 			</activation>

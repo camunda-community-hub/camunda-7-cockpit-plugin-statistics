@@ -3,7 +3,7 @@ camunda Cockpit Statistics Plugin
 
 camunda BPM community extension, which provides a statistics plugin for camunda Cockpit.
 This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
-The current master release was successfully tested on an H2, MySQL, MSSQL and DB2 database with Camunda 7.1.0 Final.
+The current master release was successfully tested on an H2, MySQL, MSSQL and DB2 database with Camunda 7.2.0 Final.
 
 ![Screenshot](http://i.imgur.com/B2KMQRR.png)
 
@@ -20,9 +20,11 @@ The current master release was successfully tested on an H2, MySQL, MSSQL and DB
 ## Get started
 
 To include this plugin into your cockpit you can either include it in your custom build on [camunda's plugin store](http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
-Do not forget to customize build.properties in case you choose the latter option. Please customize testdbs.properties.example, too to get the tests running on your system. For that you may remove // comment out test classes and/or dependencies you dont need/have (e.g. DB2 driver).
+Do not forget to customize build.properties in case you choose the latter option. Please customize testdbs.properties.example, too to get the tests running on your system. Please see the provided maven profiles for further options.
 
 ## Known issues
+
+- zoom in/out not working with enabled "statistics" tab in process definition detail view
 
 ## Roadmap
 
@@ -30,7 +32,6 @@ Do not forget to customize build.properties in case you choose the latter option
 
 - overlay information for rendered process diagram
 - more analytics graphs
-- migration to version 7.2.0
 
 **todo**
 
