@@ -4,6 +4,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', [
   './dashboardController',
   './processDefinitionCtrl',
   './pieChartCtrl',
+  './pluginSettingsCtrl',
   './durationsCtrl',
   './overlayCtrl',
   './timingCtrl',
