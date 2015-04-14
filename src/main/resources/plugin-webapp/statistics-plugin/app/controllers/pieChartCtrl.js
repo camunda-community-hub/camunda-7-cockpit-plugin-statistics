@@ -1,14 +1,61 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
-	module.controller('pieChartCtrl',['$scope', '$element', 'Uri', 'DataFactory', '$http', function($scope, element, Uri, DataFactory, $http){
+	module.controller('pieChartCtrl',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', '$http', '$modal', '$interval', 
+	                                  function($scope, element, Uri, DataFactory, SettingsFactory, $http,$modal, $interval){
 	  
 	  $scope.drilledInRunning = false;
 	  $scope.drilledInEnded = false;
 	  $scope.runningProcInstances = [];
 	  $scope.endedProcInstances = [];
 	  
+	  $scope.processInstanceCounts = [];
+	  
+	  $scope.myPlotsPluginSettings = {};
+	  
+	  $scope.widthClass = "span4";
+	  
+	  $scope.cacheKiller = null;
+    
+    $scope.showPlotSettings = false;
+	  
 	  $scope.runningPlotLabel = "Running Instances";
 	  $scope.endedPlotLabel = "Ended Instances";
 	  $scope.failedPlotLabel = "Failed Instances";
+	  
+    $scope.$on('chosenTabChangedBroadcast', function() {
+      if(DataFactory.chosenTab=="overview") {
+        $scope.applyDataToPlots();
+      }
+    });
+    
+    $scope.$on('pluginSettingsChanged', function() {
+      
+      /*
+       * gets called every time settings are changing, includes first time
+       * By that, plots will be rendered with the right settings
+       */
+      
+      if($scope.myPlotsPluginSettings!=SettingsFactory.pluginSettings.overview) {
+        $scope.myPlotsPluginSettings = SettingsFactory.pluginSettings.overview;
+        $scope.applyDataToPlots();
+      }
+      
+    });
+    
+    $scope.$on('destroy', function(){
+      if($scope.cacheKiller) {
+        console.debug("stopping cache killer...");
+        $scope.stopCacheKiller();
+      }
+    });
+    
+    $scope.stopCacheKiller = function() {
+      
+      /*
+       * stop interval execution
+       */
+      
+      $interval.cancel($scope.cacheKiller);
+    }
 	  
 		$scope.options = {
             chart: {
@@ -220,23 +267,47 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	        };
 				
 		function assingDataToPlot($scope, processInstanceCounts) {
+		  
+		  $scope.processInstanceCounts = processInstanceCounts;
+		  
+		  var countPlot = 0;
+		  
+		  if($scope.myPlotsPluginSettings.runningPI.toPlot) {
+        countPlot++;
+		  }
+		  if($scope.myPlotsPluginSettings.endedPI.toPlot) {
+        countPlot++;
+      }
+		  if($scope.myPlotsPluginSettings.failedPI.toPlot) {
+        countPlot++;
+      }
+
+		  
 			var r=[],e=[],f=[];
 			
 			for(i in processInstanceCounts){
-				if(processInstanceCounts[i].runningInstanceCount) {
-				  r.push({"key":processInstanceCounts[i].processDefinitionKey,"y":processInstanceCounts[i].runningInstanceCount});
+			  if($scope.myPlotsPluginSettings.runningPI.toPlot) {
+			    if(processInstanceCounts[i].runningInstanceCount) {
+            if($scope.myPlotsPluginSettings.runningPI.keysToSkip.indexOf(processInstanceCounts[i].processDefinitionKey)==-1) {
+              r.push({"key":processInstanceCounts[i].processDefinitionKey,"y":processInstanceCounts[i].runningInstanceCount});
+            }
+			    }
+			  }
+				if($scope.myPlotsPluginSettings.endedPI.toPlot) {
+				  if(processInstanceCounts[i].endedInstanceCount) {
+	          if($scope.myPlotsPluginSettings.endedPI.keysToSkip.indexOf(processInstanceCounts[i].processDefinitionKey)==-1) {
+	            e.push({"key":processInstanceCounts[i].processDefinitionKey,
+	              "y":processInstanceCounts[i].endedInstanceCount,
+	              "avg":processInstanceCounts[i].duration,
+	              "min":processInstanceCounts[i].minDuration,
+	              "max":processInstanceCounts[i].maxDuration});
+	          }
+	        }
 				}
-				if(processInstanceCounts[i].endedInstanceCount) {
-				  e.push({"key":processInstanceCounts[i].processDefinitionKey,
-				    "y":processInstanceCounts[i].endedInstanceCount,
-            "avg":processInstanceCounts[i].duration,
-            "min":processInstanceCounts[i].minDuration,
-            "max":processInstanceCounts[i].maxDuration});
-				}
-				
-				if(processInstanceCounts[i].failedInstanceCount) {
-				  console.log("adding failed instance count for "+processInstanceCounts[i].processDefinitionKey);
-				  f.push({"key":processInstanceCounts[i].processDefinitionKey,"y":processInstanceCounts[i].failedInstanceCount});
+				if($scope.myPlotsPluginSettings.failedPI.toPlot) {
+			    if($scope.myPlotsPluginSettings.failedPI.keysToSkip.indexOf(processInstanceCounts[i].processDefinitionKey)==-1) {
+			      f.push({"key":processInstanceCounts[i].processDefinitionKey,"y":processInstanceCounts[i].failedInstanceCount});
+			    }
 				}
 			}
 			
@@ -250,24 +321,45 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		}
 		
-		//		business logic, directly executed during load of the controller
 		
-		
-		
-    if(DataFactory.allProcessInstanceCountsByState["data"]!=undefined && DataFactory.allProcessInstanceCountsByState["data"].length>0) {
-      console.log("no need to query data!");
-      assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
-    } else {
-      DataFactory
-      .getAllProcessInstanceCountsByState()
-      .then(function() {
-        
-        assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
+		$scope.applyDataToPlots = function() {
+		  
+		  /*
+		   * get data and apply to plots
+		   */
+		  
+		  if(DataFactory.allProcessInstanceCountsByState["data"]!=undefined && DataFactory.allProcessInstanceCountsByState["data"].length>0) {
+	      assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
+	    } else {
+	      DataFactory
+	      .getAllProcessInstanceCountsByState()
+	      .then(function() {
+	        
+	        assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
 
-      });
-    }
-    
-    
+	      });
+	    }
+		  
+      if($scope.cacheKiller) {
+        $scope.stopCacheKiller();
+      }
+		  
+		  /*
+		   * start interval function for cache deletion
+		   */
+		  
+		  $scope.cacheKiller = $interval(function() {
+		    console.log("killing cache...");
+		    console.log("before:");
+		    console.log(DataFactory.allProcessInstanceCountsByState["data"]);
+		    DataFactory.allProcessInstanceCountsByState["data"] = {};
+		    console.log("afterwards:");
+        console.log(DataFactory.allProcessInstanceCountsByState["data"]);
+        
+		  }, $scope.myPlotsPluginSettings.cacheExpirationInMillis);
+		  
+		}
+		
     $(document).mouseup(function (e)
         {
             var container = $("#tooltipRunning");

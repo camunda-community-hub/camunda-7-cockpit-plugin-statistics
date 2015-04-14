@@ -13,6 +13,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.allHistoricActivitiesInformationByProcDefKey = [];
 		DataFactory.processDefWithRunningInstances = [];
 		DataFactory.aggregatedUsertasksByProcDef = [];
+		DataFactory.processDefinitions = [];
 
 		DataFactory.chosenTab = "";
 
@@ -21,7 +22,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			this.chosenTab = chosenTab;
 			this.broadcastItem();
 		};
-
+		
 		DataFactory.broadcastItem = function() {
 			$rootScope.$broadcast('chosenTabChangedBroadcast');
 		};
@@ -238,6 +239,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
       .error(function(){        
         console.debug("error in getting processes with start and end time");
       });
+		}
+		
+		DataFactory.getProcessDefinitions = function() {
+		  return $http.get(Uri.appUri("/engine-rest/engine/default/process-definition"))
+		   .success(function(data) {
+		    DataFactory.processDefinitions = data;
+		  })
+		  .error(function() {
+		    console.debug("error in getting process definitions");
+	    });
 		}
 
 
