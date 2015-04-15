@@ -7,6 +7,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
     
     $scope.pluginSettings = {};
     
+    $scope.showTooltipTiming = false;
+    $scope.showTooltipOverview = false;
+    
     $scope.init = function() {
       
       SettingsFactory.loadPluginSettings().then(function(settings){    
