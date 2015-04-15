@@ -9,8 +9,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	  
 	  $scope.processInstanceCounts = [];
 	  
-	  $scope.myPlotsPluginSettings = {};
-	  
+	  $scope.myPlotsPluginSettings = null;
+	  $scope.showRefreshIcon = false;
+	  $scope.showApplyChangesAlert = false;
+	  $scope.showPlotDescriptions = false;
+	  $scope.showReloadProcess = false;
 	  $scope.widthClass = "span4";
 	  
 	  $scope.cacheKiller = null;
@@ -34,9 +37,39 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
        * By that, plots will be rendered with the right settings
        */
       
+      
+           
       if($scope.myPlotsPluginSettings!=SettingsFactory.pluginSettings.overview) {
-        $scope.myPlotsPluginSettings = SettingsFactory.pluginSettings.overview;
-        $scope.applyDataToPlots();
+        
+       
+        if( ($scope.myPlotsPluginSettings==null) && !SettingsFactory.pluginSettings.overview.loadOnTabLoad) {
+          
+          $scope.myPlotsPluginSettings = SettingsFactory.pluginSettings.overview;
+          // first call after full reload // initial request
+          $scope.showInitialLoadButton = true;
+          
+        } else {
+          
+          $scope.myPlotsPluginSettings = SettingsFactory.pluginSettings.overview;
+          
+          if($scope.myPlotsPluginSettings.loadOnTabLoad) {
+            
+            //just do the reload
+            $scope.applyDataToPlots();
+            $scope.showPlotDescriptions = true;
+            
+          } else {
+            
+            /*
+             * settings have changed, show "apply changes / load data button"
+             * TODO : switch if first or latter settings fresh
+             */
+            
+             $scope.showApplyChangesAlert = true;
+            
+          }
+        }
+
       }
       
     });
@@ -56,7 +89,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
       
       $interval.cancel($scope.cacheKiller);
     }
-	  
+     
 		$scope.options = {
             chart: {
                 type: 'pieChart',
@@ -324,21 +357,32 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.applyDataToPlots = function() {
 		  
+		  if($scope.showApplyChangesAlert) {
+		    $scope.showApplyChangesAlert = false;
+		  }
+		  
+		  if($scope.showInitialLoadButton) {
+        $scope.showInitialLoadButton = false;
+      }
+		  
+		  $scope.showReloadProcess = true;
+		  
+		  
+		  
 		  /*
 		   * get data and apply to plots
 		   */
 		  
-		  if(DataFactory.allProcessInstanceCountsByState["data"]!=undefined && DataFactory.allProcessInstanceCountsByState["data"].length>0) {
-	      assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
-	    } else {
-	      DataFactory
-	      .getAllProcessInstanceCountsByState()
-	      .then(function() {
-	        
-	        assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
-
-	      });
-	    }
+      DataFactory
+      .getAllProcessInstanceCountsByState()
+      .then(function() {
+        
+        $scope.showReloadProcess = false;
+        $scope.showPlotDescriptions = true;
+        assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
+        
+        
+      });
 		  
       if($scope.cacheKiller) {
         $scope.stopCacheKiller();
@@ -348,15 +392,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		   * start interval function for cache deletion
 		   */
 		  
-		  $scope.cacheKiller = $interval(function() {
-		    console.log("killing cache...");
-		    console.log("before:");
-		    console.log(DataFactory.allProcessInstanceCountsByState["data"]);
-		    DataFactory.allProcessInstanceCountsByState["data"] = {};
-		    console.log("afterwards:");
-        console.log(DataFactory.allProcessInstanceCountsByState["data"]);
-        
-		  }, $scope.myPlotsPluginSettings.cacheExpirationInMillis);
+//		  $scope.cacheKiller = $interval(function() {
+//		    console.log("killing cache...");
+//		    console.log("before:");
+//		    console.log(DataFactory.allProcessInstanceCountsByState["data"]);
+//		    DataFactory.allProcessInstanceCountsByState["data"] = {};
+//		    console.log("afterwards:");
+//        console.log(DataFactory.allProcessInstanceCountsByState["data"]);
+//        
+//		  }, $scope.myPlotsPluginSettings.cacheExpirationInMillis);
 		  
 		}
 		

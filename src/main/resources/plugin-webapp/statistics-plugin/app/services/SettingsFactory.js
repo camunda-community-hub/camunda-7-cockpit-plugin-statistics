@@ -51,12 +51,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
                toPlot:true
              },
              loadOnTabLoad:true,
-             cacheExpirationInMillis:60000
            },
            timing:{
              processDefKeysToFilter:[],
              keysToSkip:[],
              loadOnTabLoad:true,
+           },
+           general: {
              cacheExpirationInMillis:60000
            }
       };

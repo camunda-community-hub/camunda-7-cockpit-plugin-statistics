@@ -6,10 +6,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', ['require'], function(m
 		  $('head').append('<link rel="stylesheet" href="'+require.toUrl('../lib/nv.d3.min.css')+'" type="text/css" />');
 
 		  
-		  $scope.showSettingsLink=false;
-		  
-		  var processKeysToFilter = [];
-		  
 		  $scope.handleTabClick = function(chosenTab) {
 		    DataFactory.prepForBroadcast(chosenTab);
 	    };
@@ -24,14 +20,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', ['require'], function(m
         });
         
         modalInstance.result.then(function (processKeysToFilter) {
-          //successfully closed ==> refresh selection of plotted processes by analyzing processSelection
-          
-          
-          //hide settings link
-          $scope.showSettingsLink=false;          
+
         }, function () {
-           //hide settings link
-          $scope.showSettingsLink=false;
+          
         });
 
 	    };
