@@ -23,7 +23,6 @@ Do not forget to customize build.properties in case you choose the latter option
 ## Known issues
 
 - zoom in/out not working with enabled "statistics" tab in process definition detail view
-
 ## Roadmap
 
 **features we are working on**

@@ -30,7 +30,7 @@ rect {
 }
 
 }
-.axis path, .axis line {
+.axis path,.axis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
@@ -114,7 +114,7 @@ div.tooltip {
   overflow: hidden
 }
 
-.nvtooltip.with-3d-shadow, .with-3d-shadow .nvtooltip {
+.nvtooltip.with-3d-shadow,.with-3d-shadow .nvtooltip {
   -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
@@ -142,7 +142,7 @@ div.tooltip {
   user-select: none
 }
 
-.nvtooltip.with-transitions, .with-transitions .nvtooltip {
+.nvtooltip.with-transitions,.with-transitions .nvtooltip {
   transition: opacity 250ms linear;
   -moz-transition: opacity 250ms linear;
   -webkit-transition: opacity 250ms linear;
@@ -151,7 +151,7 @@ div.tooltip {
   -webkit-transition-delay: 250ms
 }
 
-.nvtooltip.x-nvtooltip, .nvtooltip.y-nvtooltip {
+.nvtooltip.x-nvtooltip,.nvtooltip.y-nvtooltip {
   padding: 8px
 }
 
@@ -290,7 +290,7 @@ svg .title {
   shape-rendering: crispEdges
 }
 
-.nvd3 .nv-axis .zero line, .nvd3 .nv-axis line.zero {
+.nvd3 .nv-axis .zero line,.nvd3 .nv-axis line.zero {
   stroke-opacity: .75
 }
 
@@ -349,7 +349,7 @@ svg .title {
   fill-opacity: 1
 }
 
-.nvd3 .nv-discretebar .nv-groups text,.nvd3 .nv-multibarHorizontal .nv-groups text
+.nvd3 .nv-discretebar .nv-groups text, .nvd3 .nv-multibarHorizontal .nv-groups text
 	{
   font-weight: 700;
   fill: rgba(0, 0, 0, 1);
@@ -424,7 +424,7 @@ svg .title {
     linear
 }
 
-.nvd3.nv-scatter .nv-groups .nv-point.hover, .nvd3 .nv-groups .nv-point.hover
+.nvd3.nv-scatter .nv-groups .nv-point.hover,.nvd3 .nv-groups .nv-point.hover
 	{
   stroke-width: 7px;
   fill-opacity: .95 !important;
@@ -552,7 +552,7 @@ svg .title {
   stroke-width: 1.5px
 }
 
-.nvd3.nv-sparklineplus,.nvd3.nv-sparklineplus g {
+.nvd3.nv-sparklineplus, .nvd3.nv-sparklineplus g {
   pointer-events: all
 }
 
@@ -561,7 +561,7 @@ svg .title {
   stroke-opacity: 0
 }
 
-.nvd3.nv-sparklineplus .nv-xValue,.nvd3.nv-sparklineplus .nv-yValue {
+.nvd3.nv-sparklineplus .nv-xValue, .nvd3.nv-sparklineplus .nv-yValue {
   stroke-width: 0;
   font-size: .9em;
   font-weight: 400
@@ -669,7 +669,7 @@ svg .title {
   shape-rendering: crispEdges
 }
 
-.nvd3 .axis line,.axis path {
+.nvd3 .axis line, .axis path {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges
@@ -687,32 +687,164 @@ svg .title {
   stroke: #ccc
 }
 </style>
+<script type="text/ng-template" id="pluginSettingsModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Statistics Plugin Settings</h3>
+        </div>
+        <div class="modal-body" ng-init="init()">
+            <div ng-show="pluginSettings.supported">
+              <tabset>
+                <tab heading="General" disabled="true">
+                  <form class="form-horizontal">
+                    <div class="control-group">
+                      <label class="control-label">Cache expiration (ms)</label>
+                      <div class="controls">
+                        <input type="number" ng-model="pluginSettings.general.cacheExpirationInMillis" required>
+                      </div>
+                    </div>
+                  </form>     
+                </tab>
+                <tab heading="Settings 'Tab Overview'" active="true">
+                  <label class="checkbox inline">
+                    <input type="checkbox" ng-model="pluginSettings.overview.loadOnTabLoad">
+                    <span ng-mouseover="showTooltipOverview=true" ng-mouseleave="showTooltipOverview=false">auto refresh &nbsp;<small ng-show="showTooltipOverview"><em><br>Plots will be automatically refreshed during tab load or after a settings change</em></small></span>
+                  </label>
+                  <hr>
+                  <tabset type="pills" justified="true">
+                    <tab heading="Running Instances">
+                      <label class="checkbox inline">
+                          <input type="checkbox" ng-model="pluginSettings.overview.runningPI.toPlot"> Show 'Running' Plot
+                      </label>
+                      <h3>Process definition keys to consider</h3>
+                      <div ng-repeat="processKey in pluginSettings.overview.runningPI.filterProcessDefKeys">
+                        <label class="checkbox inline">
+                          <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                        </label>
+                      </div>
+                    </tab>
+                    <tab heading="Ended Instances">
+                      <label class="checkbox inline">
+                          <input type="checkbox" ng-model="pluginSettings.overview.endedPI.toPlot"> Show 'Ended' Plot
+                      </label>
+                      <h3>Process definition keys to consider</h3>
+                      <div ng-repeat="processKey in pluginSettings.overview.endedPI.filterProcessDefKeys">
+                        <label class="checkbox inline">
+                          <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                        </label>
+                      </div>
+                    </tab>
+                    <tab heading="Instances with incidents">
+                      <label class="checkbox inline">
+                          <input type="checkbox" ng-model="pluginSettings.overview.failedPI.toPlot"> Show 'Incidents' Plot
+                      </label>
+                      <h3>Process definition keys to consider</h3>
+                      <div ng-repeat="processKey in pluginSettings.overview.failedPI.filterProcessDefKeys">
+                        <label class="checkbox inline">
+                          <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                        </label>
+                      </div>
+                    </tab>
+                  </tabset>
+                </tab>
+                <tab heading="Settings 'Tab Timing'" disabled="true">
+                  <label class="checkbox inline">
+                    <input type="checkbox" ng-model="pluginSettings.timing.loadOnTabLoad">
+                    <span ng-mouseover="showTooltipTiming=true" ng-mouseleave="showTooltipTiming=false">auto refresh &nbsp;<small ng-show="showTooltipTiming"><em><br>Plots will be automatically refreshed during tab load or after a settings change</em></small></span>
+                  </label>
+                  <h3>Process definition keys to consider</h3>
+                  <div ng-repeat="processKey in pluginSettings.timing.processDefKeysToFilter">
+                    <label class="checkbox inline">
+                      <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                    </label>
+                  </div
+                </tab>
+              </tabset>
+            </div>
+            <div ng-show="!pluginSettings.supported">
+              <div class="alert alert-warning" role="alert">
+                Your browser does not support customizing plugin settings :(
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="applySettings()" ng-disabled="!pluginSettings.supported">Apply Settings</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+</script>
 <div ng-controller="dashboardController">
-	<h1>Statistics & Analytics</h1>
-	<tabset> <tab heading="Overview"
-		select="handleTabClick('overview')" ng-controller="pieChartCtrl">
-	<div class="row-fluid">
-		<div class="span4" state="running">
-			<nvd3 options="options" data="running" id="running" api="api"></nvd3>
-		</div>
-		<div class="span4">
-			<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
-		</div>
-		<div class="span4">
-			<nvd3 options="options" data="failed" id="failed"></nvd3>
-		</div>
-	</div>
-	<div class="row-fluid">
-		<div class="span4">
-			<p class="text-center">{{runningPlotLabel}}</p>
-		</div>
-		<div class="span4">
-			<p class="text-center">{{endedPlotLabel}}</p>
-		</div>
-		<div class="span4">
-			<p class="text-center">{{failedPlotLabel}}</p>
-		</div>
-	</div>
+	<h1>Statistics & Analytics&nbsp;&nbsp;<small><a class="btn btn-link" ng-click="showPluginSettingsModal()">Settings...</a></small></h1>
+	<tabset> <tab ng-controller="pieChartCtrl">
+	 <tab-heading ng-mouseover="showRefreshIcon=true" ng-mouseleave="showRefreshIcon=false">
+	   <span select="handleTabClick('overview')">Overview&nbsp;</span><a class="btn btn-link" ng-show="showRefreshIcon" ng-click="applyDataToPlots()"><i class="icon-repeat"></i></a>
+	 </tab-heading>
+	   <div ng-show="showInitialLoadButton">
+	     <div class="row-fluid">
+         <div class="span2 offset5">
+           <button class="btn btn-primary" ng-click="applyDataToPlots()">Load Plots!</button>
+         </div>
+       </div>
+	   </div>
+	   <div ng-show="showApplyChangesAlert">
+	     <div class="row-fluid">
+	       <div class="span6 offset3">
+			     <div class="alert alert-info">
+			       Your current tab`s settings have changed, you might want to refresh the plot...&nbsp;&nbsp;&nbsp;<button class="btn btn-primary" ng-click="applyDataToPlots()">Refresh</button>
+			     </div>
+		     </div>
+	     </div>
+	   </div>
+		 <div id="plotContainer">
+			 <div class="row-fluid">
+		    <div class="{{widthClass}}" state="running" ng-show="myPlotsPluginSettings.runningPI.toPlot">
+		      <div ng-show="reload.showReloadProcessRunning">
+		        <div class="row-fluid">
+		          <div class="span6 offset3">
+		            <div class="progress progress-striped active">
+		              <div class="bar" style="width: 100%;"></div>
+		            </div>
+		          </div>
+		        </div>
+		      </div>
+		      <nvd3 options="runningOptions" data="running" id="running" api="api"></nvd3>
+		    </div>
+		    <div class="{{widthClass}}" ng-show="myPlotsPluginSettings.endedPI.toPlot">
+		       <div ng-show="reload.showReloadProcessEnded">
+            <div class="row-fluid">
+              <div class="span6 offset3">
+                <div class="progress progress-striped active">
+                  <div class="bar" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+		      <nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
+		    </div>
+		    <div class="{{widthClass}}" ng-show="myPlotsPluginSettings.failedPI.toPlot">
+		      <div ng-show="reload.showReloadProcessFailed">
+            <div class="row-fluid">
+              <div class="span6 offset3">
+                <div class="progress progress-striped active">
+                  <div class="bar" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+		      <nvd3 options="failedOptions" data="failed" id="failed"></nvd3>
+		    </div>
+		  </div>
+		  <div class="row-fluid">
+		    <div class="{{widthClass}}" ng-show="myPlotsPluginSettings.runningPI.toPlot && showPlotDescriptions">
+		      <p class="text-center">{{runningPlotLabel}}</p>
+		    </div>
+		    <div class="{{widthClass}}" ng-show="myPlotsPluginSettings.endedPI.toPlot && showPlotDescriptions">
+		      <p class="text-center">{{endedPlotLabel}}</p>
+		    </div>
+		    <div class="{{widthClass}}" ng-show="myPlotsPluginSettings.failedPI.toPlot && showPlotDescriptions">
+		      <p class="text-center">{{failedPlotLabel}}</p>
+		    </div>
+		  </div>
+	  </div> 
 	</tab> <tab heading="Timing" select="handleTabClick('startEnd')"
 		ng-controller="timingCtrl">
 		  <div class="row-fluid">
@@ -741,7 +873,7 @@ svg .title {
 			<form class="form-horizontal">
 				<div class="control-group">
 					<select ng-model="selected"
-						ng-options="key.processDefinitionKey for key in processDefWithRunningInstances"
+						ng-options="key.processDefinitionKey for key in processDefWithFinishedInstances"
 						ng-change="getDurations()" multiple ng-multiple="true">
 					</select>
 				</div>
@@ -831,3 +963,5 @@ svg .title {
 	</tab>
 	</tabset>
 </div>
+
+

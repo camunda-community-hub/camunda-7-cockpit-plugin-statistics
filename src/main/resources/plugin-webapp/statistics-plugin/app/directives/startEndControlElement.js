@@ -15,7 +15,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		    	 		'<select ng-model="currentFrame" ng-options="currentFrame.frame for currentFrame in timeFrames" ng-change="getDataAndDrawGraph()">'+
 		    	 		'</select>'+
 		    	 	'</div>'+
-		    	 	'<h5>of process instances or activities<h5>'+
+		    	 	'<h5>of process instances or user tasks<h5>'+
 		    	 	'<div class="control-group">'+
 	    	 			'<select ng-model="currentLevel" ng-options="currentLevel.level for currentLevel in levelSpecifiers" ng-change="getDataAndDrawGraph()">'+
 	    	 			'</select>'+

@@ -1,16 +1,106 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
-	module.controller('pieChartCtrl',['$scope', '$element', 'Uri', 'DataFactory', '$http', function($scope, element, Uri, DataFactory, $http){
+	module.controller('pieChartCtrl',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', '$http', '$modal', '$interval', 
+	                                  function($scope, element, Uri, DataFactory, SettingsFactory, $http,$modal, $interval){
 	  
 	  $scope.drilledInRunning = false;
 	  $scope.drilledInEnded = false;
+	  $scope.drilledInIncidents = false;
+	  
 	  $scope.runningProcInstances = [];
 	  $scope.endedProcInstances = [];
+	  $scope.incidentsProcInstances = [];
+	  $scope.processInstanceCounts = [];
+	  
+	  $scope.myPlotsPluginSettings = null;
+	  $scope.showRefreshIcon = false;
+	  $scope.showApplyChangesAlert = false;
+	  $scope.showPlotDescriptions = false;
+	  $scope.reload = {
+	      showReloadProcessRunning:false,
+	      showReloadProcessEnded:false,
+	      showReloadProcessFailed:false
+	  };
+	  $scope.widthClass = "span4";
+	  
+	  $scope.cacheKiller = null;
+    
+    $scope.showPlotSettings = false;
 	  
 	  $scope.runningPlotLabel = "Running Instances";
 	  $scope.endedPlotLabel = "Ended Instances";
-	  $scope.failedPlotLabel = "Failed Instances";
+	  $scope.failedPlotLabel = "Instances with Incidents";
 	  
-		$scope.options = {
+    $scope.$on('chosenTabChangedBroadcast', function() {
+      if(DataFactory.chosenTab=="overview") {
+        $scope.applyDataToPlots();
+      }
+    });
+    
+    $scope.$on('pluginSettingsChanged', function() {
+      
+      /*
+       * gets called every time settings are changing, includes first time
+       * By that, plots will be rendered with the right settings
+       */
+      
+      
+           
+      if($scope.myPlotsPluginSettings!=SettingsFactory.pluginSettings.overview) {
+        
+       
+        if( ($scope.myPlotsPluginSettings==null) && !SettingsFactory.pluginSettings.overview.loadOnTabLoad) {
+          
+          $scope.myPlotsPluginSettings = SettingsFactory.pluginSettings.overview;
+          // first call after full reload // initial request
+          $scope.showInitialLoadButton = true;
+          
+        } else {
+          
+          $scope.myPlotsPluginSettings = SettingsFactory.pluginSettings.overview;
+          
+          if($scope.myPlotsPluginSettings.loadOnTabLoad) {
+            
+            //just do the reload
+            $scope.applyDataToPlots();
+            $scope.showPlotDescriptions = true;
+            
+          } else {
+            
+            /*
+             * settings have changed, show "apply changes / load data button"
+             * TODO : switch if first or latter settings fresh
+             */
+            
+             $scope.showApplyChangesAlert = true;
+            
+          }
+        }
+
+      }
+      
+    });
+    
+    $scope.$on('destroy', function(){
+      if($scope.cacheKiller) {
+        console.debug("stopping cache killer...");
+        $scope.stopCacheKiller();
+      }
+    });
+    
+    $scope.stopCacheKiller = function() {
+      
+      /*
+       * stop interval execution
+       */
+      
+      $interval.cancel($scope.cacheKiller);
+    }
+    
+    /*
+     * general pie charts options
+     */
+     
+		var options = {
             chart: {
                 type: 'pieChart',
                 height: 500,
@@ -52,8 +142,53 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
             }
         };
 		
-	
+    /*
+     * overwrite respective attributes per plot
+     */
 		
+		$scope.runningOptions = angular.copy(options);
+		
+    $scope.failedOptions = angular.copy(options);
+    $scope.failedOptions.chart.pie.dispatch.elementClick = function(t, u) {
+      if(!$scope.drilledInIncidents) {
+        $scope.$apply(function() {
+          drillIn(t, "incidents");
+        });
+      } else {
+        $scope.$apply(function() {
+          drillOut(t, "incidents");
+        });
+      }
+    };
+		
+    $scope.endedOptions = angular.copy(options);
+    $scope.endedOptions.chart.tooltipContent = function(key, y, e, graph){
+      
+      return '<h3>' + key + '</h3>' +
+      '<p>count:<b>' +  y + '</b><br/>average Duration:<b>'+
+      (e.point.avg/1000/60).toFixed(2)+
+      ' min</b><br/>minimal Duration:<b>'+
+      (e.point.min/1000/60).toFixed(2)+
+      ' min</b><br/>maximal Duration:<b>'+
+      (e.point.max/1000/60).toFixed(2)+
+      ' min</b></p>'
+      
+    };
+    
+    $scope.endedOptions.chart.pie.dispatch.elementClick = function(t, u) {
+      
+      if(!$scope.drilledInEnded) {
+        $scope.$apply(function() {
+          drillIn(t, "ended");
+        });
+      } else {
+        $scope.$apply(function() {
+          drillOut(t, "ended");
+        });
+      }
+      
+    };
+    
 		function drillIn(event, plot) {
 		  
 		  switch(plot) {
@@ -83,6 +218,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		        }
 		      });
 		      break;
+		    case "incidents":
+		      $scope.drilledInIncidents = true;
+		      setIncidentsDetailsByProcessDefinitionKey(event.point.key);
+		      $scope.failedPlotLabel = "Incidents of '"+event.point.key+"'";
+		      break;
 		     default:
 		       break;
 		  }
@@ -94,7 +234,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		  switch(plot) {
         case "running":
           $scope.running = $scope.runningProcInstances;
-          $scope.options.chart.tooltipContent = function(key, y, e, graph){
+          $scope.runningOptions.chart.tooltipContent = function(key, y, e, graph){
             return '<h3>' + key + '</h3>' +
             '<p>count:<b>' +  y + '</b></p>'
             };
@@ -116,6 +256,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
           $scope.endedPlotLabel = "Ended Instances";
           $scope.drilledInEnded=false;
           break;
+        case "incidents":
+          $scope.failedPlotLabel = "Instances with incidents";
+          $scope.failed = $scope.incidentsProcInstances;
+          $scope.drilledInIncidents=false;
+          break;
         default:
           break;
 		  }
@@ -131,7 +276,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		  }
 		  
 		  $scope.running = newRunning;
-		  $scope.options.chart.tooltipContent = function(key, y, e, graph){
+		  $scope.runningOptions.chart.tooltipContent = function(key, y, e, graph){
         return '<h3>' + key + '</h3>' +
         '<p>count:<b>' +  y + '</b><br/>assigned:<b>'+
         e.point.assigned+
@@ -170,104 +315,220 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
           's</b></p>'
         }
 		}
-
-		$scope.endedOptions = {
-	            chart: {
-	                type: 'pieChart',
-	                height: 500,
-	                x: function(d){return d.key;},
-	                y: function(d){return d.y;},
-	                showLabels: true,
-	                transitionDuration: 1500,
-	                labelThreshold: 0.01,
-	                tooltips: true,
-	                pie: {   
-	                  dispatch: {   
-	                    elementClick: function(t, u) {
-	                      if(!$scope.drilledInEnded) {
-	                        $scope.$apply(function() {
-	                          drillIn(t, "ended");
-	                        });
-	                      } else {
-	                        $scope.$apply(function() {
-	                          drillOut(t, "ended");
-	                        });
-	                      }
-	                      
-	                    }
-	                  }
-	                },
-	                tooltipContent: function(key, y, e, graph){
-      	    				return '<h3>' + key + '</h3>' +
-      	    				'<p>count:<b>' +  y + '</b><br/>average Duration:<b>'+
-      	    				(e.point.avg/1000/60).toFixed(2)+
-      	    				' min</b><br/>minimal Duration:<b>'+
-      	    				(e.point.min/1000/60).toFixed(2)+
-      	    				' min</b><br/>maximal Duration:<b>'+
-      	    				(e.point.max/1000/60).toFixed(2)+
-      	    				' min</b></p>'
-      	    				},
-	                noData:"No Processes met the requirements",
-	                legend: {
-	                    margin: {
-	                        top: 5,
-	                        right: 5,
-	                        bottom: 5,
-	                        left: 5
-	                    }
-	                }
-	            }
-	        };
 				
-		function assingDataToPlot($scope, processInstanceCounts) {
-			var r=[],e=[],f=[];
-			
-			for(i in processInstanceCounts){
-				if(processInstanceCounts[i].runningInstanceCount) {
-				  r.push({"key":processInstanceCounts[i].processDefinitionKey,"y":processInstanceCounts[i].runningInstanceCount});
-				}
-				if(processInstanceCounts[i].endedInstanceCount) {
-				  e.push({"key":processInstanceCounts[i].processDefinitionKey,
-				    "y":processInstanceCounts[i].endedInstanceCount,
-            "avg":processInstanceCounts[i].duration,
-            "min":processInstanceCounts[i].minDuration,
-            "max":processInstanceCounts[i].maxDuration});
-				}
-				
-				if(processInstanceCounts[i].failedInstanceCount) {
-				  console.log("adding failed instance count for "+processInstanceCounts[i].processDefinitionKey);
-				  f.push({"key":processInstanceCounts[i].processDefinitionKey,"y":processInstanceCounts[i].failedInstanceCount});
-				}
-			}
-			
-			$scope.runningProcInstances = r;
-			$scope.running = r;
-			
-			$scope.endedProcInstances = e;
-			$scope.ended = e;
-			
-			$scope.failed = f;
-
+	
+		var setEndedPlotData = function(endedData) {
+		  
+		  var e = [];
+		  
+      for(i in endedData){
+        if($scope.myPlotsPluginSettings.endedPI.toPlot) {
+          if(endedData[i].endedInstanceCount) {
+            if($scope.myPlotsPluginSettings.endedPI.keysToSkip.indexOf(endedData[i].processDefinitionKey)==-1) {
+              e.push({"key":endedData[i].processDefinitionKey,
+                "y":endedData[i].endedInstanceCount,
+                "avg":endedData[i].duration,
+                "min":endedData[i].minDuration,
+                "max":endedData[i].maxDuration});
+            }
+          }
+        }
+      }
+      
+      $scope.endedProcInstances = e;
+      $scope.ended = e;
+      
 		}
 		
-		//		business logic, directly executed during load of the controller
+		var setRunningPlotData = function(runningData) {
+		  
+		  var r = [];
+		  
+		  for(key in runningData) {
+		    if($scope.myPlotsPluginSettings.runningPI.toPlot) {
+	        if(runningData.hasOwnProperty(key) && runningData[key]) {
+	          if($scope.myPlotsPluginSettings.runningPI.keysToSkip.indexOf(key)==-1) {
+	            r.push({"key":key,"y":runningData[key]});
+	          }
+	        }
+	      }
+		  }
+		  
+		  $scope.runningProcInstances = r;
+      $scope.running = r;
+      
+		}
+		
+		var setIncidentPlotData = function(incidentData) {
+		  
+		  var f = [];
+		  
+		  for(key in incidentData) {
+        if($scope.myPlotsPluginSettings.failedPI.toPlot) {
+          if(incidentData.hasOwnProperty(key) && incidentData[key]) {
+            if($scope.myPlotsPluginSettings.failedPI.keysToSkip.indexOf(key)==-1) {
+              f.push({"key":key,"y":incidentData[key]});
+            }
+          }
+        }
+		  }
+		  
+		  $scope.incidentsProcInstances = f;
+	    $scope.failed = f;  
+	  
+		  
+		}
+		
+		var setIncidentsDetailsByProcessDefinitionKey = function(processDefinitionKey) {
+		  
+      DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi()
+      .then(function() {
+        
+        var data = DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi;
+
+        var resultIncidentsByPDKey = {};
+        
+        for(i in data) {
+          
+          if(data[i].definition.key == processDefinitionKey) {
+            
+            /*
+             * depends on version
+             */
+            if(data[i].incidents && data[i].incidents.length>0) {
+              for(j in data[i].incidents) {
+                
+                if(!resultIncidentsByPDKey[data[i].incidents[j].incidentType]) {
+                  resultIncidentsByPDKey[data[i].incidents[j].incidentType] = 0;
+                }
+                
+                resultIncidentsByPDKey[data[i].incidents[j].incidentType]  = data[i].incidents[j].incidentCount;
+              }
+              
+            }
+           
+          }
+          
+        }
+        
+        var f = [];
+        
+        for(key in resultIncidentsByPDKey) {
+          if($scope.myPlotsPluginSettings.failedPI.toPlot) {
+            if(resultIncidentsByPDKey.hasOwnProperty(key) && resultIncidentsByPDKey[key]) {
+              if($scope.myPlotsPluginSettings.failedPI.keysToSkip.indexOf(key)==-1) {
+                f.push({"key":key,"y":resultIncidentsByPDKey[key]});
+              }
+            }
+          }
+        }
+        
+        $scope.failed = f;
+        
+      })
+		}
 		
 		
 		
-    if(DataFactory.allProcessInstanceCountsByState["data"]!=undefined && DataFactory.allProcessInstanceCountsByState["data"].length>0) {
-      console.log("no need to query data!");
-      assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
-    } else {
+		$scope.applyDataToPlots = function() {
+		  
+		  if($scope.showApplyChangesAlert) {
+		    $scope.showApplyChangesAlert = false;
+		  }
+		  
+		  if($scope.showInitialLoadButton) {
+        $scope.showInitialLoadButton = false;
+      }
+		  
+		  $scope.reload.showReloadProcessRunning = true;
+		  $scope.reload.showReloadProcessEnded = true;
+		  $scope.reload.showReloadProcessFailed = true;
+		  
+		  
+		  
+		  /*
+		   * get data and apply to plots
+		   */
+		  
+		  /*
+		   * aggregated data for ended plot
+		   */
+		  
       DataFactory
       .getAllProcessInstanceCountsByState()
       .then(function() {
         
-        assingDataToPlot($scope, DataFactory.allProcessInstanceCountsByState["data"]);
-
+        $scope.reload.showReloadProcessEnded = false;
+        $scope.showPlotDescriptions = true;
+        setEndedPlotData(DataFactory.allProcessInstanceCountsByState["data"]);
+        
+        
       });
-    }
-    
-    
+      
+      /*
+       * data for running and incidents
+       * TODO: failed jobs
+       * 
+       */
+      
+      DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi()
+      .then(function() {
+        
+        $scope.reload.showReloadProcessFailed = false;
+        $scope.reload.showReloadProcessRunning = false;
+        
+        var data = DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi;
+        
+        var resultRunning = {};
+        var resultIncidents = {};
+        
+        for(i in data) {
+          
+          if(!resultRunning[data[i].definition.key]) {
+            resultRunning[data[i].definition.key]=0;
+          }
+          
+          resultRunning[data[i].definition.key]+=data[i].instances;
+          
+          
+          if(!resultIncidents[data[i].definition.key]) {
+            resultIncidents[data[i].definition.key] = 0;
+          }
+            
+          if(data[i].incidents && data[i].incidents.length>0) {
+            for(j in data[i].incidents) {
+              resultIncidents[data[i].definition.key]+=data[i].incidents[j].incidentCount;  
+            }  
+          }
+
+          
+        }
+        
+        setRunningPlotData(resultRunning);
+        setIncidentPlotData(resultIncidents);
+        
+      });
+		  
+      if($scope.cacheKiller) {
+        $scope.stopCacheKiller();
+      }
+		  
+		  /*
+		   * start interval function for cache deletion
+		   */
+		  
+//		  $scope.cacheKiller = $interval(function() {
+//		    console.log("killing cache...");
+//		    console.log("before:");
+//		    console.log(DataFactory.allProcessInstanceCountsByState["data"]);
+//		    DataFactory.allProcessInstanceCountsByState["data"] = {};
+//		    console.log("afterwards:");
+//        console.log(DataFactory.allProcessInstanceCountsByState["data"]);
+//        
+//		  }, $scope.myPlotsPluginSettings.cacheExpirationInMillis);
+		  
+		}
+		
     $(document).mouseup(function (e)
         {
             var container = $("#tooltipRunning");
