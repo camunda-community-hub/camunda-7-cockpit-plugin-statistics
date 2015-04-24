@@ -14,6 +14,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.processDefWithRunningInstances = [];
 		DataFactory.aggregatedUsertasksByProcDef = [];
 		DataFactory.processDefinitions = [];
+		DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi = [];
 
 		DataFactory.chosenTab = "";
 
@@ -250,6 +251,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		    console.debug("error in getting process definitions");
 	    });
 		}
+		
+    DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi = function() {
+      return $http.get(Uri.appUri("/engine-rest/engine/default/process-definition/statistics?failedJobs=true&incidents=true"))
+      .success(function(data) {
+        DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi = data;
+      })
+      .error(function() {
+        console.debug("error in getting processInstanceRunningIncidentsCountOByProcDefRestApi");
+      });
+    }
 
 
 

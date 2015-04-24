@@ -733,9 +733,9 @@ svg .title {
                         </label>
                       </div>
                     </tab>
-                    <tab heading="Failed Instances">
+                    <tab heading="Instances with incidents">
                       <label class="checkbox inline">
-                          <input type="checkbox" ng-model="pluginSettings.overview.failedPI.toPlot"> Show 'Failed' Plot
+                          <input type="checkbox" ng-model="pluginSettings.overview.failedPI.toPlot"> Show 'Incidents' Plot
                       </label>
                       <h3>Process definition keys to consider</h3>
                       <div ng-repeat="processKey in pluginSettings.overview.failedPI.filterProcessDefKeys">
@@ -794,25 +794,43 @@ svg .title {
 		     </div>
 	     </div>
 	   </div>
-	   <div ng-show="showReloadProcess">
-       <div class="row-fluid">
-         <div class="span6 offset3">
-           <div class="progress progress-striped active">
-             <div class="bar" style="width: 100%;"></div>
-           </div>
-         </div>
-       </div>
-     </div>
 		 <div id="plotContainer">
 			 <div class="row-fluid">
 		    <div class="{{widthClass}}" state="running" ng-show="myPlotsPluginSettings.runningPI.toPlot">
-		      <nvd3 options="options" data="running" id="running" api="api"></nvd3>
+		      <div ng-show="reload.showReloadProcessRunning">
+		        <div class="row-fluid">
+		          <div class="span6 offset3">
+		            <div class="progress progress-striped active">
+		              <div class="bar" style="width: 100%;"></div>
+		            </div>
+		          </div>
+		        </div>
+		      </div>
+		      <nvd3 options="runningOptions" data="running" id="running" api="api"></nvd3>
 		    </div>
 		    <div class="{{widthClass}}" ng-show="myPlotsPluginSettings.endedPI.toPlot">
+		       <div ng-show="reload.showReloadProcessEnded">
+            <div class="row-fluid">
+              <div class="span6 offset3">
+                <div class="progress progress-striped active">
+                  <div class="bar" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
 		      <nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
 		    </div>
 		    <div class="{{widthClass}}" ng-show="myPlotsPluginSettings.failedPI.toPlot">
-		      <nvd3 options="options" data="failed" id="failed"></nvd3>
+		      <div ng-show="reload.showReloadProcessFailed">
+            <div class="row-fluid">
+              <div class="span6 offset3">
+                <div class="progress progress-striped active">
+                  <div class="bar" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+		      <nvd3 options="failedOptions" data="failed" id="failed"></nvd3>
 		    </div>
 		  </div>
 		  <div class="row-fluid">
