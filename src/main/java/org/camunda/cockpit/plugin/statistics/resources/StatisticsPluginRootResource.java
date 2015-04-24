@@ -259,7 +259,7 @@ public class StatisticsPluginRootResource extends
     * @param engineName Name the selectable engine. (required)
     * @return
     */
-   @Path("{engineName}/pdkeysruninst")
+   @Path("{engineName}/pdkeysfinishedinst")
    public ProcessDefinitionsWithFinishedInstancesResource getPdKeysOfPdsWithFinishedInstances(@PathParam("engineName") String engineName) {
        return subResource(new ProcessDefinitionsWithFinishedInstancesResource(engineName), engineName);
    }
