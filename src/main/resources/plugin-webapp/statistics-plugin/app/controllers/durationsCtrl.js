@@ -24,10 +24,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.numberOfBins = {"number": 10};
 
 //				$scope.selected = [];
-				DataFactory.getProcessDefWithRunningInstances().then(function(){
-					$scope.processDefWithRunningInstances = DataFactory.processDefWithRunningInstances;
-					if(typeof $scope.processDefWithRunningInstances[0] != "undefined"){
-						$scope.selected = [{processDefinitionKey: $scope.processDefWithRunningInstances[0].processDefinitionKey}];
+				DataFactory.getProcessDefWithFinishedInstances().then(function(){
+					$scope.processDefWithFinishedInstances = DataFactory.processDefWithFinishedInstances;
+					if(typeof $scope.processDefWithFinishedInstances[0] != "undefined"){
+						$scope.selected = [{processDefinitionKey: $scope.processDefWithFinishedInstances[0].processDefinitionKey}];
 					}
 					$scope.getDurations();
 				});

@@ -873,7 +873,7 @@ svg .title {
 			<form class="form-horizontal">
 				<div class="control-group">
 					<select ng-model="selected"
-						ng-options="key.processDefinitionKey for key in processDefWithRunningInstances"
+						ng-options="key.processDefinitionKey for key in processDefWithFinishedInstances"
 						ng-change="getDurations()" multiple ng-multiple="true">
 					</select>
 				</div>

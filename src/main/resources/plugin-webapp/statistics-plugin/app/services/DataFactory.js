@@ -11,7 +11,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.historicActivityCountsDurationByProcDefKey = [];
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
 		DataFactory.allHistoricActivitiesInformationByProcDefKey = [];
-		DataFactory.processDefWithRunningInstances = [];
+		DataFactory.processDefWithFinishedInstances = [];
 		DataFactory.aggregatedUsertasksByProcDef = [];
 		DataFactory.processDefinitions = [];
 		DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi = [];
@@ -207,14 +207,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		};
 
-		DataFactory.getProcessDefWithRunningInstances = function() {
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/pdkeysruninst"))
+		DataFactory.getProcessDefWithFinishedInstances = function() {
+			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/pdkeysfinishedinst"))
 			.success(function (data){
-			  console.debug(data);
-				DataFactory.processDefWithRunningInstances = data;
+				DataFactory.processDefWithFinishedInstances = data;
 			})
 			.error(function(){
-				console.debug("error in getting process definitions with running instances")
+				console.debug("error in getting process definitions with finished instances")
 			})
 		};
 
