@@ -23,7 +23,7 @@
 	      def.KEY_ as PROC_DEF_KEY,
 	      <!-- count, min, max, avg, duration -->
         <include refid="cockpit.statistics.commonAggregations"/>
-      FROM act_hi_actinst A 
+      FROM ACT_HI_ACTINST A 
 	      LEFT JOIN
 	        ACT_RE_PROCDEF def
 	      ON 
