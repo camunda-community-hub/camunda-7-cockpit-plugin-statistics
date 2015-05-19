@@ -11,7 +11,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', ['require'], function(m
         body+="Category:"+$sanitize($scope.feedbackCategory)+", ";
         body+="Subject:"+$sanitize($scope.feedbackSubject)+", ";
         body+="Feedback: Oh! That is a nice plugin you have created, but.. "+$sanitize($scope.feedbackText);
-        $window.location = "mailto:eric.klieme"+"@"+"novatec-gmbh.com?subject=Feedback camunda-cockpit-statistics-plugin&body="+body;
+        $window.location = "mailto:eric.klieme"+"@"+"novatec-gmbh.de?subject=Feedback camunda-cockpit-statistics-plugin&body="+body;
       };
       
     }]);
