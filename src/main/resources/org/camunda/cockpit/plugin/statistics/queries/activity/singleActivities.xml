@@ -21,7 +21,7 @@
 			A.ID_ as ID,
 			<!-- start,end time -->
 			<include refid="cockpit.statistics.commonDates"/>
-		FROM act_hi_actinst A
+		FROM ACT_HI_ACTINST A
 		  LEFT JOIN
 		    ACT_RE_PROCDEF def
 		  ON
