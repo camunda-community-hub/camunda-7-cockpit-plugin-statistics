@@ -20,7 +20,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	      showReloadProcessEnded:false,
 	      showReloadProcessFailed:false
 	  };
-	  $scope.widthClass = "span4";
+	  $scope.widthClass = "col-lg-4";
 	  
 	  $scope.cacheKiller = null;
     

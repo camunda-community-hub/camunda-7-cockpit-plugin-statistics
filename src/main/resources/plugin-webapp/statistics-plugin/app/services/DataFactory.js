@@ -189,7 +189,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		DataFactory.getDurations = function(processDefKeys) {
 			var String = "";
-			if(typeof(processDefKeys)!=undefined){
+			if(processDefKeys){
 				for (var i = 0; i < processDefKeys.length; i++) {
 					if (i == 0) {
 						String = String + "?processdefkey=" + processDefKeys[i].processDefinitionKey;
