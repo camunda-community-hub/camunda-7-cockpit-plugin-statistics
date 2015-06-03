@@ -33,7 +33,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		
 		DataFactory.historicCaseInstanceDetailsAggregatedByCasedsDefinitionId = {};
 		DataFactory.historicCaseActivityInstanceDetailsAggregatedByCasedDefinitionId = {};
-		
 		/*
 		 * hybrid data --> case/process 
 		 */

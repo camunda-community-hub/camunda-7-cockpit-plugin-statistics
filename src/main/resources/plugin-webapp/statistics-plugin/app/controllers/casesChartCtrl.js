@@ -508,37 +508,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
         
         
       });
-      
-//      DataFactory.getHistoricCaseInstanceDetailsAggregatedByCasedDefinitionId()
-//        .then(function() {
-//          var data = DataFactory.historicCaseInstanceDetailsAggregatedByCasedDefinitionId;
-//          for(i in data) {
-//            if(data[i].active) {
-//              runningCases.push({"key":data[i].definitionId.substring(0,10)+"...","y":data[i].active, "defId":data[i].definitionId});
-//            }
-//            if(data[i].completed) {
-//              completedCases.push({"key":data[i].definitionId.substring(0,10)+"...","y":data[i].completed, "defId":data[i].definitionId});
-//            }
-//            if(data[i].terminated) {
-//              terminatedCases.push({"key":data[i].definitionId.substring(0,10)+"...","y":data[i].terminated, "defId":data[i].definitionId});
-//            }
-//          }
-//          
-//          $scope.activeCaseInstances = runningCases;
-//          $scope.activePlot = runningCases;
-//          $scope.completedCaseInstances = completedCases;
-//          $scope.completedPlot = completedCases;
-//          $scope.terminatedCaseInstances = terminatedCases;
-//          $scope.terminatedPlot = terminatedCases;
-//          
-//          
-//          $scope.reload.showReloadCasesAvailable = false;
-//          $scope.reload.showReloadCasesEnabled = false;
-//          $scope.reload.showReloadCasesActive = false;
-//          $scope.reload.showReloadCasesMilestones = false;
-//          $scope.reload.showReloadCasesCompleted = false;
-//          $scope.reload.showReloadCasesTerminated = false;
-//        });
     }
     
 	}])
