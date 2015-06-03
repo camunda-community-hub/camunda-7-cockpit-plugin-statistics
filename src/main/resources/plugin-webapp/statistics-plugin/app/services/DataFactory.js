@@ -2,7 +2,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('DataFactory', ['$http', 'Uri', '$rootScope', function($http, Uri, $rootScope) {
 
 		var DataFactory = {};
+		
+		//TODO: DataFactory for process/case data, create ProcessDetailsFactory and CaseDetailsFactory
 
+		/*
+		 * process related data
+		 */
+		
 		DataFactory.allProcessInstanceCountsByState = [];
 		DataFactory.processesStartEnd = [];
 		DataFactory.allRunningUserTasksCountOByProcDefKey = [];
@@ -15,11 +21,26 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.aggregatedUsertasksByProcDef = [];
 		DataFactory.processDefinitions = [];
 		DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi = [];
+		DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey = [];
+		
+		/*
+		 * case related data
+		 */
+		
+		/*
+		 * includes counts on running and ended case definitions
+		 */
+		
+		DataFactory.historicCaseInstanceDetailsAggregatedByCasedsDefinitionId = {};
+		DataFactory.historicCaseActivityInstanceDetailsAggregatedByCasedDefinitionId = {};
 
+		/*
+		 * plugin related data
+		 */
+		
 		DataFactory.chosenTab = "";
 
 		DataFactory.prepForBroadcast = function(chosenTab) {
-			console.debug("changing currently opened tab to: "+chosenTab);
 			this.chosenTab = chosenTab;
 			this.broadcastItem();
 		};
@@ -260,9 +281,216 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
         console.debug("error in getting processInstanceRunningIncidentsCountOByProcDefRestApi");
       });
     }
+    
+    
+    DataFactory.getHistoricCaseInstanceDetailsAggregatedByCasedDefinitionId = function() {
+      return $http.get(Uri.appUri("/engine-rest/engine/default/history/case-instance"))
+      .success(function(data){
+        var caseDefinitionDetails = {};
+        
+        for(i in data) {
+          
+           /*
+            * iterate through instances
+            */
+          
+          var caseDefId = data[i].caseDefinitionId;
+          
+          if(!(caseDefId in caseDefinitionDetails)) {
+           caseDefinitionDetails[caseDefId] = {}; 
+           caseDefinitionDetails[caseDefId].definitionId = caseDefId;
+          }
+          
 
+          
+          if(!caseDefinitionDetails[caseDefId].active) {
+            caseDefinitionDetails[caseDefId].active = 0;
+          }
+          
+          if(data[i].active) {
+            caseDefinitionDetails[caseDefId].active+=1;
+          }
+          
+          if(!caseDefinitionDetails[caseDefId].completed) {
+            caseDefinitionDetails[caseDefId].completed = 0;
+          }
+          
+          if(data[i].completed) {
+            caseDefinitionDetails[caseDefId].completed+=1;
+          }
+          
+          if(!caseDefinitionDetails[caseDefId].terminated) {
+            caseDefinitionDetails[caseDefId].terminated = 0;
+          }
+          
+          if(data[i].terminated) {
+            caseDefinitionDetails[caseDefId].terminated+=1;
+          }
+          
+          if(!caseDefinitionDetails[caseDefId].durations) {
+            caseDefinitionDetails[caseDefId].durations = [];
+          }
+          
+          if(data[i].durationsInMillis && data[i].durationsInMillis>0) {
+            caseDefinitionDetails[caseDefId].durations.push(data[i].durationsInMillis);
+          }
+          
+        }
+        
+        DataFactory.historicCaseInstanceDetailsAggregatedByCasedDefinitionId = caseDefinitionDetails;
+        
+      })
+      .error(function() {
+        console.debug("error in getting caseDefinitionDetails");
+      });
+    }
+    
+    
+    //TODO ==> param in query aufnehmen
+    DataFactory.getHistoricCaseActivityInstanceDetailsAggregatedByCasedDefinitionId = function(caseDefinitionId) {
+      return $http.get(Uri.appUri("/engine-rest/engine/default/history/case-activity-instance"))
+      .success(function(data){
+        var historicCaseActivityInstanceDetails = {};
+        
+        for(i in data) {
+          
+           /*
+            * iterate through instances
+            */
+          
+          if(data[i].caseDefinitionId==caseDefinitionId) {
+            
+            activityId = data[i].caseActivityType+"_"+data[i].caseActivityName;
+            
+            
+            if(!(activityId in historicCaseActivityInstanceDetails)) {
+              historicCaseActivityInstanceDetails[activityId] = {}; 
+              historicCaseActivityInstanceDetails[activityId].activityId = activityId;
+              historicCaseActivityInstanceDetails[activityId].activityType = data[i].caseActivityType;
+              historicCaseActivityInstanceDetails[activityId].activityName = data[i].caseActivityName;
+            }
+            
+            
+            
+            if(!historicCaseActivityInstanceDetails[activityId].required) {
+              historicCaseActivityInstanceDetails[activityId].required = 0;
+            }
+            
+            if(data[i].required) {
+              historicCaseActivityInstanceDetails[activityId].required+=1;
+            }
+            
+            if(!historicCaseActivityInstanceDetails[activityId].enabled) {
+              historicCaseActivityInstanceDetails[activityId].enabled = 0;
+            }
+            
+            if(data[i].enabled) {
+              historicCaseActivityInstanceDetails[activityId].enabled+=1;
+            }
+            
+            if(!historicCaseActivityInstanceDetails[activityId].disabled) {
+              historicCaseActivityInstanceDetails[activityId].disabled = 0;
+            }
+            
+            if(data[i].disabled) {
+              historicCaseActivityInstanceDetails[activityId].disabled+=1;
+            }
+            
+            if(!historicCaseActivityInstanceDetails[activityId].available) {
+              historicCaseActivityInstanceDetails[activityId].available = 0;
+            }
+            
+            if(data[i].available) {
+              historicCaseActivityInstanceDetails[activityId].available+=1;
+            }
+            
+            if(!historicCaseActivityInstanceDetails[activityId].active) {
+              historicCaseActivityInstanceDetails[activityId].active = 0;
+            }
+            
+            if(data[i].active) {
+              historicCaseActivityInstanceDetails[activityId].active+=1;
+            }
+            
+            if(!historicCaseActivityInstanceDetails[activityId].completed) {
+              historicCaseActivityInstanceDetails[activityId].completed = 0;
+            }
+            
+            if(data[i].completed) {
+              historicCaseActivityInstanceDetails[activityId].completed+=1;
+            }
+            
+            if(!historicCaseActivityInstanceDetails[activityId].terminated) {
+              historicCaseActivityInstanceDetails[activityId].terminated = 0;
+            }
+            
+            if(data[i].terminated) {
+              historicCaseActivityInstanceDetails[activityId].terminated+=1;
+            }
+            
+            if(!historicCaseActivityInstanceDetails[activityId].durations) {
+              historicCaseActivityInstanceDetails[activityId].durations = [];
+            }
+            
+            if(data[i].durationsInMillis && data[i].durationsInMillis>0) {
+              historicCaseActivityInstanceDetails[activityId].durations.push(data[i].durationsInMillis);
+            }
+            
+          }
 
+        }
+        
+        DataFactory.historicCaseActivityInstanceDetailsAggregatedByCasedDefinitionId[caseDefinitionId] = historicCaseActivityInstanceDetails;
+        
+      })
+      .error(function() {
+        console.debug("error in getting caseDefinitionDetails");
+      });
+    }
 
+    DataFactory.getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey = function() {
+      return $http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance"))
+      .success(function(data){
+        
+        var preResults = {};
+        var results = [];
+        
+        for(i in data) {
+          if(data[i].processDefinitionKey in preResults) {
+            if(data[i].durationInMillis) {
+              preResults[data[i].processDefinitionKey].finished++;
+              preResults[data[i].processDefinitionKey].durations.push(data[i].durationInMillis);
+            }
+          } else {
+            if(data[i].durationInMillis) {
+              preResults[data[i].processDefinitionKey] = {
+                  finished:1,
+                  durations:[data[i].durationInMillis]
+              }
+            }
+          }
+        }
+
+        
+        for(j in preResults) {
+          results.push({
+            "key":j,
+            "y":preResults[j].finished,
+            "avg":preResults[j].durations.reduce(function(x, y) { return x + y; })/preResults[j].durations.length,
+            "min":Math.min.apply(Math,preResults[j].durations),
+            "max":Math.max.apply(Math,preResults[j].durations)
+          });
+        }
+        
+        DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey = results;
+        
+      })
+      .error(function(data) {
+        console.debug("error in getting EndedProcessInstancesOrderedByProcessDefinitionKey");
+      });
+    }
+    
+    
 		return DataFactory;
 
 	}]);
