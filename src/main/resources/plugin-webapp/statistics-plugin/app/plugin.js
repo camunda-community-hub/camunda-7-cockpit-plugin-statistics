@@ -18,11 +18,6 @@ ngDefine('cockpit.plugin.statistics-plugin', ['./lib/d3',
 			priority: 12
 		});
 		
-    ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.action', {
-      id: 'overlay',
-      priority: 20, 
-      url: 'plugin://statistics-plugin/static/app/overlay.html'
-    });
 
 		ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.tab', {
 			id: 'runtime',

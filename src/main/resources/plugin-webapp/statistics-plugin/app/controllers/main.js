@@ -7,7 +7,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', [
   './casesChartCtrl',
   './pluginSettingsCtrl',
   './durationsCtrl',
-  './overlayCtrl',
   './timingCtrl',
   './slaChartCtrl',
   './feedbackCtrl'
