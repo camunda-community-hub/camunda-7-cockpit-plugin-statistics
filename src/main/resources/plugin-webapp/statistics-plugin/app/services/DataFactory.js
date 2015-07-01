@@ -38,6 +38,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 */
 		
 		DataFactory.runningTaskInstancesByTaskDefinitionKey = []
+		
+		/*
+		 * hybrid data --> case/process 
+		 */
+		
+		DataFactory.runningTaskInstancesByTaskDefinitionKey = []
 
 		/*
 		 * plugin related data
