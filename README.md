@@ -5,9 +5,10 @@ camunda BPM community extension, which provides a statistics plugin for camunda 
 This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
 The current master release was successfully tested on Camunda 7.3.0 Final.
 
-![Screenshot: Timing](screenshot-timing.png)
 
-![Screenshot: Analytics](screenshot-analytics.png)
+![Screenshot: Process Instances](screenshot-process-instances.png)
+
+![Screenshot: Timing](screenshot-timing.png)
 
 ![Screenshot: Process Definition](screenshot-process-definition.png)
 
