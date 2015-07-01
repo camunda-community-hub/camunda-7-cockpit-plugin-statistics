@@ -39,6 +39,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				.then(function () {
 					TimingFactory.data=Format.bringNotSortedDataInPlotFormat(DataFactory.processesStartEnd,"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
 //					TimingFactory.data = Format.getClusterFromFormatedData(data,$scope.clusterThreshold);
+					console.debug("call kmeans from process instances");
 					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data,kMeans);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
 					if(TimingFactory.processInstancesList[0].processDefKey == "all"){

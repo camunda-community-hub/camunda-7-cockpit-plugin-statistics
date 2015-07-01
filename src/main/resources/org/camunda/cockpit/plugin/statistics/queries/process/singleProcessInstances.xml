@@ -5,7 +5,7 @@
     
     <resultMap id="processInstanceStartEndDurationMap"
       type="org.camunda.cockpit.plugin.statistics.dto.process.ProcessInstanceDurationDto">
-      <result property="processDefinitionKey" column="KEY_" />
+      <result property="processDefinitionKey" column="PROC_DEF_KEY_" />
       <result property="startTime" column="START_TIME" />
       <result property="endTime" column="END_TIME" />
       <result property="duration" column="DURATION_" />
@@ -14,39 +14,31 @@
     <select id="selectProcessInstancesStartEnd"
       resultMap="processInstanceStartEndDurationMap">
 	    SELECT
-	      KEY_,
+	      PROC_DEF_KEY_,
 	      DURATION_,
 	      <!-- start,end time -->
 	      <include refid="cockpit.statistics.commonDates"/>
 	    FROM
 	      ACT_HI_PROCINST E
-	        LEFT JOIN
-	          ACT_RE_PROCDEF def
-	        ON 
-	          def.ID_ = E.PROC_DEF_ID_
 	    WHERE
 	      E.ID_ = E.PROC_INST_ID_
-	    ORDER BY KEY_ , START_TIME_
+	    ORDER BY PROC_DEF_KEY_ , START_TIME_
     </select>
 
 	  <select id="selectDurationOfTheChosenProcesses" parameterType="String"  resultMap="processInstanceStartEndDurationMap">
 		  SELECT
-		      KEY_,
+		      PROC_DEF_KEY_,
 		      DURATION_,
 		      <!-- start,end time -->
           <include refid="cockpit.statistics.commonDates"/>
 		    FROM
 		      ACT_HI_PROCINST E
-		        LEFT JOIN
-		          ACT_RE_PROCDEF def
-		        ON 
-		          def.ID_ = E.PROC_DEF_ID_
 		    WHERE
 		      E.ID_ = E.PROC_INST_ID_
 		      AND
 		      DURATION_ IS NOT NULL
 		      ${parameter.procDefSpec}
-		    ORDER BY KEY_ , START_TIME_
+		    ORDER BY PROC_DEF_KEY_, START_TIME_
 	   </select>
     
     

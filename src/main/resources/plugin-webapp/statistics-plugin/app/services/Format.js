@@ -102,9 +102,11 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				};
 				var yValue = (typeof y == "undefined" || y == "")? i+1:eval("element."+y);
 				//remove this when query doesnt give nullvalues anymore
-				if(eval("element."+x) == null);
-				else  
+				if(eval("element."+x) == null) {
+				  
+				} else {  
 					formatedData[i].values.push({"x": parseX(eval("element."+x)), "y": parseY(yValue)  });
+				}
 			});
 			return formatedData;
 		};
@@ -195,10 +197,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 		
 		Format.getKMeansClusterFromFormatedData = function(formatedData, kmeans){
-			var clusterArray = [];
+			var clusterArray = new Array(formatedData.length);
 			for(var i=0; i<formatedData.length; i++){
 				if(formatedData[i].values.length == 0) continue;
-				clusterArray.push({"key":formatedData[i].key, "values":[]});
+				clusterArray[i] = {"key":formatedData[i].key, "values":[]};
 				var dataArray =[];
 				//bring x values in the format used by cluster algo
 				for(var j=0; j<formatedData[i].values.length; j++){
@@ -217,6 +219,20 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				  }
 				}; 
 			};
+			
+			var indicesToRemove = [];
+			
+			for(i in clusterArray) {
+			  if(!clusterArray[i].values) {
+			    indicesToRemove.push(i);
+			  }
+			}
+			
+			for(i in indicesToRemove) {
+			    clusterArray.splice(indicesToRemove[i], 1);
+			}
+			
+			console.debug("returning cluster array...");
 			return clusterArray;
 		}
 

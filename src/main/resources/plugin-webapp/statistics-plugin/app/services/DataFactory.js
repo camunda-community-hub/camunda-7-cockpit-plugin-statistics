@@ -178,7 +178,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			console.debug(procDefKey + dateSpec);
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/all-user-tasks?procDefKey="+procDefKey+"&dateSpecifier="+dateSpec))
 			.success(function(data) {
-			  console.debug(data);
 				var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(procDefKey, dateSpec);
 				console.debug("key where stored: "+key);
 				DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key] = data;
