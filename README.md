@@ -3,15 +3,12 @@ camunda Cockpit Statistics Plugin
 
 camunda BPM community extension, which provides a statistics plugin for camunda Cockpit.
 This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
-The current master release was successfully tested on an H2, MySQL, MSSQL and DB2 database with Camunda 7.2.0 Final.
+The current master release was successfully tested on Camunda 7.3.0 Final.
+
 
 ![Screenshot: Process Instances](screenshot-process-instances.png)
 
-![Screenshot: User Tasks](screenshot-user-tasks.png)
-
 ![Screenshot: Timing](screenshot-timing.png)
-
-![Screenshot: Analytics](screenshot-analytics.png)
 
 ![Screenshot: Process Definition](screenshot-process-definition.png)
 
@@ -34,7 +31,7 @@ Do not forget to customize build.properties in case you choose the latter option
 
 - implement some kind of caching mechanism
 - implement a generic dashboard mechanism
-- implement further graphs
+- implement further graphs (cases)
 - more tests
 
 **done**
@@ -61,7 +58,6 @@ Do not forget to customize build.properties in case you choose the latter option
 Within NovaTec Consulting GmbH the following persons are contributing
 
 - Ingo G&uuml;hring
-- Eberhard Heber
 
 
 ![NovaTec Consulting GmbH](http://www.novatec-gmbh.de/fileadmin/styles/novatec_v5.5/images/header-logo.jpg)

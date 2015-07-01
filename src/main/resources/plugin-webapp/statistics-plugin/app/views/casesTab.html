@@ -1,0 +1,128 @@
+<div ng-show="showInitialLoadButton">
+       <div class="row">
+         <div class="col-lg-2 col-lg-offset-5">
+           <button class="btn btn-primary" ng-click="applyDataToPlots()">Load Plots!</button>
+         </div>
+       </div>
+     </div>
+     <div ng-show="showApplyChangesAlert">
+       <div class="row">
+         <div class="col-lg-6 col-lg-offset-3 ">
+           <div class="alert alert-info">
+             Your current tab`s settings have changed, you might want to refresh the plot...&nbsp;&nbsp;&nbsp;<button class="btn btn-primary" ng-click="applyDataToPlots()">Refresh</button>
+           </div>
+         </div>
+       </div>
+     </div>
+     <div id="plotContainer">
+       <div class="row">
+        <div class="{{widthClass}}" >
+           <div ng-show="reload.showReloadCasesAvailable">
+            <div class="row">
+              <div class="col-lg-6 col-lg-offset-3">
+                <div class="progress">
+                  <div class="progress progress-striped active">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nvd3 options="availableOptions" data="availableCaseInstances" id="availableCases"></nvd3>
+        </div>
+        <div class="{{widthClass}}">
+          <div ng-show="reload.showReloadCasesEnabled">
+            <div class="row">
+              <div class="col-lg-6 col-lg-offset-3">
+                <div class="progress">
+                  <div class="progress progress-striped active">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nvd3 options="enabledOptions" data="enabledCaseInstances" id="enabledCases"></nvd3>
+        </div>
+        <div class="{{widthClass}}" state="running">
+          <div ng-show="reload.showReloadCasesActive">
+            <div class="row">
+              <div class="col-lg-6 col-lg-offset-3">
+                <div class="progress">
+                  <div class="progress progress-striped active">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nvd3 options="activeOptions" data="activePlot" id="activeCases"></nvd3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="{{widthClass}}">
+          <p class="text-center">{{availablePlotLabel}}</p>
+        </div>
+        <div class="{{widthClass}}">
+          <p class="text-center">{{enabledPlotLabel}}</p>
+        </div>
+        <div class="{{widthClass}}">
+          <p class="text-center">{{activePlotLabel}}</p>
+        </div>
+      </div>
+    <div class="row">
+        <div class="{{widthClass}}" >
+           <div ng-show="reload.showReloadCasesMilestones">
+            <div class="row">
+              <div class="col-lg-6 col-lg-offset-3">
+                <div class="progress">
+                  <div class="progress progress-striped active">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nvd3 options="milestonesOptions" data="milestonesCaseInstances" id="milestonesCases"></nvd3>
+        </div>
+        <div class="{{widthClass}}">
+          <div ng-show="reload.showReloadCasesCompleted">
+            <div class="row">
+              <div class="col-lg-6 col-lg-offset-3">
+                <div class="progress">
+                  <div class="progress progress-striped active">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nvd3 options="completedOptions" data="completedPlot" id="completedCases"></nvd3>
+        </div>
+        <div class="{{widthClass}}" state="running">
+          <div ng-show="reload.showReloadCasesTerminated">
+            <div class="row">
+              <div class="col-lg-6 col-lg-offset-3">
+                <div class="progress">
+                  <div class="progress progress-striped active">
+                    <div class="bar" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nvd3 options="terminatedOptions" data="terminatedPlot" id="terminatedCases"></nvd3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="{{widthClass}}">
+          <p class="text-center">{{milestonesPlotLabel}}</p>
+        </div>
+        <div class="{{widthClass}}">
+          <p class="text-center">{{completedPlotLabel}}</p>
+        </div>
+        <div class="{{widthClass}}">
+          <p class="text-center">{{terminatedPlotLabel}}</p>
+        </div>
+      </div>
+     </div>

@@ -19,12 +19,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
     				'<p>count:<b>' +  y + '</b><br/>type:<b>'+
     				e.point.type+	
     				'</b><br/>average Duration:<b>'+
-    				(e.point.avg/1000).toFixed(2)+
-    				's</b><br/>minimal Duration:<b>'+
-    				(e.point.min/1000).toFixed(2)+
-    				's</b><br/>maximal Duration:<b>'+
-    				(e.point.max/1000).toFixed(2)+
-    				's</b></p>'
+    				(e.point.avg/1000/60).toFixed(2)+
+    				'min </b><br/>minimal Duration:<b>'+
+    				(e.point.min/1000/60).toFixed(2)+
+    				'min </b><br/>maximal Duration:<b>'+
+    				(e.point.max/1000/60).toFixed(2)+
+    				'min </b></p>'
     				},
                 noData:"No Processes met the requirements",
                 legend: {
@@ -43,14 +43,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
             type: 'lineChart',
             height: 450,
             x: function(d){return d.x;},
-            y: function(d){return d.y/1000;},
+            y: function(d){return d.y;},
             showLabels: true,
             yAxis: { 
               tickFormat:function(d) {
-                return d+" s";
+                return d+" min";
               },
               showMaxMin:false,
-              axisLabel: function(d){ return "duration (s)";}
+              axisLabel: function(d){ return "duration (min)";}
             },
             xAxis: { 
               axisLabel: "top 100 longest instances"
@@ -111,16 +111,17 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.showLinePlot = function() {
       DataFactory.getAllHistoricActivitiesInformationByProcDefKey($scope.processDefinition.key,$scope.selectedActivity.name, $scope.selectedActivity.type).then(function() {
         var historicActivityInformation = DataFactory.allHistoricActivitiesInformationByProcDefKey[$scope.processDefinition.key];
+        
         var filteredData = [];
         for(i in historicActivityInformation) {
-          if(historicActivityInformation[i].duration) {
+          if(historicActivityInformation[i].duration>0) {
             filteredData.push({
               "x":i,
-              "y":(historicActivityInformation[i].duration/1000).toFixed(2),
+              "y":(historicActivityInformation[i].duration/1000/60).toFixed(2),
               "id":historicActivityInformation[i].id,
               "start":historicActivityInformation[i].startTime,
               "end":historicActivityInformation[i].endTime
-              });
+             });  
           }
         }
         $scope.historicActivityPlotData =  [{
