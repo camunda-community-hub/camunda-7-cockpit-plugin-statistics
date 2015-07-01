@@ -8,12 +8,12 @@
 	   </tab-heading>
      <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/processesTab.html'"></div>
 	</tab>
-	<tab ng-controller="casesChartCtrl" select="handleTabClick('cases')">
+	<!-- <tab ng-controller="casesChartCtrl" select="handleTabClick('cases')">
    <tab-heading ng-mouseover="showRefreshIcon=true" ng-mouseleave="showRefreshIcon=false">
      <span>Cases&nbsp;</span><a class="btn btn-link" ng-show="showRefreshIcon" ng-click="applyDataToPlots()"><i class="icon-repeat"></i></a>
    </tab-heading>
    <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/casesTab.html'"></div>
-  </tab>
+  </tab> -->
   <tab heading="Timing" select="handleTabClick('startEnd')"
 		ng-controller="timingCtrl">
 		  <div class="row">

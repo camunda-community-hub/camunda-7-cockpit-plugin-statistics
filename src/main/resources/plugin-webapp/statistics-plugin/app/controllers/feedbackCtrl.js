@@ -8,7 +8,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', ['require'], function(m
         $scope.feedbackText = feedbackText;
         
         $scope.feedbackCategory = 'Feature-Request';
-        $scope.feedbackSubject = 'Tab - Overview';
+        $scope.feedbackSubject = 'Tab - Processes';
         
         $scope.sendFeedback = function() {
           var body = "";
