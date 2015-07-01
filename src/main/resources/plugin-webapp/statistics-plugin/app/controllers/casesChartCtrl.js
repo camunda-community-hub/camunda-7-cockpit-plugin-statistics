@@ -243,10 +243,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
         if(data) {
           
           switch(typeOfPlot) {
-
-        if(data) {
-          
-          switch(typeOfPlot) {
             case "active":
               drillInActive(data, caseDefinitionId);
               break;
