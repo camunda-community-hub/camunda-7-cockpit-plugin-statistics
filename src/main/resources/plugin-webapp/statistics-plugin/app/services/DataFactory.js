@@ -33,6 +33,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		
 		DataFactory.historicCaseInstanceDetailsAggregatedByCasedsDefinitionId = {};
 		DataFactory.historicCaseActivityInstanceDetailsAggregatedByCasedDefinitionId = {};
+		
+		/*
+		 * hybrid data --> case/process 
+		 */
+		
+		DataFactory.runningTaskInstancesByTaskDefinitionKey = []
 
 		/*
 		 * plugin related data
@@ -350,97 +356,225 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
     DataFactory.getHistoricCaseActivityInstanceDetailsAggregatedByCasedDefinitionId = function(caseDefinitionId) {
       return $http.get(Uri.appUri("/engine-rest/engine/default/history/case-activity-instance"))
       .success(function(data){
-        var historicCaseActivityInstanceDetails = {};
         
-        for(i in data) {
+        
+        if(caseDefinitionId!=undefined) {
           
-           /*
-            * iterate through instances
-            */
+          var historicCaseActivityInstanceDetails = {};
           
-          if(data[i].caseDefinitionId==caseDefinitionId) {
+          for(i in data) {
             
-            activityId = data[i].caseActivityType+"_"+data[i].caseActivityName;
+             /*
+              * iterate through instances
+              */
             
+            var shortenendCaseDefinitionId = data[i].caseDefinitionId.substring(0,data[i].caseDefinitionId.indexOf(":"));           
+            var idAfterShortened = data[i].caseDefinitionId.substring(data[i].caseDefinitionId.indexOf(":")+1);
+            var definitionVersion = idAfterShortened.substring(0,idAfterShortened.indexOf(":"));
             
-            if(!(activityId in historicCaseActivityInstanceDetails)) {
-              historicCaseActivityInstanceDetails[activityId] = {}; 
-              historicCaseActivityInstanceDetails[activityId].activityId = activityId;
-              historicCaseActivityInstanceDetails[activityId].activityType = data[i].caseActivityType;
-              historicCaseActivityInstanceDetails[activityId].activityName = data[i].caseActivityName;
+            if(data[i].caseDefinitionId==caseDefinitionId) {
+              
+              activityId = data[i].caseActivityType+"_"+data[i].caseActivityName;
+              
+              
+              if(!(activityId in historicCaseActivityInstanceDetails)) {
+                historicCaseActivityInstanceDetails[activityId] = {
+                    activityType : data[i].caseActivityType,
+                    activityId : activityId,
+                    activityName: data[i].caseActivityName,
+                    caseDefinitionId:caseDefinitionId,
+                    shortCaseDefinitionId: shortenendCaseDefinitionId
+                }; 
+                
+                if(data[i].caseActivityType=="humanTask") {
+                  historicCaseActivityInstanceDetails[activityId].taskDefinitionKey = data[i].caseActivityId;
+                }
+                
+              }
+              
+              
+              
+              if(!historicCaseActivityInstanceDetails[activityId].required) {
+                historicCaseActivityInstanceDetails[activityId].required = 0;
+              }
+              
+              if(data[i].required) {
+                historicCaseActivityInstanceDetails[activityId].required+=1;
+              }
+              
+              if(!historicCaseActivityInstanceDetails[activityId].enabled) {
+                historicCaseActivityInstanceDetails[activityId].enabled = 0;
+              }
+              
+              if(data[i].enabled) {
+                historicCaseActivityInstanceDetails[activityId].enabled+=1;
+              }
+              
+              if(!historicCaseActivityInstanceDetails[activityId].disabled) {
+                historicCaseActivityInstanceDetails[activityId].disabled = 0;
+              }
+              
+              if(data[i].disabled) {
+                historicCaseActivityInstanceDetails[activityId].disabled+=1;
+              }
+              
+              if(!historicCaseActivityInstanceDetails[activityId].available) {
+                historicCaseActivityInstanceDetails[activityId].available = 0;
+              }
+              
+              if(data[i].available) {
+                historicCaseActivityInstanceDetails[activityId].available+=1;
+              }
+              
+              if(!historicCaseActivityInstanceDetails[activityId].active) {
+                historicCaseActivityInstanceDetails[activityId].active = 0;
+              }
+              
+              if(data[i].active) {
+                historicCaseActivityInstanceDetails[activityId].active+=1;
+              }
+              
+              if(!historicCaseActivityInstanceDetails[activityId].completed) {
+                historicCaseActivityInstanceDetails[activityId].completed = 0;
+              }
+              
+              if(data[i].completed) {
+                historicCaseActivityInstanceDetails[activityId].completed+=1;
+              }
+              
+              if(!historicCaseActivityInstanceDetails[activityId].terminated) {
+                historicCaseActivityInstanceDetails[activityId].terminated = 0;
+              }
+              
+              if(data[i].terminated) {
+                historicCaseActivityInstanceDetails[activityId].terminated+=1;
+              }
+              
+              if(!historicCaseActivityInstanceDetails[activityId].durations) {
+                historicCaseActivityInstanceDetails[activityId].durations = [];
+              }
+              
+              if(data[i].durationInMillis && data[i].durationInMillis>0) {
+                historicCaseActivityInstanceDetails[activityId].durations.push(data[i].durationInMillis);
+              }
+              
             }
-            
-            
-            
-            if(!historicCaseActivityInstanceDetails[activityId].required) {
-              historicCaseActivityInstanceDetails[activityId].required = 0;
-            }
-            
-            if(data[i].required) {
-              historicCaseActivityInstanceDetails[activityId].required+=1;
-            }
-            
-            if(!historicCaseActivityInstanceDetails[activityId].enabled) {
-              historicCaseActivityInstanceDetails[activityId].enabled = 0;
-            }
-            
-            if(data[i].enabled) {
-              historicCaseActivityInstanceDetails[activityId].enabled+=1;
-            }
-            
-            if(!historicCaseActivityInstanceDetails[activityId].disabled) {
-              historicCaseActivityInstanceDetails[activityId].disabled = 0;
-            }
-            
-            if(data[i].disabled) {
-              historicCaseActivityInstanceDetails[activityId].disabled+=1;
-            }
-            
-            if(!historicCaseActivityInstanceDetails[activityId].available) {
-              historicCaseActivityInstanceDetails[activityId].available = 0;
-            }
-            
-            if(data[i].available) {
-              historicCaseActivityInstanceDetails[activityId].available+=1;
-            }
-            
-            if(!historicCaseActivityInstanceDetails[activityId].active) {
-              historicCaseActivityInstanceDetails[activityId].active = 0;
-            }
-            
-            if(data[i].active) {
-              historicCaseActivityInstanceDetails[activityId].active+=1;
-            }
-            
-            if(!historicCaseActivityInstanceDetails[activityId].completed) {
-              historicCaseActivityInstanceDetails[activityId].completed = 0;
-            }
-            
-            if(data[i].completed) {
-              historicCaseActivityInstanceDetails[activityId].completed+=1;
-            }
-            
-            if(!historicCaseActivityInstanceDetails[activityId].terminated) {
-              historicCaseActivityInstanceDetails[activityId].terminated = 0;
-            }
-            
-            if(data[i].terminated) {
-              historicCaseActivityInstanceDetails[activityId].terminated+=1;
-            }
-            
-            if(!historicCaseActivityInstanceDetails[activityId].durations) {
-              historicCaseActivityInstanceDetails[activityId].durations = [];
-            }
-            
-            if(data[i].durationsInMillis && data[i].durationsInMillis>0) {
-              historicCaseActivityInstanceDetails[activityId].durations.push(data[i].durationsInMillis);
+
+          }
+          
+          //calculate min/max/mean
+          
+          for(i in historicCaseActivityInstanceDetails) {
+            if(historicCaseActivityInstanceDetails[i].durations && historicCaseActivityInstanceDetails[i].durations.length>0) {
+              historicCaseActivityInstanceDetails[i].minDuration = d3.min(historicCaseActivityInstanceDetails[i].durations);
+              historicCaseActivityInstanceDetails[i].maxDuration = d3.max(historicCaseActivityInstanceDetails[i].durations);
+              historicCaseActivityInstanceDetails[i].meanDuration = d3.mean(historicCaseActivityInstanceDetails[i].durations);
             }
             
           }
 
+          
+          DataFactory.historicCaseActivityInstanceDetailsAggregatedByCasedDefinitionId[caseDefinitionId] = historicCaseActivityInstanceDetails;  
+          
+        } else {
+          
+          var historicCaseActivityInstanceDetails = {};
+          
+          var foundCaseInstanceIdsAvailable = [];
+          var foundCaseInstanceIdsEnabled = [];
+          var foundCaseInstanceIdsActive = [];
+          var foundCaseInstanceIdsMilestones = [];
+          var foundCaseInstanceIdsTerminated = [];
+          var foundCaseInstanceIdsCompleted = [];
+          
+          for(i in data) {
+            
+             /*
+              * iterate through instances
+              */
+            
+            var shortenendCaseDefinitionId = data[i].caseDefinitionId.substring(0,data[i].caseDefinitionId.indexOf(":"));           
+            var idAfterShortened = data[i].caseDefinitionId.substring(data[i].caseDefinitionId.indexOf(":")+1);
+            var definitionVersion = idAfterShortened.substring(0,idAfterShortened.indexOf(":"));
+            
+
+            if(!(shortenendCaseDefinitionId in historicCaseActivityInstanceDetails)) {
+              
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId] = {
+                  caseDefinitionId : data[i].caseDefinitionId,
+                  shortDefinitionId : shortenendCaseDefinitionId,
+                  version: definitionVersion,
+                  available:0,
+                  ended:0,
+                  active:0,
+                  milestones:0,
+                  completed:0,
+                  durations:[],
+                  minDuration:0,
+                  maxDuration:0,
+                  meanDuration:0,
+                  terminated:0
+              };
+              
+            }
+
+            
+            if(data[i].enabled && foundCaseInstanceIdsEnabled.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].enabled+=1;
+              foundCaseInstanceIdsEnabled.push(data[i].caseInstanceId);
+            }
+                       
+            if(data[i].available && foundCaseInstanceIdsAvailable.indexOf(data[i].caseInstanceId)==-1) {
+              if(data[i].caseActivityType!="milestone") {
+                historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].available+=1;
+                foundCaseInstanceIdsAvailable.push(data[i].caseInstanceId);
+              } 
+            }
+            
+            if(data[i].available && foundCaseInstanceIdsMilestones.indexOf(data[i].caseInstanceId)==-1) {
+              if(data[i].caseActivityType=="milestone") {
+                historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].milestones+=1;
+                foundCaseInstanceIdsMilestones.push(data[i].caseInstanceId);
+              } 
+            }
+            
+            if(data[i].active && foundCaseInstanceIdsActive.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].active+=1;
+              foundCaseInstanceIdsActive.push(data[i].caseInstanceId);
+            }
+            
+            if(data[i].completed && foundCaseInstanceIdsCompleted.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].completed+=1;
+              foundCaseInstanceIdsCompleted.push(data[i].caseInstanceId);
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].durations.push(data[i].durationInMillis);
+            }            
+          
+            if(data[i].terminated && foundCaseInstanceIdsTerminated.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].terminated+=1;
+              foundCaseInstanceIdsTerminated.push(data[i].caseInstanceId);
+            }
+            
+          }
+          
+          
+          //calculate min/max/mean
+          
+          for(i in historicCaseActivityInstanceDetails) {
+            if(historicCaseActivityInstanceDetails[i].durations && historicCaseActivityInstanceDetails[i].durations.length>0) {
+              historicCaseActivityInstanceDetails[i].minDuration = d3.min(historicCaseActivityInstanceDetails[i].durations);
+              historicCaseActivityInstanceDetails[i].maxDuration = d3.max(historicCaseActivityInstanceDetails[i].durations);
+              historicCaseActivityInstanceDetails[i].meanDuration = d3.mean(historicCaseActivityInstanceDetails[i].durations);
+            }
+            
+          }
+
+          
+          DataFactory.historicCaseActivityInstanceDetailsAggregatedByCasedDefinitionId["data"] = historicCaseActivityInstanceDetails;  
+          
+          
         }
         
-        DataFactory.historicCaseActivityInstanceDetailsAggregatedByCasedDefinitionId[caseDefinitionId] = historicCaseActivityInstanceDetails;
+        
         
       })
       .error(function() {
@@ -488,6 +622,33 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
       .error(function(data) {
         console.debug("error in getting EndedProcessInstancesOrderedByProcessDefinitionKey");
       });
+    }
+    
+    DataFactory.getRunningTaskInstancesByTaskDefinitionKey = function(taskDefinitionKey) {
+      return $http.get(Uri.appUri("/engine-rest/engine/default/history/task?taskDefinitionKey="+taskDefinitionKey))
+      .success(function(data){
+        
+        var result = {
+            assigned: 0,
+            name: data[0].name,
+            count: 0
+        };
+
+        for(i in data) {
+          if(!data[i].deleteReason){
+            result.count++;
+            if(data[i].assignee) {
+              result.assigned++;
+            }
+          }
+        }
+        
+        DataFactory.runningTaskInstancesByTaskDefinitionKey[taskDefinitionKey] = result;
+      })
+      .error(function(data) {
+        console.debug("error in getting historicTaskInstancesByTaskDefinitionKey");
+      });
+      
     }
     
     
