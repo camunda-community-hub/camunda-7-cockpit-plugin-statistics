@@ -1,0 +1,83 @@
+<div ng-show="showInitialLoadButton">
+	<div class="row">
+		<div class="col-lg-2 col-lg-offset-5">
+			<button class="btn btn-primary" ng-click="applyDataToPlots()">Load
+				Plots!</button>
+		</div>
+	</div>
+</div>
+<div ng-show="showApplyChangesAlert">
+	<div class="row">
+		<div class="col-lg-6 col-lg-offset-3 ">
+			<div class="alert alert-info">
+				Your current tab`s settings have changed, you might want to refresh
+				the plot...&nbsp;&nbsp;&nbsp;
+				<button class="btn btn-primary" ng-click="applyDataToPlots()">Refresh</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="plotContainer">
+	<div class="row">
+		<div class="{{widthClass}}" state="running"
+			ng-show="myPlotsPluginSettings.runningPI.toPlot">
+			<div ng-show="reload.showReloadProcessRunning">
+				<div class="row">
+					<div class="col-lg-6 col-lg-offset-3">
+						<div class="progress">
+							<div class="progress progress-striped active">
+								<div class="bar" style="width: 100%;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<nvd3 options="runningOptions" data="running" id="running" api="api"></nvd3>
+		</div>
+		<div class="{{widthClass}}"
+			ng-show="myPlotsPluginSettings.endedPI.toPlot">
+			<div ng-show="reload.showReloadProcessEnded">
+				<div class="row">
+					<div class="col-lg-6 col-lg-offset-3">
+						<div class="progress">
+							<div class="progress progress-striped active">
+								<div class="bar" style="width: 100%;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
+		</div>
+		<div class="{{widthClass}}"
+			ng-show="myPlotsPluginSettings.failedPI.toPlot">
+			<div ng-show="reload.showReloadProcessFailed">
+				<div class="row">
+					<div class="col-lg-6 col-lg-offset-3">
+						<div class="progress">
+							<div class="progress progress-striped active">
+								<div class="bar" style="width: 100%;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<nvd3 options="failedOptions" data="failed" id="failed"></nvd3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="{{widthClass}}"
+			ng-show="myPlotsPluginSettings.runningPI.toPlot && showPlotDescriptions">
+			<p class="text-center">{{runningPlotLabel}}</p>
+		</div>
+		<div class="{{widthClass}}"
+			ng-show="myPlotsPluginSettings.endedPI.toPlot && showPlotDescriptions">
+			<p class="text-center">{{endedPlotLabel}}</p>
+		</div>
+		<div class="{{widthClass}}"
+			ng-show="myPlotsPluginSettings.failedPI.toPlot && showPlotDescriptions">
+			<p class="text-center">{{failedPlotLabel}}</p>
+		</div>
+	</div>
+</div>
+</tab>

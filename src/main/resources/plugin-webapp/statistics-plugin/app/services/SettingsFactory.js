@@ -93,14 +93,54 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
             }
           }
           
+          var indizesToRemoveFromOldList = [];
+          for (var i = 1; i <= settingsToReturn.overview.runningPI.filterProcessDefKeys.length; i++) {
+            indizesToRemoveFromOldList.push(i);
+          }
+          
+          var matchedExistingKeys = 0;
+          var oldLengthOfKeysToFilter = settingsToReturn.overview.runningPI.filterProcessDefKeys.length;
+          
           for(i in processKeysToFilter) {
             
             if(fromLocalSettings) {
               /*
                * see if list of available process definition keys changed...
-               * TODO --> create Button to refresh settings (scan local storage and ggf. expand with new information);
-               */
+               *                */
 
+              var newProcessDefinitionKey = true;
+              
+              for(j in settingsToReturn.overview.runningPI.filterProcessDefKeys) {
+                if(processKeysToFilter[i] == settingsToReturn.overview.runningPI.filterProcessDefKeys[j].processKey) {
+                  newProcessDefinitionKey = false;
+                  indizesToRemoveFromOldList.splice(indizesToRemoveFromOldList.indexOf(j),1);
+                  matchedExistingKeys++;
+                }     
+              }
+              
+             
+              if(newProcessDefinitionKey) {
+                //new key ==> add to filter list
+                settingsToReturn.overview.runningPI.filterProcessDefKeys.push({
+                  plot:true,
+                  processKey:processKeysToFilter[i]
+                });
+                settingsToReturn.overview.endedPI.filterProcessDefKeys.push({
+                  plot:true,
+                  processKey:processKeysToFilter[i]
+                });
+                settingsToReturn.overview.failedPI.filterProcessDefKeys.push({
+                  plot:true,
+                  processKey:processKeysToFilter[i]
+                });
+                settingsToReturn.timing.processDefKeysToFilter.push({
+                  plot:true,
+                  processKey:processKeysToFilter[i]
+                });
+                
+                //check if any definition was removed
+              }
+                
             } else {
               settingsToReturn.overview.runningPI.filterProcessDefKeys.push({
                 plot:true,
@@ -121,7 +161,34 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
             }
             
           }
-       
+          
+          if(matchedExistingKeys<oldLengthOfKeysToFilter) {
+            
+            /*
+             * process definitions were removed
+             * --> remove them from all lists
+             */
+            
+            var indizesDeleted = 0;
+            for(i in indizesToRemoveFromOldList) {
+              
+              /*
+               * only works because list of indizes is ordered from 0 to n
+               */
+              var  indexToDelete = indizesToRemoveFromOldList[i]-indizesDeleted;
+
+              
+              settingsToReturn.overview.runningPI.filterProcessDefKeys.splice(indexToDelete,1);
+              settingsToReturn.overview.endedPI.filterProcessDefKeys.splice(indexToDelete,1);
+              settingsToReturn.overview.failedPI.filterProcessDefKeys.splice(indexToDelete,1);
+              settingsToReturn.timing.processDefKeysToFilter.splice(indexToDelete,1);
+              
+              indizesDeleted++;              
+              
+            }
+            
+          }
+          
           deferred.resolve(settingsToReturn);
           
         });

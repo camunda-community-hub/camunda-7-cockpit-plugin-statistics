@@ -3,7 +3,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', ['require'], function(m
   module.controller('dashboardController',
 		['$scope','DataFactory' , '$http', 'Uri', '$templateCache', '$modal', function($scope, DataFactory , $http, Uri, $templateCache,$modal) {	  
 		  
-		  $('head').append('<link rel="stylesheet" href="'+require.toUrl('../lib/nv.d3.min.css')+'" type="text/css" />');
+		  //$('head').append('<link rel="stylesheet" href="'+require.toUrl('../../../api/cockpit/plugin/statistics-plugin/static/app/lib/pluginstyles.css')+'" type="text/css" />');
 
 		  
 		  $scope.handleTabClick = function(chosenTab) {

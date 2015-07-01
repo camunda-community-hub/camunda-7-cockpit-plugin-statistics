@@ -1,0 +1,59 @@
+<div class="row" ng-controller="durationsCtrl">
+    <div class="col-lg-8" id="plot4">
+      <div id="regPlotDiv" ng-if="selectedView.name== views[0].name">
+        <regression-plot data="data" options="options"> </regression-plot>
+      </div>
+      <div id="stackChart" ng-if="selectedView.name== views[1].name">
+        <nvd3 options="options" data="data"></nvd3>
+      </div>
+    </div>
+    <div class="col-lg-4" id="plot6">
+      <h5>Mark process(es) to plot</h5>
+      <form class="form-horizontal">
+        <div class="control-group">
+          <select ng-model="selected"
+            ng-options="key.processDefinitionKey for key in processDefWithFinishedInstances"
+            ng-change="getDurations()" multiple ng-multiple="true">
+          </select>
+        </div>
+        <h5>select view</h5>
+        <div class="control-group">
+          <select ng-model="selectedView"
+            ng-options="view.name for view in views"
+            ng-change="getDurations()">
+          </select>
+          <!-- <a ng-href='' ng-click="showInfo()"> <i
+                class="icon-info-sign"></i>
+                follows in a later version
+              </a> -->
+          <!--              <div ng-if = "showInfo"> -->
+          <!--                {{selectedView.info}}</div> -->
+        </div>
+        <div ng-if="selectedView.name== views[0].name">
+          <div class="control-group">
+            <label class="checkbox"> <input ng-model="options.scatter"
+              ng-checked="1" type="checkbox"> show scatter plot
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="checkbox"> <input ng-model="options.spline"
+              ng-checked="1" type="checkbox" /> show splines
+            </label>
+          </div>
+          <div class="control-group">
+            <label class="checkbox"> <input
+              ng-model="options.regression" ng-checked="0" type="checkbox" />
+              draw regression
+            </label>
+          </div>
+        </div>
+        <div ng-if="selectedView.name==views[1].name">
+          <h6>
+            adjust number of bins
+            <h6>
+              <input type="number" min="1" step="1" value="10"
+                ng-model="numberOfBins.number" ng-change="getDurations()">
+        </div>
+      </form>
+    </div>
+  </div>

@@ -1,5 +1,5 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
-	module.controller('pieChartCtrl',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', '$http', '$modal', '$interval', 
+	module.controller('processesChartController',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', '$http', '$modal', '$interval', 
 	                                  function($scope, element, Uri, DataFactory, SettingsFactory, $http,$modal, $interval){
 	  
 	  $scope.drilledInRunning = false;
@@ -20,7 +20,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	      showReloadProcessEnded:false,
 	      showReloadProcessFailed:false
 	  };
-	  $scope.widthClass = "span4";
+	  $scope.widthClass = "col-lg-4";
 	  
 	  $scope.cacheKiller = null;
     
@@ -31,8 +31,20 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	  $scope.failedPlotLabel = "Instances with Incidents";
 	  
     $scope.$on('chosenTabChangedBroadcast', function() {
-      if(DataFactory.chosenTab=="overview") {
-        $scope.applyDataToPlots();
+      if(DataFactory.chosenTab=="processes") {
+        if($scope.myPlotsPluginSettings) {
+          if($scope.drilledInEnded) {
+            drillOut("", "ended");
+          }
+          if($scope.drilledInIncidents) {
+            drillOut("", "incidents");
+          }
+          if($scope.drilledInRunning) {
+            drillOut("", "running");
+          }
+          $scope.applyDataToPlots();
+        }
+        
       }
     });
     
@@ -307,12 +319,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
           '<p>count:<b>' +  y + '</b><br/>type:<b>'+
           e.point.type+ 
           '</b><br/>average Duration:<b>'+
-          (e.point.avg/1000).toFixed(2)+
-          's</b><br/>minimal Duration:<b>'+
-          (e.point.min/1000).toFixed(2)+
-          's</b><br/>maximal Duration:<b>'+
-          (e.point.max/1000).toFixed(2)+
-          's</b></p>'
+          (e.point.avg/1000/60).toFixed(2)+
+          'min</b><br/>minimal Duration:<b>'+
+          (e.point.min/1000/60).toFixed(2)+
+          'min</b><br/>maximal Duration:<b>'+
+          (e.point.max/1000/60).toFixed(2)+
+          'min</b></p>'
         }
 		}
 				
@@ -321,15 +333,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		  
 		  var e = [];
 		  
-      for(i in endedData){
+      for(var i=0; i<endedData.length; i++){
         if($scope.myPlotsPluginSettings.endedPI.toPlot) {
-          if(endedData[i].endedInstanceCount) {
-            if($scope.myPlotsPluginSettings.endedPI.keysToSkip.indexOf(endedData[i].processDefinitionKey)==-1) {
-              e.push({"key":endedData[i].processDefinitionKey,
-                "y":endedData[i].endedInstanceCount,
-                "avg":endedData[i].duration,
-                "min":endedData[i].minDuration,
-                "max":endedData[i].maxDuration});
+          if(endedData[i].y) {
+            if($scope.myPlotsPluginSettings.endedPI.keysToSkip.indexOf(endedData[i].key)==-1) {
+              e.push({"key":endedData[i].key,
+                "y":endedData[i].y,
+                "avg":endedData[i].avg,
+                "min":endedData[i].min,
+                "max":endedData[i].max});
             }
           }
         }
@@ -454,16 +466,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		   * aggregated data for ended plot
 		   */
 		  
-      DataFactory
-      .getAllProcessInstanceCountsByState()
-      .then(function() {
-        
+		  DataFactory
+		  .getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey()
+		  .then(function(){
         $scope.reload.showReloadProcessEnded = false;
         $scope.showPlotDescriptions = true;
-        setEndedPlotData(DataFactory.allProcessInstanceCountsByState["data"]);
-        
-        
-      });
+        setEndedPlotData(DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey);
+		  });
       
       /*
        * data for running and incidents

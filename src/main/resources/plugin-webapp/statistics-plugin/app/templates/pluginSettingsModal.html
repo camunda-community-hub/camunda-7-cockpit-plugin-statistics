@@ -1,0 +1,101 @@
+<script type="text/ng-template" id="pluginSettingsModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Statistics Plugin Settings</h3>
+        </div>
+        <div class="modal-body" ng-init="init()">
+            <div ng-show="pluginSettings.supported">
+              <tabset>
+                <tab heading="General" disabled="true">
+                  <form class="form-horizontal">
+                    <div class="form-group">
+                      <label class="control-label">Cache expiration (ms)</label>
+                      <div>
+                        <input type="number" ng-model="pluginSettings.general.cacheExpirationInMillis" required>
+                      </div>
+                    </div>
+                  </form>     
+                </tab>
+                <tab heading="Settings 'Processes'" active="true">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="pluginSettings.overview.loadOnTabLoad">
+                      <span ng-mouseover="showTooltipOverview=true" ng-mouseleave="showTooltipOverview=false">auto refresh &nbsp;<small ng-show="showTooltipOverview"><em><br>Plots will be automatically refreshed during tab load or after a settings change</em></small></span>
+                    </label>
+                  </div>
+                  <hr>
+                  <tabset type="pills" justified="true">
+                    <tab heading="Running Instances">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" ng-model="pluginSettings.overview.runningPI.toPlot"> Show 'Running' Plot
+                        </label>
+                      </div>
+                      <h3>Process definition keys to consider</h3>
+                      <div ng-repeat="processKey in pluginSettings.overview.runningPI.filterProcessDefKeys">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                          </label>
+                        </div>
+                      </div>
+                    </tab>
+                    <tab heading="Ended Instances">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" ng-model="pluginSettings.overview.endedPI.toPlot"> Show 'Ended' Plot
+                        </label>
+                      </div>
+                      <h3>Process definition keys to consider</h3>
+                      <div ng-repeat="processKey in pluginSettings.overview.endedPI.filterProcessDefKeys">
+                        <div class="checkbox">
+                          <label>
+                            <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                          </label>
+                        </div>
+                      </div>
+                    </tab>
+                    <tab heading="Instances with incidents">
+                      <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="pluginSettings.overview.failedPI.toPlot"> Show 'Incidents' Plot
+                        </label>
+                      </div>
+                      <h3>Process definition keys to consider</h3>
+                      <div ng-repeat="processKey in pluginSettings.overview.failedPI.filterProcessDefKeys">
+                        <div class="checkbox">  
+                          <label>
+                            <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                          </label>
+                        </div>
+                      </div>
+                    </tab>
+                  </tabset>
+                </tab>
+                <tab heading="Settings 'Timing'" disabled="true">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="pluginSettings.timing.loadOnTabLoad">
+                      <span ng-mouseover="showTooltipTiming=true" ng-mouseleave="showTooltipTiming=false">auto refresh &nbsp;<small ng-show="showTooltipTiming"><em><br>Plots will be automatically refreshed during tab load or after a settings change</em></small></span>
+                    </label>
+                  </div>
+                  <h3>Process definition keys to consider</h3>
+                  <div ng-repeat="processKey in pluginSettings.timing.processDefKeysToFilter">
+                    <label class="checkbox inline">
+                      <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
+                    </label>
+                  </div
+                </tab>
+              </tabset>
+            </div>
+            <div ng-show="!pluginSettings.supported">
+              <div class="alert alert-warning" role="alert">
+                Your browser does not support customizing plugin settings :(
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="applySettings()" ng-disabled="!pluginSettings.supported">Apply Settings</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+</script>
