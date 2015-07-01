@@ -5,7 +5,7 @@
 	<tabset>
 	 <tab ng-controller="processesChartController" select="handleTabClick('processes')">
 	   <tab-heading ng-mouseover="showRefreshIcon=true" ng-mouseleave="showRefreshIcon=false">
-	     <span >Processes&nbsp;</span><a class="btn btn-link" ng-show="showRefreshIcon" ng-click="applyDataToPlots()"><i class="icon-repeat"></i></a>
+	     <span >Processes&nbsp;</span><a class="btn btn-link" ng-show="showRefreshIcon" ng-click="applyDataToPlots()"><i class="glyphicon glyphicon-repeat"></i></a>
 	   </tab-heading>
      <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/processesTab.html'"></div>
 	</tab>
