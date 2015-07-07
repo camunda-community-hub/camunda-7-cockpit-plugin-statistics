@@ -37,11 +37,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
           UserInteractionFactory.plotHeight = 500;
           UserInteractionFactory.broadcastHeight();
         }
-      } else if(width>992) {
-        if(UserInteractionFactory.plotHeight!=500) {
-          UserInteractionFactory.plotHeight = 500;
-          UserInteractionFactory.broadcastHeight();
-        }
       }
     }
     
