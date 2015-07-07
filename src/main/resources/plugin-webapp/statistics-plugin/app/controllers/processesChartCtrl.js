@@ -1,6 +1,6 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
-	module.controller('processesChartController',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', '$http', '$modal', '$interval', 
-	                                  function($scope, element, Uri, DataFactory, SettingsFactory, $http,$modal, $interval){
+	module.controller('processesChartController',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', 'UserInteractionFactory', '$http', '$modal', '$interval', '$window',
+	                                  function($scope, element, Uri, DataFactory, SettingsFactory, UserInteractionFactory, $http,$modal, $interval, $window){
 	  
 	  $scope.drilledInRunning = false;
 	  $scope.drilledInEnded = false;
@@ -20,7 +20,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	      showReloadProcessEnded:false,
 	      showReloadProcessFailed:false
 	  };
-	  $scope.widthClass = "col-lg-4";
+	  
+	  $scope.widthClass = "col-lg-4 col-md-4 col-sm-4";
+	  $scope.plotHeight = 500;
 	  
 	  $scope.cacheKiller = null;
     
@@ -29,6 +31,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	  $scope.runningPlotLabel = "Running Instances";
 	  $scope.endedPlotLabel = "Ended Instances";
 	  $scope.failedPlotLabel = "Instances with Incidents";
+	  
+	  
+	  $scope.$on('heightChanged', function() {
+	    changePlotsHeight();
+	  });
 	  
     $scope.$on('chosenTabChangedBroadcast', function() {
       if(DataFactory.chosenTab=="processes") {
@@ -107,7 +114,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
       
       $interval.cancel($scope.cacheKiller);
     }
+
+
+    var changePlotsHeight = function() {
+      $scope.runningOptions.chart.height = UserInteractionFactory.plotHeight;
+      $scope.failedOptions.chart.height = UserInteractionFactory.plotHeight;
+      $scope.endedOptions.chart.height = UserInteractionFactory.plotHeight;
+    }
     
+
     /*
      * general pie charts options
      */
@@ -115,7 +130,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		var options = {
             chart: {
                 type: 'pieChart',
-                height: 500,
+                height: UserInteractionFactory.plotHeight,
                 x: function(d){return d.key;},
                 y: function(d){return d.y;},
                 showLabels: true,

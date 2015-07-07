@@ -1,8 +1,8 @@
 <div class="row">
-    <div class="col-lg-3">
+    <div class="col-lg-3 col-md-3 col-sm-3">
       <p class="text-right">Category</p>
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-5 col-md-5 col-sm-5">
       <select ng-model="feedbackCategory" id="inputCategory">
         <option>Bug</option>
         <option>Feature-Request</option>
@@ -11,10 +11,10 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-3">
+    <div class="col-lg-3 col-md-3 col-sm-3">
       <p class="text-right">Subject</p>
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-5 col-md-5 col-sm-5">
       <select ng-model="feedbackSubject" id="inputSubject">
         <option>Tab - Processes</option>
         <!-- <option>Tab - Cases</option> -->
@@ -26,15 +26,15 @@
   </div>
   <div class="row">
 
-    <div class="col-lg-3">
+    <div class="col-lg-3 col-md-3 col-sm-3">
       <p class="text-right">Feedback</p>
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-5 col-md-5 col-sm-5">
       <textarea ng-model="feedbackText" rows="8" id="feedbackText" class="span12"></textarea>
     </div>
   </div>
   <div class="row">
-    <div class="col-lg-9 col-lg-offset-3">
+    <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-md-9 col-md-offset-3">
       <button type="button" class="btn btn-primary"
         ng-click="sendFeedback()" data-toggle="tooltip" title="via email">Give
         Feedback!</button>

@@ -25,8 +25,6 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
     	 				'<select ng-disabled="!currentLevel.moreOptions" ng-model="processInstance" ng-options="processInstance.processDefKey for processInstance in processInstances" ng-change="getDataAndDrawGraph()">'+
     	 				'</select>'+
     	 			'</div>'+
-		    	 	'<h5>adjust width<h5>'+
-		    	 	'<input type="number" name="points" min="0" step="10" value="1000" ng-model = "width" ng-change="getDataAndDrawGraph()">'+
 		    	 '</form>'
 		    };		
 	});

@@ -2,7 +2,7 @@
 
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('timingCtrl',['$scope','TimingFactory','DataFactory', '$location', function($scope,TimingFactory,DataFactory,$location){
+	module.controller('timingCtrl',['$scope','TimingFactory','DataFactory', 'UserInteractionFactory', '$location', function($scope,TimingFactory,DataFactory,UserInteractionFactory,$location){
 
 		$scope.shownPlot = false;
 
@@ -11,11 +11,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.showPlot();
 			}
 		});
+		
+    $scope.$on('widthChanged', function() {
+      $scope.width = UserInteractionFactory.currentWidth*0.66;
+      $scope.getDataAndDrawGraph();
+    });
 
 		$scope.showPlot = function() {
 			if(!$scope.shownPlot) {
 
-				$scope.width = 1000;
 				$scope.data = TimingFactory.data;
 
 				$scope.timeFrames = TimingFactory.timeFrames;

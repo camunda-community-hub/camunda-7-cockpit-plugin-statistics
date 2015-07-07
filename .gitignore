@@ -28,4 +28,3 @@ build.properties
 
 # H2
 camunda-h2-dbs
-src/test/resources/testdbs.properties

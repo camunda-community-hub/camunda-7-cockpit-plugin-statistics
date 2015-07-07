@@ -4,7 +4,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', [
     './Format',
     './GraphFactory',
     './TimingFactory',
-    './SettingsFactory'
+    './SettingsFactory',
+    './UserInteractionFactory'
 ], function(module) {
 
 });
