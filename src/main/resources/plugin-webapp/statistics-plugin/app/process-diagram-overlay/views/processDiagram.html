@@ -1,0 +1,10 @@
+<div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/styles/processDiagramStyles.html'"></div>
+
+<div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/activityHistoryModal.html'"></div>
+
+<div ng-show="highlight()" ng-click="showActivityHistoryInformation()">
+	<div class="bpmn-element-overlay bad" ng-hide="!isHighlightedAsWarning()"></div>
+	<div class="bpmn-element-overlay good" ng-hide="showOnlyBad() || isHighlightedAsWarning()"></div>
+	<div class="badge badge-bottom badge-bad" ng-hide="instancesExceededLimit == null">{{ instancesExceededLimit }}</div>
+	<div class="badge badge-top badge-good" ng-hide="showOnlyBad() || instancesMetLimit == null">{{ instancesMetLimit }}</div>
+</div>

@@ -10,6 +10,7 @@
 		<result property="startTime" column="START_TIME" />
 		<result property="endTime" column="END_TIME" />
 		<result property="id" column="ID" />
+		<result property="assignee" column="ASSIGNEE" />
 	</resultMap>
 	<select id="selectHistoricActivityInformationWithProcDefKey"
 		resultMap="historicActivityInformationMap">
@@ -19,6 +20,7 @@
 			def.KEY_ as PROC_DEF_KEY,
 			DURATION_ as DURATION,
 			A.ID_ as ID,
+			ASSIGNEE_ as ASSIGNEE,
 			<!-- start,end time -->
 			<include refid="cockpit.statistics.commonDates"/>
 		FROM ACT_HI_ACTINST A

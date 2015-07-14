@@ -26,6 +26,21 @@ ngDefine('cockpit.plugin.statistics-plugin', ['./lib/d3',
 			url: 'plugin://statistics-plugin/static/app/processDefinition.html',
 			controller: 'processDefinitionCtrl'
 		});
+		
+		ViewsProvider.registerDefaultView('cockpit.processDefinition.diagram.overlay', {
+			id: 'process-diagram-overlay',
+			priority: 20,	
+			label: 'Process Data',
+			url: 'plugin://statistics-plugin/static/app/process-diagram-overlay/views/processDiagram.html',
+			controller: 'processDiagramCtrl'
+		});
+
+		ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.action', {
+			id: 'overlay-menu-action',
+			priority: 20, 
+			url: 'plugin://statistics-plugin/static/app/process-diagram-overlay/views/overlayMenu.html',
+			controller: 'overlayMenuCtrl'
+		});
 	};
 
 	Configuration.$inject = ['ViewsProvider'];

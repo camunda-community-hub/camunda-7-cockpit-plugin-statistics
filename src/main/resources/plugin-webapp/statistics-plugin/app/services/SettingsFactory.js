@@ -5,6 +5,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
     var settingsPrefixForLocalStorage = "pluginSettings_";
     var loggedInUser = $rootScope.authentication.name;
     
+    // settings of process diagram
+    SettingsFactory.showOnlyBadInformation = false;
+    
     SettingsFactory.pluginSettings = {};
     
     var supportsLocalStorage = function() {
