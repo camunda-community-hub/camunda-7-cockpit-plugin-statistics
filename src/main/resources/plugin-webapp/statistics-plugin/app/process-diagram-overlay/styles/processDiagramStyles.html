@@ -1,0 +1,48 @@
+<style>
+.bpmn-element-overlay {
+	width: 100px;
+	/* TODO: set size of overlay dynamically depending on size of bpmn element*/
+	height: 80px;
+	border-radius: 10px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: rgb(0, 0, 0);
+	background-color: rgb(255, 255, 255));
+	border-width: 1px;
+}
+
+.good {
+	border-color: rgb(0, 0, 0);
+	background-color: rgba(70, 136, 71, 0.4);
+}
+
+.bad {
+	border-color: rgb(0, 0, 0);
+	background-color: rgba(181, 21, 43, 0.4);
+}
+
+[process-diagram] .badge-top {
+	position: absolute;
+	right: -10px;
+	top: -10px;
+}
+
+[process-diagram] .badge-bottom {
+	position: absolute;
+	right: -10px;
+	bottom: -10px;
+}
+
+[process-diagram] .badge-good {
+	color: rgb(255,255,255);
+	border-color: rgb(0, 0, 0);
+	background-color: rgb(70, 136, 71);
+}
+
+[process-diagram] .badge-bad {
+	color: rgb(255,255,255);
+	border-color: rgb(0, 0, 0);
+	background-color: rgb(181, 21, 43);
+}
+
+</style>
