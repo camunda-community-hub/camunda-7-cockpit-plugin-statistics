@@ -1,7 +1,6 @@
 ngDefine('cockpit.plugin.statistics-plugin', ['./lib/d3',
                                               './lib/nv.d3',
                                               './lib/clusterfck-0.1',
-                                              //'./lib/angular-touch',
                                               'module:nvd3:./lib/angular-nvd3',
                                               'module:angularAwesomeSlider:./lib/angular-awesome-slider',
                                               'module:cockpit.plugin.statistics-plugin.controllers:./controllers/main',
