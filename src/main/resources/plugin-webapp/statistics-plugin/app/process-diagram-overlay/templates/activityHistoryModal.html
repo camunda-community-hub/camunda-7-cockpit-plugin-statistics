@@ -4,36 +4,17 @@
 </div>
 <div class="modal-body" ng-init="init()">
 	<form class="form-horizontal form-group">
-		<label class="control-label">Time Unit: </label>
+		<!--label class="control-label">Time Unit: </label>
 		<select ng-model="selectedTimeUnit" ng-change="showPlot()">
 			<option ng-repeat="option in timeUnitOptions">{{ option }}</option>
 		</select>
-		<br />
-		<label class="control-label">Show finished activities since </label>
-		<select ng-model="selectedStartTime" ng-change="showPlot()">
-			<option ng-repeat="option in timeOptions">{{ option }}</option>
-		</select>
-		<label class="control-label">and until </label>
-		<select ng-model="selectedEndTime" ng-change="showPlot()">
-			<option ng-repeat="option in timeOptions">{{ option }}</option>
-		</select>
-	</form>
-	<nvd3 options="optionsLineChart" data="historicActivityPlotData" api="api"></nvd3>
-	<!--nvd3-line-chart
-		data="historicActivityPlotData"
-		id="activityDurationLineChart"
-		height="500"
-		width="500"
-		x="xFunction()"
-		y="yFunction()"
-        showXAxis="false"
-        showYAxis="true"
-		interactive="true"
-        clipEdge="true"
-		tooltips="true"
-        tooltipcontent="toolTipContentFunction()"
-		noData="No durations available requirements"><svg width="500px" height="500px"></svg>
-	</nvd3-line-chart-->
+		<br /-->
+		<div>Note: The format of the duration is HH:MM:SS.m.</div>
+		<div ng-hide="hasOnlyOneValue()" style="margin-top: 20px; margin-bottom: 10px;">
+    		<input ng-model="slider.value" type="text" id="rangeSlider" slider options="optionsSlider" />
+  		</div>
+  	</form>
+	<nvd3 options="optionsChart" data="historicActivityPlotData"></nvd3>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-warning" ng-click="closeModal()">Close</button>
