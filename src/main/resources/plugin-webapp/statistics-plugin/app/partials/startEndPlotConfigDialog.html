@@ -1,0 +1,257 @@
+
+
+<style>
+/*probably not necessary anymore!!
+/* .my-modal > .modal-dialog { */
+/*   width: 100%; */
+/* } */
+.my-modal {
+	width: 1100px;
+}
+
+.my-remove-icon {
+	cursor: pointer;
+	float: right;
+}
+</style>
+<div class="modal-header">
+	<h3 class="modal-title">Plot Configuration</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-lg-11 col-md-11 col-sm-11">
+			<tabset justified="true"> <tab heading="data">
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<scatter-plot-control-menu></scatter-plot-control-menu>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div ng-show="selected.length">
+						<div class="well">
+							<div ng-repeat="item in selected"> 
+								<div style="border: 2px solid black">
+									<strong>{{item.process}}</strong>
+									<i class="pull-right glyphicon glyphicon-ok" ng-show = "item.wholeProcess"></i>
+									<div ng-repeat = "types in item.activityTypes" style="text-indent:10px;">
+										{{types.activityType}}
+										<div ng-repeat = "act in types.activities" style="text-indent:20px;">
+											{{act.activity}}
+										</div>
+									</div>
+								</div>
+								<br>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</tab> <tab heading="time-window"> <tabset
+				class ="tabs-left"> <tab heading="date">
+			<div class="row">
+				<div class="col-lg-5 col-md-5 col-sm-5">
+					<pre class="alert alert-info">From: {{fromDate | date: 'longDate'}}</pre>
+					<datepicker
+						show-weeks="true"
+						class="well well-sm"
+						ng-model="fromDate"></datepicker>
+				</div>
+				<div class="col-lg-5 col-md-5 col-sm-5">
+					<pre class="alert alert-info">To: {{toDate | date: 'longDate'}}</pre>
+					<datepicker
+						show-weeks="true"
+						class="well well-sm"
+						ng-model="toDate"></datepicker>
+				</div>
+			</div>
+			</tab> <tab heading="time">
+			<div class="row">
+				<div class="col-lg-5 col-md-5 col-sm-5">
+					<pre class="alert alert-info">From: {{mytime | date:'shortTime' }}</pre>
+					<timepicker
+						ng-model="mytime"
+						ng-change="changed()"
+						hour-step="hstep"
+						minute-step="mstep"
+						show-meridian="ismeridian"></timepicker>
+				</div>
+				<div class="col-lg-5 col-md-5 col-sm-5">
+					<pre class="alert alert-info">To: {{mytime | date:'shortTime' }}</pre>
+					<timepicker
+						ng-model="mytime"
+						ng-change="changed()"
+						hour-step="hstep"
+						minute-step="mstep"
+						show-meridian="ismeridian"></timepicker>
+				</div>
+			</div>
+			</tab> </tabset> </tab> <tab heading="config"> <tabset
+				justified="true"
+				class="tabs-left"> <tab heading="x-Axis">
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="radio">
+						<label>
+							<input
+								type="radio"
+								name="startEnd">
+							start time
+						</label>
+					</div>
+					<div class="radio">
+						<label>
+							<input
+								type="radio"
+								name="startEnd2">
+							end time
+						</label>
+					</div>
+					<div class="radio disabled">
+						<label>
+							<input
+								type="radio"
+								name="duration"
+								disabled>
+							duration
+						</label>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<img ng-src="{{imageSource}}"></img>
+				</div>
+			</div>
+			</tab> <tab heading=time-frame>
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="radio">
+						<label>
+							<input
+								type="radio"
+								name="startEnd">
+							dayly
+						</label>
+					</div>
+					<div class="radio">
+						<label>
+							<input
+								type="radio"
+								name="startEnd2">
+							weekly
+						</label>
+					</div>
+				</div>
+			</div>
+			</tab> <tab heading="clustering">
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="radio">
+						<label>
+							<input
+								type="radio"
+								name="startEnd">
+							no clustering
+						</label>
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">
+							<div class="radio">
+								<label>
+									<input
+										type="radio"
+										name="startEnd2">
+									k means Algo
+								</label>
+							</div>
+						</span>
+						<input
+						id="my-div"
+							type="number"
+							name="kmeans"
+							min="1"
+							step="1"
+							value="5"
+							ng-model="kMeans"
+							ng-change="getDataAndDrawGraph()">
+					</div>
+					<!-- 							<div class="col-lg-6"> -->
+					<!--     <div class="input-group"> -->
+					<!--       <span class="input-group-addon"> -->
+					<!--         <input type="radio"> -->
+					<!--       </span> -->
+					<!--       <input type="text" class="form-control" aria-label="..."> -->
+					<!--     </div>/input-group -->
+					<!--   </div>/.col-lg-6 -->
+				</div>
+			</div>
+			</tab> <tab heading="appearance">
+			<div class="input-prepend">
+				<button
+					class="btn"
+					type="radio">kmeans</button>
+				<input
+					type="number"
+					class="col-lg-1 col-md-1 col-sm-1"
+					name="kmeans"
+					min="1"
+					step="1"
+					value="5"
+					ng-model="kMeans"
+					ng-change="getDataAndDrawGraph()">
+			</div>
+			<br>
+
+			<div class="input-prepend">
+				<input
+					type="radio"
+					name="startEnd2">
+				<input
+					type="number"
+					class="col-lg-1 col-md-1 col-sm-1"
+					name="kmeans"
+					min="1"
+					step="1"
+					value="5"
+					ng-model="kMeans"
+					ng-change="getDataAndDrawGraph()">
+			</div>
+			<div
+				class="btn-group"
+				data-toggle="buttons">
+				<label class="pdsa-radiobutton btn btn-primary active">
+					<i class="glyphicon-record"></i>Male
+				</label>
+				<label class="pdsa-radiobutton btn btn-primary">
+					<i class="glyphicon-unchecked"></i>Female
+				</label>
+			</div>
+			<button
+				type="submit"
+				class="btn btn-default">
+				<i class="glyphicon-unchecked"></i> Search
+			</button>
+			</tab> </tabset> </tab> </tabset>
+		</div>
+		<div class="col-lg-1 col-md-1 col-sm-1">
+			<div class="dropdown">
+				<a
+					href="#"
+					class="dropdown-toggle"
+					data-toggle="dropdown"><span class="glyphicon glyphicon-list"></span></a>
+				<ul
+					class="dropdown-menu pull-right"
+					ng-click="$event.stopPropagation()"
+					is-open = "'true'">
+					<li
+						ng-repeat="chosenItem in selected"
+						style="margin-left: 5px">{{chosenItem}}<i
+						class="glyphicon glyphicon-remove my-remove-icon"
+						ng-click="removeFromList(chosenItem)"></i></li>
+			</div>
+			</li>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary">Apply</button>
+	<button class="btn btn-warning">Cancel</button>
+</div>
+

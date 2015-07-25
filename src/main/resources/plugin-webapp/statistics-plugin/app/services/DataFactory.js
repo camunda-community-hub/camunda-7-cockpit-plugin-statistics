@@ -58,6 +58,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.prepForBroadcast = function(chosenTab) {
 			this.chosenTab = chosenTab;
 			this.broadcastItem();
+			console.log("braodcast:");
+			console.log(chosenTab);
 		};
 
 		DataFactory.broadcastItem = function() {
@@ -658,6 +660,18 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 
 		}
+    
+    //inserted this from my old local version
+    //TODO: needs to checked if there is a new way of doing this
+    DataFactory.getActivityNamesTypesProcDefinition = function() {
+			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/activity-names-types-procdef"))
+			.success(function (data){
+				DataFactory.activityNamesTypesProcDefinition = data;
+			})
+			.error(function(){				
+				console.debug("error in fetching ActivityNamesTypesProcDefinition");
+			});
+		};
 
 
 		return DataFactory;
