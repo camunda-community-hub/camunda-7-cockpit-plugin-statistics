@@ -14,7 +14,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.selected = [];
 		//next two methods are used by the child controllers in the accordion
 		//adds or deletes the chosenItem
-		$scope.change = function(chosenItem,add){
+		$scope.change = function(chosenItem,add,processIndex,activityTypeIndex,activityIndex){
 			console.debug("change");
 			//find out if the process has been inserted before????
 			var indexProcess = $scope.selected.map(function(e) { return e.process; }).indexOf(chosenItem.process);
@@ -38,6 +38,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.splice(indexActivity,1);
 						//if no other activities of this type are selected --> delete activityType
 						if($scope.selected[indexProcess].activityTypes[indexActivityType].activities.length==0){
+							$scope.$broadcast('activityTypeDeleted',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityType});
 							$scope.selected[indexProcess].activityTypes.splice(indexActivityType,1);
 							//if no other types are selected and not whole process --> delete process
 							if($scope.selected[indexProcess].activityTypes.length ==0 && !$scope.selected[indexProcess].wholeProcess)
@@ -61,9 +62,16 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			console.debug($scope.selected);
 		};
 		//used by the remove icon in the list itself
-		$scope.removeFromList = function(chosenItem){
-			$scope.deselect(chosenItem);
-			$scope.$broadcast('removedListIcon',{"val":chosenItem})
+		$scope.removeFromList = function(process, type, activity){
+			if(!type){}
+			else if (!activity){
+				$scope.$broadcast('activityTypeDeleted',{"val":type})
+			}
+			else {
+				var removeItem ={"process":process, "wholeProcess": false, "activityType":type, "activity": activity};
+				$scope.change(removeItem);
+				$scope.$broadcast('activityDeleted',{"val":activity})
+			};
 		};
 
 		$scope.imageSource = require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/pics/endTimePlot.jpg'));
@@ -90,7 +98,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//and unchecks the box, so the list and boxes stay in sync
 		//and if the activityType is unchecked it fires an event that
 		//the activity controllers listen to
-		$scope.$on('removedListIcon', function(event, args){
+		$scope.$on('activityTypeDeleted', function(event, args){
 			if($scope.activityType.key == args.val){
 				$scope.isSelected = false;
 			}
@@ -120,7 +128,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		});
 		//listens for the event when an item is removed from the list with the remove icon
 		//and unchecks the box, so the list and boxes stay in sync
-		$scope.$on('removedListIcon', function(event, args){
+		$scope.$on('activityDeleted', function(event, args){
 			if($scope.activity.x == args.val){
 				$scope.isSelected = false;
 			}
@@ -128,10 +136,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		$scope.isSelected = false;//ng-init
 //		$scope.tooltip ="...";
-		$scope.toggleSelection = function() {
+		$scope.toggleSelection = function(processIndex,activityTypeIndex,activityIndex) {
 				var insert ={"process":$scope.processItem.key, "wholeProcess": false, "activityType":$scope.activityType.key, "activity": $scope.activity.x};
-				console.debug(insert);
-				$scope.change( insert,$scope.isSelected );
+				$scope.change( insert,$scope.isSelected,processIndex,activityTypeIndex,activityIndex );
 		}; 
 
 	}]);

@@ -32,10 +32,10 @@
 								<div style="border: 2px solid black">
 									<strong>{{item.process}}</strong>
 									<i class="pull-right glyphicon glyphicon-ok" ng-show = "item.wholeProcess"></i>
-									<div ng-repeat = "types in item.activityTypes" style="text-indent:10px;">
-										{{types.activityType}}
+									<div ng-repeat = "types in item.activityTypes" style="text-indent:10px;font-style: italic;">
+										{{types.activityType}} <a class="pull-right glyphicon glyphicon-remove" ng-click="removeFromList(item.process,types.activityType,undefined)"></a>
 										<div ng-repeat = "act in types.activities" style="text-indent:20px;">
-											{{act.activity}}
+											{{act.activity}} <a class="pull-right glyphicon glyphicon-remove" ng-click="removeFromList(item.process,types.activityType,act.activity)"></a>
 										</div>
 									</div>
 								</div>
