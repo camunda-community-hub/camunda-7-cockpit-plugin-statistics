@@ -9,6 +9,7 @@ import javax.ws.rs.QueryParam;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginRootResource;
 import org.camunda.cockpit.plugin.statistics.StatisticsPlugin;
 import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityInstanceResource;
+import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityNamesTypesProcDefinitionRessource;
 import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityStatisticInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.activity.HistoricActivityInformationResource;
 import org.camunda.cockpit.plugin.statistics.resources.other.JobDefinitionsResource;
@@ -313,5 +314,11 @@ public class StatisticsPluginRootResource extends
      return subResource(new RunningTaskInstancesAByProcDefKeyRessource(engineName, procDefKey), engineName);
    }
     
-    
+   /**
+    * 
+    */
+    @Path("{engineName}/activity-names-types-procdef")
+    public ActivityNamesTypesProcDefinitionRessource getActivityNamesTypesProcDefinition(@PathParam("engineName") String engineName){
+    		return subResource(new ActivityNamesTypesProcDefinitionRessource(engineName), engineName);
+    }
 }
