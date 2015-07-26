@@ -32,12 +32,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.cancel = function() {
 			DataFactory.bpmnElementsToHighlight = {};
 			DataFactory.bpmnElementsToHighlightAsWarning = {};
+			DataFactory.activityDurations = {};
 			$modalInstance.dismiss('cancel');
 		};
 
 		$scope.highlightUsertasks = function() {
 			DataFactory.bpmnElementsToHighlight = {};
 			DataFactory.bpmnElementsToHighlightAsWarning = {};
+			DataFactory.activityDurations = {};
 			angular.forEach(bpmnTasks, function(task, index, array) {
 				if($scope.selectedTaskType == "all" || task.$type == $scope.selectedTaskType) {
 					if($scope.selectDurationLimit) {
@@ -51,6 +53,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				}
 			});
 			SettingsFactory.showOnlyBadInformation = $scope.showOnlyBad;
+			SettingsFactory.durationLimitInMs = getMilliseconds($scope.durationLimit, $scope.selectedTimeUnit);
 		}
 
 		function getMilliseconds(time, unit) {
@@ -62,7 +65,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 
 		function countInstancesRegardingDurationLimit(task, limit) {
-
 			DataFactory.getAllHistoricActivitiesInformationByProcDefKey(DataFactory.processDefinitionKey, task.name, getTaskType(task.$type)).
 			then(function() {
 				var exceeded = 0;
