@@ -4,7 +4,8 @@
 </div>
 <div class="modal-body">
 	<tabset>
-		<tab heading="Highlight Tasks" active="true">
+		<tab heading="Highlight Settings">
+		<div style="margin-top: 5px; margin-bottom: 10px;">Highlight specific process elements.</div>
 			<form class="form-horizontal form-group">
 				<label class="control-label">Task Type: </label>
 				<select ng-model="$parent.selectedTaskType">
@@ -12,18 +13,23 @@
 					<option ng-repeat="option in taskTypes" value="{{ option }}">{{ option | split:':':1 }}</option>
 				</select>
 			</form>
+		</tab>
+		<tab heading="Timing">
+			<div style="margin-top: 5px; margin-bottom: 10px;">Highlight activities which, on average, took longer than a defined duration limit.</div>
 			<form class="form-horizontal form-group">
-				<label class="control-label">Duration limit: </label>
+				<label class="control-label">Specifiy duration limit: </label>
 				<input ng-model="$parent.selectDurationLimit" type="checkbox">
+			</form>
+			<form class="form-horizontal form-group">
 				<input ng-model="$parent.durationLimit" type="number" min="1" ng-show="selectDurationLimit" width=20px>
 				<select ng-model="$parent.selectedTimeUnit" ng-show="selectDurationLimit">
 					<option ng-repeat="option in timeUnitOptions">{{ option }}</option>
 				</select>
 			</form>
-			<form class="form-horizontal form-group">
+			<!--form class="form-horizontal form-group">
 				<label class="control-label">Show only bad information: </label>
 				<input ng-model="$parent.showOnlyBad" type="checkbox">
-			</form>
+			</form-->
 		</tab>
 	</tabset>
 </div>
