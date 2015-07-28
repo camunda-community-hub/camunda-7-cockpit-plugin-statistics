@@ -20,7 +20,7 @@ public class ActivityNamesTypesProcDefinitionRessource extends AbstractCockpitPl
      * @return
      */
     @GET
-    public List<ActivityInstanceCountDto> getRunningUserTaskCounts() {
+    public List<ActivityInstanceCountDto> getActivityNamesTypesProcDefinition() {
     	
     	return getQueryService().executeQuery("cockpit.statistics.selectActivityNamesTypesProcessDefinition",
     	    new QueryParameters<ActivityInstanceCountDto>());

@@ -7,7 +7,16 @@ public class ActivityInstanceCountDto extends CommonAggregationsDto {
 	private String activityName;
 	private String type;
 	private String procDefKey;
+	private String procDefId;
 	
+
+	public String getProcDefId() {
+		return procDefId;
+	}
+
+	public void setProcDefId(String procDefId) {
+		this.procDefId = procDefId;
+	}
 
 	public String getActivityName() {
 		return activityName;

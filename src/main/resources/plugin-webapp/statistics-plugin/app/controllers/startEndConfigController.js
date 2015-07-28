@@ -1,13 +1,30 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('startEndConfigController',['$scope','Uri','ScatterPlotConfigFactory', function($scope, Uri, ScatterPlotConfigFactory){
+	module.controller('startEndConfigController',['$scope','Uri','ScatterPlotConfigFactory', 'TimingFactory', function($scope, Uri, ScatterPlotConfigFactory,TimingFactory){
 
+//		$scope.apply = function(){
+//			DataFactory.getDataFromModelMenu($scope.selected)
+//			.then(function(){
+////				console.log(DataFactory.resultData)
+//				$scope.plotData = DataFactory.resultData;
+//				console.log($scope.plotData);
+//			});
+//		}
+		
+		$scope.apply = function(){
+			TimingFactory.getModelMenuData($scope.selected)
+			.then(function(){
+//				console.log(DataFactory.resultData)
+				$scope.plotData = TimingFactory.chosenData;
+				console.log($scope.plotData);
+			});
+		}
+			
 		//data to fill the accordion
 		$scope.menuData = [];
 		ScatterPlotConfigFactory.getMenuData()
 		.then(function(){
 			$scope.menuData = ScatterPlotConfigFactory.menuData;
-			console.debug($scope.menuData);
 		});
 
 		//data chosen from the user in the accordion
@@ -51,7 +68,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 							if($scope.selected[indexProcess].activityTypes.length ==0 && !$scope.selected[indexProcess].wholeProcess)
 								$scope.selected.splice(indexProcess,1);
 						}
-						
+
 					}
 				}
 				//activityType has not been added yet
@@ -66,14 +83,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			else{
 				//add whole process
 				if(chosenItem.wholeProcess)
-					$scope.selected.push({"process":chosenItem.process, "wholeProcess": true, "activityTypes":[]});
+					$scope.selected.push({"process":chosenItem.process, "procDefId": $scope.menuData[processIndexMenu].Id,"wholeProcess": true, "activityTypes":[]});
 				else if(add) {//need this for the case: all activities unchecked, type still checked
-					$scope.selected.push({"process":chosenItem.process, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
+					$scope.selected.push({"process":chosenItem.process,"procDefId": $scope.menuData[processIndexMenu].Id, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
 					if ($scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length==1)
 						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});
 				}
 			}
+			console.log($scope.selected);
 		};
 		//used by the remove icon in the list itself
 		$scope.removeFromList = function(process, type, activity){
@@ -87,6 +105,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.$broadcast('activityDeleted',{"val":activity})
 			};
 		};
+
+		//init clustering tab and hold data
+		$scope.clustering =  {
+				algo: "kmeans",
+				numberOfClusters: 5
+		};
+		$scope.timeFrame = "daily";
+		$scope.xAxis = "startTime";
 
 		$scope.imageSource = require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/pics/endTimePlot.jpg'));
 	}]);
@@ -117,13 +143,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.isSelected = false;
 			}
 		});
-		
+
 		$scope.$on('checkActivityType', function(event, args){
 			if($scope.activityType.key == args.val){
 				$scope.isSelected = true;
 			}
 		});
-		
+
 //		$scope.tooltip ="This will select all activities of that type..";
 		$scope.isSelected = false;//ng-init
 		this.isSelected = $scope.isSelected;
@@ -153,11 +179,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.isSelected = false;//ng-init
 //		$scope.tooltip ="...";
 		$scope.toggleSelection = function(processIndex,activityTypeIndex,activityIndex) {
-				var insert ={"process":$scope.processItem.key, "wholeProcess": false, "activityType":$scope.activityType.key, "activity": $scope.activity.x};
-				$scope.change( insert,$scope.isSelected,processIndex,activityTypeIndex,activityIndex );
+			var insert ={"process":$scope.processItem.key, "wholeProcess": false, "activityType":$scope.activityType.key, "activity": $scope.activity.x};
+			$scope.change( insert,$scope.isSelected,processIndex,activityTypeIndex,activityIndex );
 		}; 
 
 	}]);
-	
+
 });
 

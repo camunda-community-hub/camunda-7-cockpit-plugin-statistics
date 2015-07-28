@@ -9,17 +9,14 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				var menuData = Format.bringSortedDataInPlotFormat
 					(DataFactory.activityNamesTypesProcDefinition,"procDefKey","type","activityName",undefined,undefined);
 				for(var i = 0; i< menuData.length;i++){
-					console.debug(menuData[i].values);
 					menuData[i].values = Format.bringNotSortedDataInPlotFormat(menuData[i].values,"x","y",undefined,undefined,undefined);
+					var j = DataFactory.activityNamesTypesProcDefinition.map(function(e) { return e.procDefKey; }).indexOf(menuData[i].key);
+					//add procDefId (we need that later to get the results from database using Rest API)
+					menuData[i].Id = DataFactory.activityNamesTypesProcDefinition[j].procDefId;
 				}
 				ScatterPlotConfigFactory.menuData = menuData;
 			});
 		};
-		
-		
-		
 		return ScatterPlotConfigFactory;
-		
-		
 	}]);
 });

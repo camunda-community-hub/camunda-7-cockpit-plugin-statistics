@@ -14,8 +14,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		TimingFactory.data = [];
 		TimingFactory.options = [];
 		
-		var i = TimingFactory.processInstancesList.length;
-		TimingFactory.processInstance = TimingFactory.processInstancesList[i-1];
+		//i dont think this is necessary
+//		var i = TimingFactory.processInstancesList.length;
+		TimingFactory.processInstance = TimingFactory.processInstancesList[0];
 
 		var initProcessList = function(processInstanceData){
 			var processInstancesList = [];
@@ -70,7 +71,19 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				});
 			};	
 		};
-
+		
+		
+		TimingFactory.getModelMenuData = function(selectedFromMenu){
+			return DataFactory.getDataFromModelMenu(selectedFromMenu)
+			.then(function(promiseData){
+//				TimingFactory.chosenData = DataFactory.resultData;
+				TimingFactory.chosenData  =[];
+				angular.forEach(promiseData, function(singleCallbackReturn){
+					TimingFactory.chosenData.push(Format.bringSortedDataInPlotFormat(singleCallbackReturn.data,"activityName","startTime","","",""));
+				})
+			});
+		}
+		
 		return TimingFactory;
 	}]);
 });

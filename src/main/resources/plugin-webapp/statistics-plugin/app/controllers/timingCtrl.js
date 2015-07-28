@@ -1,4 +1,4 @@
-'use strict'; 
++'use strict'; 
 
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
@@ -58,7 +58,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				});
 
 				$scope.openDeleteDeploymentDialog = function (size) {
-					console.debug("open config plot dialog");
 					$modal.open({
 						templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/startEndPlotConfigDialog.html')),
 						controller: 'startEndConfigController',
