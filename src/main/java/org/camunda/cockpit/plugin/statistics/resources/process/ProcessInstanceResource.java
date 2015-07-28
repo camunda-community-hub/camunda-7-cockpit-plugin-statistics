@@ -37,7 +37,6 @@ public class ProcessInstanceResource extends AbstractCockpitPluginResource {
      */
     @GET
     public List<ProcessInstanceCountDto> getProcessInstanceCounts() {
-      
       List<ProcessInstanceVersionsCountDto> queryResults = getQueryService().executeQuery("cockpit.statistics.selectProcessInstanceVersionCountsByProcessDefinition",
           new QueryParameters<ProcessInstanceVersionsCountDto>());
 
