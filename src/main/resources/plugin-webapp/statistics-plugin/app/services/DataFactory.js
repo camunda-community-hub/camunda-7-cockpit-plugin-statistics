@@ -661,29 +661,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		}
 
-//		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu){
-//			DataFactory.resultData = [];
-//			var procDefId = selectedFromModelMenu[0].procDefId;
-//			console.log(selectedFromModelMenu[0].activityTypes.length);
-//			angular.forEach(selectedFromModelMenu[0].activityTypes, function(activityTypeObject,index){
-//				console.log(index);
-//				var activityType = activityTypeObject.activityType;
-//				var actName = activityTypeObject.activities[0].activity;
-//				console.log(procDefId);
-//				console.log(activityType);
-//				console.log(actName);
-//				
-//				return $http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName))
-//				.success(function(data){
-//					DataFactory.resultData[index] = data;
-//					console.log(DataFactory.resultData);
-//					
-//				})
-//				.error(function(data){
-//					console.debug("error in getDataFromModelMenu");
-//				});
-//			});
-//		};
 		
 		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu){
 			DataFactory.resultData = [];

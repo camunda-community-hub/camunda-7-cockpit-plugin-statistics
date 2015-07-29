@@ -1,33 +1,18 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
-	module.factory('TimingFactory',['DataFactory','Format','GraphFactory', function(DataFactory,Format, GraphFactory) {
+	module.factory('TimingFactory',['DataFactory','Format','GraphFactory','$rootScope', function(DataFactory,Format, GraphFactory,$rootScope) {
 		var TimingFactory = {};
 
-		TimingFactory.timeFrames = [{frame:"weekly", format: "%a %H:%M"},{frame: "daily", format: "%H:%M" }]; 
-
-		TimingFactory.xValueSpecifiers = [{xValue: "startTime",xProperty:"startTime"}, {xValue: "endTime", xProperty:"endTime"}];
-
-		TimingFactory.levelSpecifiers = [{level:"process instances", moreOptions: false}, {level: "activities", moreOptions: true}];
-
-		TimingFactory.processInstancesList = [];
-		TimingFactory.processInstancesList.push({processDefKey: "all"});
+		var getTimeFormat = function(timeFrame){
+			if(timeFrame==="daily")
+				return "%H:%M";
+			else if(timeFrame==="weekly")
+				return "%a %H:%M";
+			else console.debug("Error: no known time frame was chosen")
+		};
 
 		TimingFactory.data = [];
 		TimingFactory.options = [];
-		
-		//i dont think this is necessary
-//		var i = TimingFactory.processInstancesList.length;
-		TimingFactory.processInstance = TimingFactory.processInstancesList[0];
-
-		var initProcessList = function(processInstanceData){
-			var processInstancesList = [];
-			for(var i =0; i < processInstanceData.length; i++){
-				processInstancesList.push({processDefKey: processInstanceData[i].key});
-			};
-			processInstancesList.push({processDefKey: "all"});
-			var i = processInstancesList.length;
-			TimingFactory.processInstance = processInstancesList[i-1];
-			return processInstancesList;
-		};
+	
 
 		TimingFactory.getData = function(currentLevel, userTaskProcessSpecifier, currentFrame, currentXValue,width, kMeans){
 			//if we decide to store data and not make an asynchronous call each time the table is build
@@ -72,15 +57,29 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			};	
 		};
 		
-		
-		TimingFactory.getModelMenuData = function(selectedFromMenu){
+		/**
+		 * @selectedFromMenu: processes, and activities chosen by the user to plot
+		 * @xValue: either starttime or endtime of the processes will be plotted on the x Axis
+		 * @timeFrame: either focus on weekly dates i.e. the rest of the date will be ignored
+		 * or focus on time only i.e. weekday, year will be ignored
+		 * 
+		 */
+		TimingFactory.getModelMenuData = function(selectedFromMenu,xValue, timeFrame){
+			var timeString = (timeFrame ==="daily")?"24h":"Week";
+			console.log(timeFrame);
+			console.log(timeString);
 			return DataFactory.getDataFromModelMenu(selectedFromMenu)
 			.then(function(promiseData){
 //				TimingFactory.chosenData = DataFactory.resultData;
 				TimingFactory.chosenData  =[];
 				angular.forEach(promiseData, function(singleCallbackReturn){
-					TimingFactory.chosenData.push(Format.bringSortedDataInPlotFormat(singleCallbackReturn.data,"activityName","startTime","","",""));
-				})
+					TimingFactory.chosenData = TimingFactory.chosenData.concat(singleCallbackReturn.data);
+				});
+				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName",xValue,"",eval("Format.breakDateDownTo"+timeString));
+				TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,5);
+				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(timeFrame),1000);
+				console.log(TimingFactory.chosenData);
+				$rootScope.$broadcast('plotData:updated');
 			});
 		}
 		
