@@ -2,24 +2,30 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('startEndConfigController',['$scope','Uri','ScatterPlotConfigFactory', 'TimingFactory', function($scope, Uri, ScatterPlotConfigFactory,TimingFactory){
 
-//		$scope.apply = function(){
-//			DataFactory.getDataFromModelMenu($scope.selected)
-//			.then(function(){
-////				console.log(DataFactory.resultData)
-//				$scope.plotData = DataFactory.resultData;
-//				console.log($scope.plotData);
-//			});
-//		}
-		
 		$scope.apply = function(){
-			TimingFactory.getModelMenuData($scope.selected)
-			.then(function(){
-//				console.log(DataFactory.resultData)
-				$scope.plotData = TimingFactory.chosenData;
-				console.log($scope.plotData);
-			});
-		}
-			
+			TimingFactory.getModelMenuData($scope.selected, $scope.xAxis.time, $scope.timeFrameModel.frame)
+		};
+		
+		$scope.hallo = function() {
+			console.log($scope.toDate);
+			console.log($scope.fromDate);
+		};
+
+		$scope.clustering =  {
+				algo: "kmeans",
+				numberOfClusters: 5
+		};
+		
+		$scope.timeFrameModel  = {
+				frame : "weekly"
+		};
+		
+		$scope.xAxis = {
+				time: "startTime"
+		};
+		
+		$scope.fromDate = null;
+		$scope.toDate = null;
 		//data to fill the accordion
 		$scope.menuData = [];
 		ScatterPlotConfigFactory.getMenuData()
@@ -105,14 +111,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.$broadcast('activityDeleted',{"val":activity})
 			};
 		};
-
-		//init clustering tab and hold data
-		$scope.clustering =  {
-				algo: "kmeans",
-				numberOfClusters: 5
-		};
-		$scope.timeFrame = "daily";
-		$scope.xAxis = "startTime";
 
 		$scope.imageSource = require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/pics/endTimePlot.jpg'));
 	}]);

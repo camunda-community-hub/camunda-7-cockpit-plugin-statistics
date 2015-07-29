@@ -84,7 +84,7 @@
 						<label>
 							<input
 								type="radio"
-								ng-model= "xAxis"
+								ng-model= "xAxis.time"
 								value = "startTime">
 							start time
 						</label>
@@ -93,7 +93,7 @@
 						<label>
 							<input
 								type="radio"
-								ng-model= "xAxis"
+								ng-model= "xAxis.time"
 								value = "endTime">
 							end time
 						</label>
@@ -109,22 +109,18 @@
 				<div class="col-lg-5 col-md-5 col-sm-5">
 					time-frame
 					<div class="radio">
-						<label>
 							<input
 								type="radio"
-								ng-model= "timeFrame"
+								ng-model= "timeFrameModel.frame"
 								value = "daily">
 							dayly
-						</label>
 					</div>
 					<div class="radio">
-						<label>
 							<input
 								type="radio"
-								ng-model = "timeFrame"
+								ng-model = "timeFrameModel.frame"
 								value = "weekly">
 							weekly
-						</label>
 					</div>
 				</div>
 				<!-- pic later in "Vorschau" button -->

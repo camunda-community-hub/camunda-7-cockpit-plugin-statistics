@@ -20,44 +20,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.showPlot = function() {
 			if(!$scope.shownPlot) {
 
-				$scope.data = TimingFactory.data;
-
-				$scope.timeFrames = TimingFactory.timeFrames;
-				$scope.currentFrame = $scope.timeFrames[0];
-
-				$scope.xValueSpecifiers = TimingFactory.xValueSpecifiers;
-				$scope.currentXValue = $scope.xValueSpecifiers[0];
-
-				$scope.levelSpecifiers = TimingFactory.levelSpecifiers;
-				$scope.currentLevel = $scope.levelSpecifiers[0];
-
-				$scope.kMeans = 5;
-
-				$scope.processInstances = TimingFactory.processInstancesList;
-
-				$scope.processInstance = TimingFactory.processInstance;	
-
-				$scope.getDataAndDrawGraph= function(){
-					TimingFactory.getData($scope.currentLevel,$scope.processInstance.processDefKey, $scope.currentFrame, $scope.currentXValue,$scope.width, $scope.kMeans)
-					.then(function(){
-						$scope.processInstances = TimingFactory.processInstancesList;
-						$scope.options = TimingFactory.options;
-						$scope.data = TimingFactory.data;
-//						$scope.processInstance = TimingFactory.processInstance;	
-					});
-				};
-
-
-
-				TimingFactory.getData($scope.currentLevel,"all", $scope.currentFrame, $scope.currentXValue,$scope.width, $scope.kMeans)
-				.then(function(){
-					$scope.processInstances = TimingFactory.processInstancesList;
+				$scope.$on('plotData:updated', function(event,data) {
+					$scope.data = TimingFactory.chosenData;
 					$scope.options = TimingFactory.options;
-					$scope.data = TimingFactory.data;
-					$scope.processInstance = TimingFactory.processInstance;	
 				});
 
-				$scope.openDeleteDeploymentDialog = function (size) {
+				$scope.openDeleteDeploymentDialog = function () {
 					$modal.open({
 						templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/startEndPlotConfigDialog.html')),
 						controller: 'startEndConfigController',
@@ -65,7 +33,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					});
 				}; 
 				$scope.shownPlot = true;
-				
+
 			}
 		}
 	}]);
