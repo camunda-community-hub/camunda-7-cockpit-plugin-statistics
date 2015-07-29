@@ -3,7 +3,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	module.controller('startEndConfigController',['$scope','Uri','ScatterPlotConfigFactory', 'TimingFactory', function($scope, Uri, ScatterPlotConfigFactory,TimingFactory){
 
 		$scope.apply = function(){
-			TimingFactory.getModelMenuData($scope.selected, $scope.xAxis.time, $scope.timeFrameModel.frame)
+			TimingFactory.getModelMenuData($scope.selected, $scope.xAxis.time, $scope.timeFrameModel.frame,$scope.date)
 		};
 		
 		$scope.hallo = function() {
@@ -23,9 +23,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.xAxis = {
 				time: "startTime"
 		};
-		
-		$scope.fromDate = null;
-		$scope.toDate = null;
+		$scope.date = {
+				from : null,
+				to : null
+		};
+//		$scope.fromDate = null;
+//		$scope.toDate = null;
 		//data to fill the accordion
 		$scope.menuData = [];
 		ScatterPlotConfigFactory.getMenuData()
@@ -119,10 +122,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//when the tooltips are displayed sth goes wrong
 //		$scope.tooltip ="This will select the process..";
 		$scope.isSelected = false;//ng-init
-		$scope.toggleSelection = function(e) {
+		$scope.toggleSelection = function(e,processIndex) {
 			$scope.isSelected= !$scope.isSelected;
 			e.stopPropagation();e.preventDefault();
-			$scope.change( {"process":$scope.processItem.key, "wholeProcess": true },$scope.isSelected );
+			$scope.change( {"process":$scope.processItem.key, "wholeProcess": true },$scope.isSelected,processIndex,undefined,undefined );
 		}; 
 	}]);
 

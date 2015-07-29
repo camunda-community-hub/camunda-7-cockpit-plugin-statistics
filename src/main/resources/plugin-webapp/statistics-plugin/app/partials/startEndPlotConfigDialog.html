@@ -41,18 +41,18 @@
 			</tab> <tab heading="time-window"> <tabset class="tabs-left"> <tab heading="date">
 			<div class="row">
 				<div class="col-lg-5 col-md-5 col-sm-5">
-					<pre class="alert alert-info">From: {{fromDate | date: 'longDate'}}</pre>
+					<pre class="alert alert-info">From: {{date.from | date: 'longDate'}}</pre>
 					<datepicker
 						show-weeks="true"
 						class="well well-sm"
-						ng-model="fromDate"></datepicker>
+						ng-model="date.from"></datepicker>
 				</div>
 				<div class="col-lg-5 col-md-5 col-sm-5">
-					<pre class="alert alert-info">To: {{toDate | date: 'longDate'}}</pre>
+					<pre class="alert alert-info">To: {{date.to | date: 'longDate'}}</pre>
 					<datepicker
 						show-weeks="true"
 						class="well well-sm"
-						ng-model="toDate"></datepicker>
+						ng-model="date.to"></datepicker>
 				</div>
 			</div>
 			</tab> <tab heading="time">
