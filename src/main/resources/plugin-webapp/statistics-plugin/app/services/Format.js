@@ -26,6 +26,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		};
 
 		Format.breakDateDownTo24h = function(date){
+			console.log(date);
 			var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 			var changedDate = date.substr(10);
 			changedDate = "1991-05-05" + changedDate;
@@ -72,8 +73,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				var yValue = (typeof y == "undefined" || y == "")? i+1:eval("element."+y);
 				//remove this when query doesnt give nullvalues anymore
 				if(eval("element."+x) == null);
-				else  
+				else  {
 					formatedData[i].values.push({"x": parseX(eval("element."+x)), "y": parseY(yValue)  });
+				}
 			});
 			return formatedData;
 		};
@@ -88,13 +90,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var i = -1;
 			angular.forEach(data, function(element){
 				if(typeof formatedData[i] == "undefined" || formatedData[i].key!=eval("element." +key)){
-					i=-1;
-					for(var j =0; j<formatedData.length; j++){
-						if(formatedData[j].key==eval("element." +key)){
-							i = j;
-							return;
-						}
-					};
+					i = formatedData.map(function(e) {return e.key;}).indexOf(eval("element." +key));
 					if(i==-1){
 						formatedData.push({"key": eval("element." +key), "values": []});
 						i= formatedData.length-1;

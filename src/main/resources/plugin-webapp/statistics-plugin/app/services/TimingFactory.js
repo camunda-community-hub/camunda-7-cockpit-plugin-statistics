@@ -62,13 +62,14 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * @xValue: either starttime or endtime of the processes will be plotted on the x Axis
 		 * @timeFrame: either focus on weekly dates i.e. the rest of the date will be ignored
 		 * or focus on time only i.e. weekday, year will be ignored
-		 * 
+		 * @date: an object containing date.to a date, date.from a date
+		 * if specified only procs/acts in this period are ploted
 		 */
-		TimingFactory.getModelMenuData = function(selectedFromMenu,xValue, timeFrame){
+		TimingFactory.getModelMenuData = function(selectedFromMenu,xValue, timeFrame,date){
+			//formats date into a LOCAL time date string for the database
+			var formatDate = d3.time.format("%Y-%m-%dT%H:%M:%S");
 			var timeString = (timeFrame ==="daily")?"24h":"Week";
-			console.log(timeFrame);
-			console.log(timeString);
-			return DataFactory.getDataFromModelMenu(selectedFromMenu)
+			return DataFactory.getDataFromModelMenu(selectedFromMenu, formatDate(date.from),formatDate(date.to))
 			.then(function(promiseData){
 //				TimingFactory.chosenData = DataFactory.resultData;
 				TimingFactory.chosenData  =[];

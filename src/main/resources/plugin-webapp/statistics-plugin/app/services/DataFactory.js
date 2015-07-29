@@ -660,9 +660,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 
 		}
-
-		
-		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu){
+		/**
+		 * @dateFrom: a string in the format:"%Y-%m-%dT%H:%M:%S"
+		 */
+		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu,dateFrom,dateTo){
 			DataFactory.resultData = [];
 			var promises =[];
 			var procDefId = selectedFromModelMenu[0].procDefId;
@@ -674,8 +675,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.log(procDefId);
 				console.log(activityType);
 				console.log(actName);
-				
-				promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName)));
+				console.log(dateFrom);
+				console.log(dateTo);
+				console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+"&startedAfter"+dateFrom+"&finishedBefore"+dateTo);
+				promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+"&startedAfter"+dateFrom+"&finishedBefore"+dateTo)));
 	
 			});
 			return $q.all(promises);
