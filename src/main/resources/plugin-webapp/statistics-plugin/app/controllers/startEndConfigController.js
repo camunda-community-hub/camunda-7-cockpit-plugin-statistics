@@ -59,9 +59,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				if(indexActivityType>=0){
 					if(add) {
 						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.push({"activity": chosenItem.activity});
-						//controls weather now all activities of this type are checked and then also check the type
-						if ($scope.selected[indexProcess].activityTypes[indexActivityType].activities.length==$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length)
-							$scope.$broadcast('checkActivityType',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityTyp});
+						//controls weather now all activities of this type are checked and then also checks the type
+						if ($scope.selected[indexProcess].activityTypes[indexActivityType].activities.length==$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length){
+							$scope.$broadcast('checkActivityType',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityType});
+						}
 					}
 					//delete activity
 					else{
