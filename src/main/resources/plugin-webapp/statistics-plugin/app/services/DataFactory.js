@@ -677,7 +677,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.log(actName);
 				console.log(dateFrom);
 				console.log(dateTo);
-				console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+"&startedAfter"+dateFrom+"&finishedBefore"+dateTo);
+				console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+"&startedAfter="+dateFrom+"&finishedBefore="+dateTo);
 				promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+"&startedAfter"+dateFrom+"&finishedBefore"+dateTo)));
 	
 			});

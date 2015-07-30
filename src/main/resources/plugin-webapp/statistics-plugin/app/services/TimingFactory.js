@@ -75,6 +75,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				TimingFactory.chosenData  =[];
 				angular.forEach(promiseData, function(singleCallbackReturn){
 					TimingFactory.chosenData = TimingFactory.chosenData.concat(singleCallbackReturn.data);
+					console.log(TimingFactory.chosenData);
 				});
 				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName",xValue,"",eval("Format.breakDateDownTo"+timeString));
 				TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,5);
