@@ -3,13 +3,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	module.controller('startEndConfigController',['$scope','Uri','ScatterPlotConfigFactory', 'TimingFactory', function($scope, Uri, ScatterPlotConfigFactory,TimingFactory){
 
 		$scope.apply = function(){
-			TimingFactory.getModelMenuData($scope.selected, $scope.xAxis.time, $scope.timeFrameModel.frame,$scope.date)
+			TimingFactory.getModelMenuData($scope.selected, $scope.xAxis.time, $scope.timeFrameModel.frame,$scope.timeWindow)
 		};
 		
-		$scope.hallo = function() {
-			console.log($scope.toDate);
-			console.log($scope.fromDate);
-		};
 
 		$scope.clustering =  {
 				algo: "kmeans",
@@ -23,12 +19,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.xAxis = {
 				time: "startTime"
 		};
-		$scope.date = {
-				from : null,
-				to : null
+		
+		$scope.timeWindow = {
+				start: "",
+				startDate : null,
+				end: "",
+				Date: null
 		};
-//		$scope.fromDate = null;
-//		$scope.toDate = null;
+		
 		//data to fill the accordion
 		$scope.menuData = [];
 		ScatterPlotConfigFactory.getMenuData()

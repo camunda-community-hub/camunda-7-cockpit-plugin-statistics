@@ -14,7 +14,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		$scope.$on('widthChanged', function() {
 			$scope.width = UserInteractionFactory.currentWidth*0.66;
-			$scope.getDataAndDrawGraph();
+			$scope.data = TimingFactory.chosenData;
+			$scope.options = TimingFactory.options;
 		});
 
 		$scope.showPlot = function() {
@@ -25,13 +26,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					$scope.options = TimingFactory.options;
 				});
 
-				$scope.openDeleteDeploymentDialog = function () {
-					$modal.open({
-						templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/startEndPlotConfigDialog.html')),
-						controller: 'startEndConfigController',
-						size: 'lg'
-					});
-				}; 
+//				$scope.openDeleteDeploymentDialog = function () {
+//					$modal.open({
+//						templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/startEndPlotConfigDialog.html')),
+//						controller: 'startEndConfigController',
+//						size: 'lg'
+//					});
+//				}; 
 				$scope.shownPlot = true;
 
 			}
