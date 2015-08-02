@@ -71,6 +71,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var timeString = (timeFrame ==="daily")?"24h":"Week";
 			return DataFactory.getDataFromModelMenu(selectedFromMenu, formatDate(date.from),formatDate(date.to))
 			.then(function(promiseData){
+				console.log(promiseData);
 //				TimingFactory.chosenData = DataFactory.resultData;
 				TimingFactory.chosenData  =[];
 				angular.forEach(promiseData, function(singleCallbackReturn){
