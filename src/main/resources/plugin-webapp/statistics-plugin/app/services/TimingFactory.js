@@ -65,11 +65,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * @date: an object containing date.to a date, date.from a date
 		 * if specified only procs/acts in this period are ploted
 		 */
-		TimingFactory.getModelMenuData = function(selectedFromMenu,xValue, timeFrame,date){
-			//formats date into a LOCAL time date string for the database
-			var formatDate = d3.time.format("%Y-%m-%dT%H:%M:%S");
+		/**
+		 * formating is now happening inside the loop, if performance becomes an issue we have to think of sth new
+		 */
+		TimingFactory.getModelMenuData = function(selectedFromMenu,xValue, timeFrame,timeWindow){
 			var timeString = (timeFrame ==="daily")?"24h":"Week";
-			return DataFactory.getDataFromModelMenu(selectedFromMenu, formatDate(date.from),formatDate(date.to))
+			return DataFactory.getDataFromModelMenu(selectedFromMenu,timeWindow)
 			.then(function(promiseData){
 				console.log(promiseData);
 //				TimingFactory.chosenData = DataFactory.resultData;

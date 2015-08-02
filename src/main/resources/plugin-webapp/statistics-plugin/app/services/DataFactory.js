@@ -663,32 +663,43 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		/**
 		 * @dateFrom: a string in the format:"%Y-%m-%dT%H:%M:%S"
 		 */
-		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu,dateFrom,dateTo){
+		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu,timeWindow){
 			DataFactory.resultData = [];
 			var promises =[];
-			var procDefId = selectedFromModelMenu[0].procDefId;
-			console.log(selectedFromModelMenu[0].activityTypes.length);
-			angular.forEach(selectedFromModelMenu[0].activityTypes, function(activityTypeObject,index){
-				console.log(index);
-				var activityType = activityTypeObject.activityType;
-				var actName = activityTypeObject.activities[0].activity;
+			//formats date into a LOCAL time date string for the database
+			var formatDate = d3.time.format("%Y-%m-%dT%H:%M:%S");
+			timeRequest = "";
+			if(timeWindow.start !="")
+				timeRequest = "&" + timeWindow.start + "=" + formatDate(timeWindow.startDate);
+			if(timeWindow.end != "")
+				timeRequest = timeRequest + "&" + timeWindow.end + "=" + formatDate(timeWindow.endDate);
+			angular.forEach(selectedFromModelMenu, function(processObject){
+				var procDefId = processObject.procDefId;
 				console.log(procDefId);
-				console.log(activityType);
-				console.log(actName);
-				console.log(dateFrom);
-				console.log(dateTo);
-				console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+"&startedAfter="+dateFrom+"&finishedBefore="+dateTo);
-				promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+"&startedAfter"+dateFrom+"&finishedBefore"+dateTo)));
-			});
+				//this could also be done outside the loop, might be faster, but order of pushed objects in promises is destroyed
+				//if performance becomes an issue we have to change this
+				if(processObject.wholeProcess)
+					promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+procDefId+timeRequest)));
+				angular.forEach(processObject.activityTypes, function(activityTypeObject,indexActType){
+					angular.forEach(activityTypeObject.activities, function(activityObject, indexAct){
+						var activityType = activityTypeObject.activityType;
+						var actName = activityObject.activity;
+						console.log(activityType);
+						console.log(actName);
+						console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName + timeRequest);
+						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+timeRequest)));
+					})
+				})
+			})
 			return $q.all(promises);
 //			.then(function(data){
-////				DataFactory.resultData[index] = data;
-////				console.log(DataFactory.resultData);
-//				console.log(data);
-//				
+////			DataFactory.resultData[index] = data;
+////			console.log(DataFactory.resultData);
+//			console.log(data);
+
 //			})
 		};
-		
+
 		//inserted this from my old local version
 		//TODO: need to checked if there is a new way of doing this
 		DataFactory.getActivityNamesTypesProcDefinition = function() {
