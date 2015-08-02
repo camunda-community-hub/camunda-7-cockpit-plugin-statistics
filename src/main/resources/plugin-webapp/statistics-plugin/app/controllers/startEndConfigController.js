@@ -40,6 +40,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.selected = [];
 		//next two methods are used by the child controllers in the accordion
 		//adds or deletes the chosenItem
+		//TODO: think if input parameters are really necessary
 		$scope.change = function(chosenItem,add,processIndexMenu,activityTypeIndexMenu,activityIndexMenu){
 			console.debug("change");
 			//find out if the process has been inserted before????
@@ -68,7 +69,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					else{
 						var indexActivity = $scope.selected[indexProcess].activityTypes[indexActivityType].activities.map(function(e) { return e.activity; }).indexOf(chosenItem.activity);
 						//if one activity is removed we also uncheck the  activity type, since checking the type implies ALL activities to be checked
-						$scope.$broadcast('activityTypeDeleted',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityType});
+						$scope.$broadcast('uncheckActivityType',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityType});
 						//remove activity
 						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.splice(indexActivity,1);
 						//if no other activities of this type are selected --> delete activityType
@@ -105,17 +106,20 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 		//used by the remove icon in the list itself
 		$scope.removeFromList = function(process, type, activity){
+			//right now that cant happen, but if we include sth to delete processes in the list next 
+			//to the menu it must be implemented
 			if(!type){}
 			else if (!activity){
-				$scope.$broadcast('activityTypeDeleted',{"val":type})
+				$scope.$broadcast('uncheckActivityType',{"val":type})
 			}
 			else {
 				var removeItem ={"process":process, "wholeProcess": false, "activityType":type, "activity": activity};
-				$scope.change(removeItem);
+				//we dont use all input parameters since in the delete case they are not used anyway
+				$scope.change(removeItem,false);
 				$scope.$broadcast('activityDeleted',{"val":activity})
 			};
 		};
-
+				
 		$scope.imageSource = require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/pics/endTimePlot.jpg'));
 	}]);
 
@@ -131,16 +135,16 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	}]);
 
 	module.controller('activityTypeController',['$scope', function($scope){
-		$scope.$watch('isSelected', function(newVal, oldVal){
-			if(newVal!=oldVal)
-				$scope.$broadcast('isSelectedChange',{"val":newVal})
-		});
+//		$scope.$watch('isSelected', function(newVal, oldVal){
+//			if(newVal!=oldVal)
+//				$scope.$broadcast('isSelectedChange',{"val":newVal})
+//		});
 
 		//listens for the event when an item is removed from the list with the remove icon
 		//and unchecks the box, so the list and boxes stay in sync
 		//and if the activityType is unchecked it fires an event that
 		//the activity controllers listen to
-		$scope.$on('activityTypeDeleted', function(event, args){
+		$scope.$on('uncheckActivityType', function(event, args){
 			if($scope.activityType.key == args.val){
 				$scope.isSelected = false;
 			}
@@ -152,11 +156,19 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 		});
 
+		$scope.$on('uncheckActivityType', function(event, args){
+			if($scope.activityType.key == args.val){
+				$scope.isSelected = false;
+				$scope.$broadcast('isSelectedChange',{"val":$scope.isSelected});
+			}
+		});
+		
 //		$scope.tooltip ="This will select all activities of that type..";
 		$scope.isSelected = false;//ng-init
 		this.isSelected = $scope.isSelected;
 		$scope.toggleSelection = function(e) {
 			$scope.isSelected= !$scope.isSelected;
+			$scope.$broadcast('isSelectedChange',{"val":$scope.isSelected});
 			e.stopPropagation();e.preventDefault();
 		}; 
 	}]);
