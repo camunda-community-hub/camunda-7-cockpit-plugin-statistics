@@ -1,4 +1,12 @@
-
+<style>
+#circle {
+     width: 14px;
+     height: 14px;
+     -webkit-border-radius: 14px;
+     -moz-border-radius: 14px;
+     border-radius: 14px;
+} */
+</style>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12">
 		<tabset justified="true"> <tab heading="data">
@@ -11,7 +19,10 @@
 					<div class="well">
 						<div ng-repeat="item in selected">
 							<div style="border: 2px solid black">
-								<strong>{{item.process}}</strong> <i
+<!-- 								ng-show also depends on item.wholeProcess since even if we dont give it a color it would move the "process" in the list -->
+								<div id="circle" class ="pull-left" ng-style="item.color"></div>
+								<strong>{{item.process}}</strong> 
+								<i
 									class="pull-right glyphicon glyphicon-ok"
 									ng-show="item.wholeProcess"></i>
 								<div
@@ -23,6 +34,7 @@
 									<div
 										ng-repeat="act in types.activities"
 										style="text-indent: 20px;">
+										<div id="circle" class ="pull-left" ng-style="act.color"></div>
 										{{act.activity}} <a
 											class="pull-right glyphicon glyphicon-remove"
 											ng-click="removeFromList(item.process,types.activityType,act.activity)"></a>
@@ -141,11 +153,15 @@
 					end time
 				</div>
 				<div>
-					<input type="radio" 
+					<input
+						type="radio"
 						ng-model="xAxis.time"
 						value="duration">
 					duration
 				</div>
+				<label class="checkbox"> <input ng-model="options.spline"
+              ng-checked="1" type="checkbox"> show splines
+            </label>
 			</div>
 			<div class="col-lg-5 col-md-5 col-sm-5">
 				<h4>time-frame</h4>
@@ -206,4 +222,3 @@
 		ng-click="apply()">Apply</button>
 	<button class="btn btn-warning">Cancel</button>
 </div>
-

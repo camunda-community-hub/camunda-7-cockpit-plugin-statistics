@@ -74,16 +74,23 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var timeString = (timeFrame ==="daily")?"24h":"Week";
 			return DataFactory.getDataFromModelMenu(selectedFromMenu,timeWindow)
 			.then(function(promiseData){
+				var keyList = DataFactory.keyList;
 				console.log(promiseData);
 //				TimingFactory.chosenData = DataFactory.resultData;
 				TimingFactory.chosenData  =[];
-				angular.forEach(promiseData, function(singleCallbackReturn){
+				angular.forEach(promiseData, function(singleCallbackReturn,promiseIndex){
+					console.log(singleCallbackReturn.data);
+					if(singleCallbackReturn.data.length ==0){
+						console.log(promiseIndex);
+						singleCallbackReturn.data = [{"activityName": keyList[promiseIndex]}];
+						console.log(singleCallbackReturn.data);
+					}//TODO: make a good dummy, with a unique key, in best case the right key without data, for that maybe use index in angular for each and selected data
 					TimingFactory.chosenData = TimingFactory.chosenData.concat(singleCallbackReturn.data);
 					console.log(TimingFactory.chosenData);
 				});
 				if(xValue == "duration"){
 					var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName","startTime","durationInMillis",parseDate,function(d){console.log(d/1000/60);return d/1000/60;});
+					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName","startTime","durationInMillis",parseDate,function(d){return d/1000/60;});
 					console.log(TimingFactory.chosenData);
 					TimingFactory.options  = {
 							outerRegion:[5,95],
@@ -93,7 +100,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					};
 				}
 				else{
-					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName",xValue,"",eval("Format.breakDateDownTo"+timeString));
+					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,["activityName","processDefinitionKey"] ,xValue,"",eval("Format.breakDateDownTo"+timeString));
+					console.log(TimingFactory.chosenData);
 					TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,5);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(timeFrame),1000);
 					console.log(TimingFactory.chosenData);				}

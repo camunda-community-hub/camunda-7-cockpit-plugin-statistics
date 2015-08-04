@@ -10,7 +10,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			                type: 'scatterChart',
 			                height: 400,
 			                width: width,
-			                color: d3.scale.category10().range(),
+			                //color function is set in the Controller for the plot
+			                //if nothing is specified nvd3 will choose d3 color20 as default
+//			                color: d3.scal.category10().range(),
 //						sizeDomain: [1,10],	//see https://github.com/krispo/angular-nvd3/issues/49 for more info
 
 						size : function(d){
