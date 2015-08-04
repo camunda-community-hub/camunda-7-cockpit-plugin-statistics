@@ -21,18 +21,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.showPlot = function() {
 			if(!$scope.shownPlot) {
 
-				$scope.$on('plotData:updated', function(event,data) {
-					$scope.data = TimingFactory.chosenData;
-					$scope.options = TimingFactory.options;
-				});
-
-//				$scope.openDeleteDeploymentDialog = function () {
-//					$modal.open({
-//						templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/startEndPlotConfigDialog.html')),
-//						controller: 'startEndConfigController',
-//						size: 'lg'
-//					});
-//				}; 
 				$scope.shownPlot = true;
 
 			}

@@ -17,22 +17,19 @@
   </tab> -->
   <tab heading="Timing" select="handleTabClick('startEnd')"
 		ng-controller="timingCtrl">
-		  <div class="row">
+		  <div class="row" ng-controller = "startEndConfigController">
 				<div class="col-lg-7 col-md-7 col-sm-7">
-					<div id="timingChartDiv">
+					<div id="timingChartDiv" ng-if = "xAxis.time=='startTime'||xAxis.time=='endTime'">
 						<nvd3 options="options" data="data"></nvd3>
 					</div>
-<!-- 					<div id="regPlotDiv" ng-if="selectedView.name== views[0].name"> -->
-<!--         				<regression-plot data="data" options="options"> </regression-plot> -->
-<!--      				</div> -->
+					<div id="regPlotDiv" ng-if="xAxis.time=='duration'">
+        				<regression-plot data="data" options="options"> </regression-plot>
+     				</div>
 <!--       				<div id="stackChartDiv" ng-if="selectedView.name== views[1].name"> -->
 <!--         				<nvd3 options="options" data="data"></nvd3> -->
 <!--       				</div> -->
 				</div>
-<!-- 				<div class="col-lg-4 col-md-4 col-sm-4"> -->
-<!-- 					<button class="btn btn-default" ng-click="openDeleteDeploymentDialog()">Open me!</button> -->
-<!-- 				</div> -->
-				<div class="col-lg-5 col-md-5 col-sm-5 well" ng-controller = "startEndConfigController">
+				<div class="col-lg-5 col-md-5 col-sm-5 well">
 					<div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/partials/plotConfigDialog.html'"></div>
 				</div>
       </div>

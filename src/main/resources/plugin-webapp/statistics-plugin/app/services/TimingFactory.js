@@ -13,7 +13,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		TimingFactory.data = [];
 		TimingFactory.options = [];
 	
-
+		/**
+		 * this method is not needed anymore
+		 */
 		TimingFactory.getData = function(currentLevel, userTaskProcessSpecifier, currentFrame, currentXValue,width, kMeans){
 			//if we decide to store data and not make an asynchronous call each time the table is build
 			//(for example if we periodically update all data) 
@@ -79,11 +81,22 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					TimingFactory.chosenData = TimingFactory.chosenData.concat(singleCallbackReturn.data);
 					console.log(TimingFactory.chosenData);
 				});
-				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName",xValue,"",eval("Format.breakDateDownTo"+timeString));
-				TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,5);
-				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(timeFrame),1000);
-				console.log(TimingFactory.chosenData);
-				$rootScope.$broadcast('plotData:updated');
+				if(xValue == "duration"){
+					var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
+					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName","startTime","durationInMillis",parseDate,function(d){console.log(d/1000/60);return d/1000/60;});
+					console.log(TimingFactory.chosenData);
+					TimingFactory.options  = {
+							outerRegion:[5,95],
+							scatter  : true,
+							regression : true,
+							spline : false
+					};
+				}
+				else{
+					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName",xValue,"",eval("Format.breakDateDownTo"+timeString));
+					TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,5);
+					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(timeFrame),1000);
+					console.log(TimingFactory.chosenData);				}
 			});
 		}
 		

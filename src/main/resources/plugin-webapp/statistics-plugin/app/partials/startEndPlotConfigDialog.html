@@ -125,50 +125,60 @@
 						show-meridian="ismeridian"></timepicker>
 				</div>
 			</div>
-			</tab> </tabset> </tab> <tab heading="config"> <tabset class="tabs-left"> <tab heading="x-Axis">
+			</tab> </tabset> </tab> <tab heading="config"> <tabset class="tabs-left"> <tab heading="Properties to be plotted">
 			<div class="row">
-				<div class="col-lg-5 col-md-5 col-sm-5">
-					<h4>Choose the unit for the x-Axis</h4>
-					<div>
-						<input
-							type="radio"
-							ng-model="xAxis.time"
-							value="startTime">
-						start time
-					</div>
-					<div>
-						<input
-							type="radio"
-							ng-model="xAxis.time"
-							value="endTime">
-						end time
-					</div>
-					<div>
-						<input type="radio">
-						duration
-					</div>
-				</div>
-				<div class="col-lg-5 col-md-5 col-sm-5">
-					<h4>time-frame</h4>
-					<div>
-						<input
-							type="radio"
-							ng-model="timeFrameModel.frame"
-							value="daily">
-						dayly
-					</div>
-					<div>
-						<input
-							type="radio"
-							ng-model="timeFrameModel.frame"
-							value="weekly">
-						weekly
-					</div>
-				</div>
-				<!-- pic later in "Vorschau" button -->
-				<!-- 				<div class="col-lg-6 col-md-6 col-sm-6"> -->
-				<!-- 					<img ng-src="{{imageSource}}"></img> -->
-				<!-- 				</div> -->
+<!-- 				<div class="col-lg-5 col-md-5 col-sm-5"> -->
+<!-- 					<h4>Choose the unit for the x-Axis</h4> -->
+<!-- 					<div> -->
+<!-- 						<input -->
+<!-- 							type="radio" -->
+<!-- 							ng-model="xAxis.time" -->
+<!-- 							value="startTime"> -->
+<!-- 						start time -->
+<!-- 					</div> -->
+<!-- 					<div> -->
+<!-- 						<input -->
+<!-- 							type="radio" -->
+<!-- 							ng-model="xAxis.time" -->
+<!-- 							value="endTime"> -->
+<!-- 						end time -->
+<!-- 					</div> -->
+<!-- 					<div> -->
+<!-- 						<input type="radio" -->
+<!-- 							ng-model="xAxis.time" -->
+<!-- 							value="duration"> -->
+<!-- 						duration -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="col-lg-5 col-md-5 col-sm-5"> -->
+<!-- 					<h4>time-frame</h4> -->
+<!-- 					<div> -->
+<!-- 						<input -->
+<!-- 							type="radio" -->
+<!-- 							ng-model="timeFrameModel.frame" -->
+<!-- 							value="daily"> -->
+<!-- 						dayly -->
+<!-- 					</div> -->
+<!-- 					<div> -->
+<!-- 						<input -->
+<!-- 							type="radio" -->
+<!-- 							ng-model="timeFrameModel.frame" -->
+<!-- 							value="weekly"> -->
+<!-- 						weekly -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+				<ul class="nav nav-pills nav-stacked">
+					<li><a href="#tab1" >First</a></li>
+					<li><a href="#tab2" >First</a></li>
+				</ul>
+				<div class="tab-content">
+	    			<div class="tab-pane" id="tab1">
+	     				 1
+	   				 </div>
+	   				 <div class="tab-pane" id="tab2">
+	     				 2
+	    			</div>
+	    		</div>
 			</div>
 			</tab> <tab heading="clustering">
 			<div class="row">

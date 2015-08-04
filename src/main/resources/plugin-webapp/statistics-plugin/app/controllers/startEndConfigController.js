@@ -4,6 +4,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		$scope.apply = function(){
 			TimingFactory.getModelMenuData($scope.selected, $scope.xAxis.time, $scope.timeFrameModel.frame,$scope.timeWindow)
+			.then(function(){
+				$scope.data = TimingFactory.chosenData;
+				$scope.options = TimingFactory.options;
+			})
 		};
 		
 
@@ -108,7 +112,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			//to the menu it must be implemented
 			if(!type){}
 			else if (!activity){
-				$scope.$broadcast('uncheckActivityType',{"val":type})
+				$scope.$broadcast('deleteActivityType',{"val":type})
 			}
 			else {
 				var removeItem ={"process":process, "wholeProcess": false, "activityType":type, "activity": activity};
@@ -154,7 +158,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 		});
 
-		$scope.$on('uncheckActivityType', function(event, args){
+		$scope.$on('deleteActivityType', function(event, args){
 			if($scope.activityType.key == args.val){
 				$scope.isSelected = false;
 				$scope.$broadcast('isSelectedChange',{"val":$scope.isSelected});
