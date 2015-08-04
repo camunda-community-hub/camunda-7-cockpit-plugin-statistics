@@ -7,30 +7,68 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			.then(function(){
 				$scope.data = TimingFactory.chosenData;
 				$scope.options = TimingFactory.options;
-			})
+				var colorIterator = makeIterator($scope.d3Colors);
+				angular.forEach($scope.selected, function(processObject){
+					if(processObject.wholeProcess){
+						var color = colorIterator.next();
+						processObject.color = {"background-color" : color };
+						$scope.colorDictionary.push({"key" : processObject.process, "color": color});
+					}
+					angular.forEach(processObject.activityTypes, function(activityTypeObject){
+						angular.forEach(activityTypeObject.activities, function(activityObject){
+							var color = colorIterator.next();
+							activityObject.color = {"background-color" : color};
+							$scope.colorDictionary.push({"key":activityObject.activity, "color": color});
+						})
+					})
+				})
+				console.log($scope.colorDictionary);
+				$scope.options.chart.color = function(d, i) {
+			        keyIndex = $scope.colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
+			        console.log(keyIndex);
+			        console.log(d.key);
+			        console.log(d);
+			        return $scope.colorDictionary[keyIndex].color;
+			    };
+			});
 		};
+		$scope.colorDictionary =[];
+		$scope.d3Colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+		                   "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
+		                   ];
 		
+		function makeIterator(array){
+			var nextIndex = 0;
+
+			return {
+				next: function(){
+					if(nextIndex >= array.length)
+						nextIndex =0 ;
+					return array[nextIndex++];
+				}
+			}
+		};
 
 		$scope.clustering =  {
 				algo: "kmeans",
 				numberOfClusters: 5
 		};
-		
+
 		$scope.timeFrameModel  = {
 				frame : "weekly"
 		};
-		
+
 		$scope.xAxis = {
 				time: "startTime"
 		};
-		
+
 		$scope.timeWindow = {
 				start: "",
 				startDate : null,
 				end: "",
 				Date: null
 		};
-		
+
 		//data to fill the accordion
 		$scope.menuData = [];
 		ScatterPlotConfigFactory.getMenuData()
@@ -43,6 +81,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//next two methods are used by the child controllers in the accordion
 		//adds or deletes the chosenItem
 		//TODO: think if input parameters are really necessary
+		//each time something is added it also gets a color
+		//if it is deleted it gets deleted from the color dictionary and the iterator is set one step back
 		$scope.change = function(chosenItem,add,processIndexMenu,activityTypeIndexMenu,activityIndexMenu){
 			console.debug("change");
 			//find out if the process has been inserted before????
@@ -53,7 +93,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				if(chosenItem.wholeProcess){
 					$scope.selected[indexProcess].wholeProcess = add;
 					//case: delete whole process and no other activitytype selected
-					if(!add && $scope.selected[indexProcess].activityTypes.length ==0) $scope.selected.splice(indexProcess,1);
+					if(!add && $scope.selected[indexProcess].activityTypes.length ==0)
+						$scope.selected.splice(indexProcess,1);
 					return;
 				}
 				//activity has been chosen (not whole process)
@@ -121,7 +162,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.$broadcast('activityDeleted',{"val":activity})
 			};
 		};
-				
+
 		$scope.imageSource = require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/pics/endTimePlot.jpg'));
 	}]);
 
@@ -138,8 +179,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('activityTypeController',['$scope', function($scope){
 //		$scope.$watch('isSelected', function(newVal, oldVal){
-//			if(newVal!=oldVal)
-//				$scope.$broadcast('isSelectedChange',{"val":newVal})
+//		if(newVal!=oldVal)
+//		$scope.$broadcast('isSelectedChange',{"val":newVal})
 //		});
 
 		//listens for the event when an item is removed from the list with the remove icon
@@ -164,7 +205,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.$broadcast('isSelectedChange',{"val":$scope.isSelected});
 			}
 		});
-		
+
 //		$scope.tooltip ="This will select all activities of that type..";
 		$scope.isSelected = false;//ng-init
 		this.isSelected = $scope.isSelected;

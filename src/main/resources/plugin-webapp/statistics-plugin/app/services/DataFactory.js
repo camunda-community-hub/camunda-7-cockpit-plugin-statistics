@@ -662,8 +662,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 		/**
 		 * @dateFrom: a string in the format:"%Y-%m-%dT%H:%M:%S"
+		 * @return: an objet with all promises in one vector and the keyList which contains all the keys of
+		 * the chosen data, used for the legend
 		 */
 		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu,timeWindow){
+			//keyList is an array containing all keys of the chosen data. It will be used for the legend
+			var keyList = [];
 			DataFactory.resultData = [];
 			var promises =[];
 			//formats date into a LOCAL time date string for the database
@@ -678,19 +682,24 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.log(procDefId);
 				//this could also be done outside the loop, might be faster, but order of pushed objects in promises is destroyed
 				//if performance becomes an issue we have to change this
-				if(processObject.wholeProcess)
-					promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+procDefId+timeRequest)));
+				if(processObject.wholeProcess){
+					promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+procDefId+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+					keyList.push(processObject.process);
+				}
 				angular.forEach(processObject.activityTypes, function(activityTypeObject,indexActType){
 					angular.forEach(activityTypeObject.activities, function(activityObject, indexAct){
 						var activityType = activityTypeObject.activityType;
 						var actName = activityObject.activity;
 						console.log(activityType);
 						console.log(actName);
-						console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName + timeRequest);
-						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+timeRequest)));
+						keyList.push(actName);
+//						we need to sort the results by start time for the splines in regressionplot directive
+						console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName + timeRequest+"&sortBy=startTime&sortOrder=asc");
+						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
 					})
 				})
 			})
+			DataFactory.keyList = keyList;
 			return $q.all(promises);
 //			.then(function(data){
 ////			DataFactory.resultData[index] = data;

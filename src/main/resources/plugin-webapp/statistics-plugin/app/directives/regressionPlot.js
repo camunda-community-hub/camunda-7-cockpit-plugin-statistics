@@ -73,7 +73,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		var colorScale = d3.scale.ordinal()
 		.range(usedColors)
 		.domain(processes);
-		
+		console.log(colorScale);
 		return colorScale;
 	};
 	

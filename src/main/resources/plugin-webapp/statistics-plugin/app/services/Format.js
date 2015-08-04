@@ -48,7 +48,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * 
 		 * @param data the data that will be formated. Data needs to be sorted by its key property for 
 		 * this function to work!!
-		 * @param key 
+		 * @param keyArray a string or an array of strings, if the object does not have the first string as an attribute, the second is tried
 		 * @param x the property of data that will be plotted on the x axis
 		 * @param y the property of data that will be plotted on the y axis, if no y value is specified each key will get 
 		 * a dummy y property, so all points belonging to one key will have the same y value
@@ -57,7 +57,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * @param parsey the name of a function, before the y property is pushed in the new data structure
 		 * it will be parsed by parseY
 		 */
-		Format.bringSortedDataInPlotFormat = function(data, key, x, y, parseX, parseY){
+		Format.bringSortedDataInPlotFormat = function(data, keyArray, x, y, parseX, parseY){
 
 			var identity = function(value){return value};
 			var parseX = (typeof parseX == "undefined" || parseX == "")? identity:parseX;
@@ -66,6 +66,17 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var formatedData = [];
 			var i = -1;
 			angular.forEach(data ,function(element){
+				if(typeof keyArray == "string") var key = keyArray;
+				else {
+				console.log(eval("element." + keyArray[0])==undefined);
+				console.log(typeof eval("element." + keyArray[0])==undefined);
+				console.log(typeof eval("element." + keyArray[0])=="undefined")
+				var key = eval("element." + keyArray[0]) == undefined? keyArray[1] : keyArray[0];
+				console.log(key);
+				console.log(element);
+				console.log(eval("element." +key));
+				}
+				console.log(key);
 				if(typeof formatedData[i] == "undefined" || formatedData[i].key!=eval("element." +key)){
 					formatedData.push({"key": eval("element." +key), "values": []});
 					i++;
@@ -195,7 +206,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		Format.getKMeansClusterFromFormatedData = function(formatedData, kmeans){
 			var clusterArray = new Array(formatedData.length);
 			for(var i=0; i<formatedData.length; i++){
-				if(formatedData[i].values.length == 0) continue;
+//				if(formatedData[i].values.length == 0) continue;
 				clusterArray[i] = {"key":formatedData[i].key, "values":[]};
 				var dataArray =[];
 				//bring x values in the format used by cluster algo
