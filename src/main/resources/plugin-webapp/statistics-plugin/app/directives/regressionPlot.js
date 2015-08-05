@@ -60,22 +60,20 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		return [x,y];
 	};
 	
-	function setUpColorScale(data){
-		var colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-		              "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
-		              ];
-		var usedColors = [];
-		var processes = [];
-		for(var i=0; i<data.length; i++){
-			usedColors.push(colors[i]);
-			processes.push(data[i].key);
-		};
-		var colorScale = d3.scale.ordinal()
-		.range(usedColors)
-		.domain(processes);
-		console.log(colorScale);
-		return colorScale;
-	};
+	//this should be set in the options input!
+//	function setUpColorScale(data){
+//		var colors = d3.scale.category10().range();
+//		var usedColors = [];
+//		var processes = [];
+//		for(var i=0; i<data.length; i++){
+//			usedColors.push(colors[i]);
+//			processes.push(data[i].key);
+//		};
+//		var colorScale = d3.scale.ordinal()
+//		.range(usedColors)
+//		.domain(processes);
+//		return colorScale;
+//	};
 	
 	
 	function initGraph(options,data,svg,colorScale){
@@ -162,14 +160,12 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 //		  .attr("height", 10)
 	      .attr("r", 5)
 	      .style("stroke-width", "2px")
-	      .style("stroke",function(d) { 
-		        var color = colorScale(d.key);
-		        return color;
-		      })
-		  .style("fill", function(d) { 
-	        var color = colorScale(d.key);
-	        return color;
-	      })
+//	      .style("stroke",function(d) { 
+//		        var color = colorScale(d.key);
+//		        return color;
+//		      })
+	      .style("stroke",colorScale)
+		  .style("fill", colorScale)
 	      
 	    legend.selectAll('text')
 	      .data(data)
@@ -204,7 +200,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("r", 3.5)
 				.attr("cx", function(d) { return x(d.x); })
 				.attr("cy", function(d) { return y(d.y); })
-				.style("fill", colorScale(processSet.key));
+				.style("fill", colorScale(processSet));
 			});
 		}
 
@@ -231,7 +227,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("id", "spline")
 				.attr("class", "line")
 				.attr("d", line)
-				.attr("stroke",colorScale(processSet.key));
+				.attr("stroke",colorScale(processSet));
 			});
 		}
 	};
@@ -280,7 +276,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("id","regText")
 				.text("slope: "+ (slope*100).toFixed(2) + "%")		//this may produce some weird behavior when it comes to certain numbers
 				.attr("opacity","0.0")
-				.attr("fill",colorScale(processSet.key))
+				.attr("fill",colorScale(processSet))
 				.style("text-anchor", "end");
 
 				path = g.append("path")
@@ -289,14 +285,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("class", "reg")
 				.attr("d", line)
 //				.attr("stroke",regColor(slope))//the color of the line depends on abs(slope) the increase in slope leads to increase in "redness"
-				.attr("stroke",colorScale(processSet.key))
+				.attr("stroke",colorScale(processSet))
 				.on('mouseover', function(d){				//show slope information when mouse hovers over regression line
 					d3.select(this).style({opacity:'0.6'});
 					d3.select("#regText")
 					.attr("x",d3.mouse(this)[0])
 					.attr("y",d3.mouse(this)[1])
 //					.attr("stroke",regColor(slope))
-					.attr("stroke",colorScale(processSet.key))
+					.attr("stroke",colorScale(processSet))
 					.attr("opacity","1.0");
 
 				})
@@ -317,7 +313,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				if (typeof scope.data=="undefined") 
 					return;
 				
-				scope.colorScale = setUpColorScale(scope.data);
+//				scope.colorScale = setUpColorScale(scope.data);
+				scope.colorScale = scope.options.chart.color;
 
 				element[0].innerHTML = '';
 				var width = getWidth(scope.options.width);

@@ -7,36 +7,33 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			.then(function(){
 				$scope.data = TimingFactory.chosenData;
 				$scope.options = TimingFactory.options;
-				var colorIterator = makeIterator($scope.d3Colors);
+				//make an iterator over the 10 d3 default colors
+				//TODO if more then 10 are selected we need the 20 color scale
+				var colorIterator = makeIterator(d3.scale.category10().range());
+				var colorDictionary =[];
 				angular.forEach($scope.selected, function(processObject){
 					if(processObject.wholeProcess){
 						var color = colorIterator.next();
 						processObject.color = {"background-color" : color };
-						$scope.colorDictionary.push({"key" : processObject.process, "color": color});
+						colorDictionary.push({"key" : processObject.process, "color": color});
 					}
 					angular.forEach(processObject.activityTypes, function(activityTypeObject){
 						angular.forEach(activityTypeObject.activities, function(activityObject){
 							var color = colorIterator.next();
 							activityObject.color = {"background-color" : color};
-							$scope.colorDictionary.push({"key":activityObject.activity, "color": color});
+							colorDictionary.push({"key":activityObject.activity, "color": color});
 						})
 					})
 				})
-				console.log($scope.colorDictionary);
 				$scope.options.chart.color = function(d, i) {
-			        keyIndex = $scope.colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
-			        console.log(keyIndex);
-			        console.log(d.key);
-			        console.log(d);
-			        return $scope.colorDictionary[keyIndex].color;
+			        keyIndex = colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
+			        return colorDictionary[keyIndex].color;
 			    };
 			});
 		};
-		$scope.colorDictionary =[];
-		$scope.d3Colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-		                   "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
-		                   ];
-		
+		/**
+		 * @return: an iterator over an array. When the end is reached it starts all over again
+		 */
 		function makeIterator(array){
 			var nextIndex = 0;
 
@@ -93,8 +90,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				if(chosenItem.wholeProcess){
 					$scope.selected[indexProcess].wholeProcess = add;
 					//case: delete whole process and no other activitytype selected
-					if(!add && $scope.selected[indexProcess].activityTypes.length ==0)
+					if(!add && $scope.selected[indexProcess].activityTypes.length ==0){
 						$scope.selected.splice(indexProcess,1);
+						$scope.selected[indexProcess].color = null;
+					}
 					return;
 				}
 				//activity has been chosen (not whole process)

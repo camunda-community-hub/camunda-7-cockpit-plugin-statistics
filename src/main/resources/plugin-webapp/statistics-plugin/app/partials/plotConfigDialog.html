@@ -5,7 +5,7 @@
      -webkit-border-radius: 14px;
      -moz-border-radius: 14px;
      border-radius: 14px;
-} */
+}
 </style>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12">
@@ -159,6 +159,13 @@
 						value="duration">
 					duration
 				</div>
+				<div>
+					<input
+						type="radio"
+						ng-model="xAxis.time"
+						value="distribution">
+					distribution
+				</div>
 				<label class="checkbox"> <input ng-model="options.spline"
               ng-checked="1" type="checkbox"> show splines
             </label>
@@ -220,5 +227,4 @@
 	<button
 		class="btn btn-primary"
 		ng-click="apply()">Apply</button>
-	<button class="btn btn-warning">Cancel</button>
 </div>

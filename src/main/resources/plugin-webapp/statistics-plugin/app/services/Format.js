@@ -167,10 +167,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					formatedData[i].values.push({"x": j, "y": dataInBins[j].length});
 				};
 			};
-			var result = [];
-			result.push({"data":formatedData, "thresholds": thresholds});
-			return result;
-//			return formatedData;
+			console.log(formatedData);
+			return {"data":formatedData, "thresholds": thresholds};
 		}
 
 		/**
@@ -206,7 +204,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		Format.getKMeansClusterFromFormatedData = function(formatedData, kmeans){
 			var clusterArray = new Array(formatedData.length);
 			for(var i=0; i<formatedData.length; i++){
-//				if(formatedData[i].values.length == 0) continue;
+				if(formatedData[i].values.length == 0) continue;
 				clusterArray[i] = {"key":formatedData[i].key, "values":[]};
 				var dataArray =[];
 				//bring x values in the format used by cluster algo
