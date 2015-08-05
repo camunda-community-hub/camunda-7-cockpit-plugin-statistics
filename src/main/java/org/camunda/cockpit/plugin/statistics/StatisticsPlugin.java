@@ -80,7 +80,6 @@ public class StatisticsPlugin extends AbstractCockpitPlugin {
     private List<String> getProcessInstanceRelatedMappingFiles() {
       List<String> procinstRelatedMappingFiles = new ArrayList<String>();
       
-      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/singleProcessInstances.xml");
       procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/aggregatedProcessInstances.xml");
       return procinstRelatedMappingFiles;
     }

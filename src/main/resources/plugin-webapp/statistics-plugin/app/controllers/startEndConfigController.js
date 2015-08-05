@@ -92,7 +92,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					//case: delete whole process and no other activitytype selected
 					if(!add && $scope.selected[indexProcess].activityTypes.length ==0){
 						$scope.selected.splice(indexProcess,1);
-						$scope.selected[indexProcess].color = null;
 					}
 					return;
 				}

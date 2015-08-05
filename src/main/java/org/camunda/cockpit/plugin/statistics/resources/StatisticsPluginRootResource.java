@@ -16,12 +16,10 @@ import org.camunda.cockpit.plugin.statistics.resources.other.JobDefinitionsResou
 import org.camunda.cockpit.plugin.statistics.resources.other.OpLogResource;
 import org.camunda.cockpit.plugin.statistics.resources.other.VariablesDataResource;
 import org.camunda.cockpit.plugin.statistics.resources.other.VariablesSizeResource;
-import org.camunda.cockpit.plugin.statistics.resources.process.DurationsResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.IncidentResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessDefinitionRessource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessDefinitionsWithFinishedInstancesResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceResource;
-import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceStartEndResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceVersionResource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.AllTaskInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.EndedUserTaskResource;
@@ -230,32 +228,6 @@ public class StatisticsPluginRootResource extends
     }
 
     /**
-     * This method provides the durations. These can be selected by the process
-     * definition keys. If you do not provide a process definition key. All
-     * durations will be sent to client.
-     *
-     * @param engineName Name the selectable engine. (required)
-     * @param processDefKeys Select your process definitions. (optional)
-     * @return
-     */
-    @Path("{engineName}/durations")
-    public DurationsResource getDurationsResource(
-            @PathParam("engineName") String engineName,
-            @QueryParam("processdefkey") List<String> processDefKeys) {
-        return subResource(new DurationsResource(engineName, processDefKeys), engineName);
-    }
-
-    /**
-     *
-     * @param engineName Name the selectable engine. (required)
-     * @return
-     */
-    @Path("{engineName}/keys2")
-    public ProcessDefinitionsWithFinishedInstancesResource getKeyResource(@PathParam("engineName") String engineName) {
-        return subResource(new ProcessDefinitionsWithFinishedInstancesResource(engineName), engineName);
-    }
-    
-    /**
     *
     * @param engineName Name the selectable engine. (required)
     * @return
@@ -283,15 +255,6 @@ public class StatisticsPluginRootResource extends
         return subResource(new VariablesDataResource(engineName, firstResult, maxResults, activityInstanceIdIn), engineName);
     }
 
-    /**
-     *
-     * @param engineName Name the selectable engine. (required)
-     * @return
-     */
-    @Path("{engineName}/process-instance-start-end")
-    public ProcessInstanceStartEndResource getProcessInstanceStartEndResource(@PathParam("engineName") String engineName) {
-        return subResource(new ProcessInstanceStartEndResource(engineName), engineName);
-    }
     
     /**
     *
