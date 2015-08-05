@@ -14,52 +14,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		TimingFactory.options = [];
 	
 		/**
-		 * this method is not needed anymore
-		 */
-		TimingFactory.getData = function(currentLevel, userTaskProcessSpecifier, currentFrame, currentXValue,width, kMeans){
-			//if we decide to store data and not make an asynchronous call each time the table is build
-			//(for example if we periodically update all data) 
-			//then we have to remove this
-			DataFactory.allUserTasksByProcDefKeyAndDateSpecification=[];
-			var timeString = (currentFrame.frame =="daily")?"24h":"Week";
-			if(currentLevel.level  == "process instances"){
-				return DataFactory.getProcessesStartEnd()
-				.then(function () {
-					TimingFactory.data=Format.bringNotSortedDataInPlotFormat(DataFactory.processesStartEnd,"processDefinitionKey",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
-//					TimingFactory.data = Format.getClusterFromFormatedData(data,$scope.clusterThreshold);
-					console.debug("call kmeans from process instances");
-					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data,kMeans);
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
-					if(TimingFactory.processInstancesList[0].processDefKey == "all"){
-						TimingFactory.processInstancesList = initProcessList(TimingFactory.data);
-					};
-				});
-			}
-			else if(userTaskProcessSpecifier == "all"){
-				var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(undefined, currentXValue.xValue);
-				return DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification(undefined,currentXValue.xValue)
-				.then(function(){
-					TimingFactory.data=Format.bringNotSortedDataInPlotFormat
-					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"userTaskName",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),"");
-					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data, kMeans);
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
-				});
-
-			}	
-			else{
-				var key = DataFactory.generateKeyAllUserTasksByProcDefKeyAndDateSpecification(userTaskProcessSpecifier, currentXValue.xValue);
-				console.debug("key to lookup: "+key);
-				return DataFactory.getAllUserTasksByProcDefKeyAndDateSpecification(userTaskProcessSpecifier,currentXValue.xValue)
-				.then(function(){
-					TimingFactory.data=Format.bringNotSortedDataInPlotFormat
-					(DataFactory.allUserTasksByProcDefKeyAndDateSpecification[key],"userTaskName",currentXValue.xProperty,"",eval("Format.breakDateDownTo"+timeString),""); 
-					TimingFactory.data = Format.getKMeansClusterFromFormatedData(TimingFactory.data, kMeans);
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(currentFrame.format,width);
-				});
-			};	
-		};
-		
-		/**
 		 * @selectedFromMenu: processes, and activities chosen by the user to plot
 		 * @xValue: either starttime or endtime of the processes will be plotted on the x Axis
 		 * @timeFrame: either focus on weekly dates i.e. the rest of the date will be ignored
@@ -74,37 +28,39 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var timeString = (timeFrame ==="daily")?"24h":"Week";
 			return DataFactory.getDataFromModelMenu(selectedFromMenu,timeWindow)
 			.then(function(promiseData){
-				var keyList = DataFactory.keyList;
 				console.log(promiseData);
-//				TimingFactory.chosenData = DataFactory.resultData;
 				TimingFactory.chosenData  =[];
 				angular.forEach(promiseData, function(singleCallbackReturn,promiseIndex){
-					console.log(singleCallbackReturn.data);
-					if(singleCallbackReturn.data.length ==0){
-						console.log(promiseIndex);
-						singleCallbackReturn.data = [{"activityName": keyList[promiseIndex]}];
-						console.log(singleCallbackReturn.data);
-					}//TODO: make a good dummy, with a unique key, in best case the right key without data, for that maybe use index in angular for each and selected data
 					TimingFactory.chosenData = TimingFactory.chosenData.concat(singleCallbackReturn.data);
-					console.log(TimingFactory.chosenData);
 				});
 				if(xValue == "duration"){
 					var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,"activityName","startTime","durationInMillis",parseDate,function(d){return d/1000/60;});
+					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,["activityName","processDefinitionKey"],"startTime","durationInMillis",parseDate,function(d){return d/1000/60;});
 					console.log(TimingFactory.chosenData);
 					TimingFactory.options  = {
 							outerRegion:[5,95],
 							scatter  : true,
 							regression : true,
-							spline : false
+							spline : false,
+							//TODO If it works put it all in chart
+							chart : {}
+							
 					};
 				}
-				else{
+				else if(xValue == "startTime"||xValue == "endTime"){
 					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,["activityName","processDefinitionKey"] ,xValue,"",eval("Format.breakDateDownTo"+timeString));
 					console.log(TimingFactory.chosenData);
 					TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,5);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(timeFrame),1000);
-					console.log(TimingFactory.chosenData);				}
+					console.log(TimingFactory.chosenData);
+				}
+				else {
+					var dataAndBins = Format.bringDataIntoBarPlotFormat(TimingFactory.chosenData,"processDefinitionKey","durationInMillis",function(d){return d/1000/60;},10);
+					TimingFactory.chosenData = dataAndBins.data;
+					TimingFactory.options = GraphFactory.getOptionsForTimeDistributionGraph(10,dataAndBins.thresholds);
+					console.log(TimingFactory.chosenData);
+					console.log(TimingFactory.options);
+				}
 			});
 		}
 		

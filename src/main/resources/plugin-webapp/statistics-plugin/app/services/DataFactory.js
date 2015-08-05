@@ -13,7 +13,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.processesStartEnd = [];
 		DataFactory.allRunningUserTasksCountOByProcDefKey = [];
 		DataFactory.allEndedUserTasksCountOByProcDefKey = [];
-		DataFactory.durations = [];
 		DataFactory.historicActivityCountsDurationByProcDefKey = [];
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
 		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
@@ -222,26 +221,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		DataFactory.businessData = function() {
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/businessdata?firstresult=0&maxresults=10000"));
-		};
-
-		DataFactory.getDurations = function(processDefKeys) {
-			var String = "";
-			if(processDefKeys){
-				for (var i = 0; i < processDefKeys.length; i++) {
-					if (i == 0) {
-						String = String + "?processdefkey=" + processDefKeys[i].processDefinitionKey;
-					}
-					else
-						String = String + "&processdefkey=" + processDefKeys[i].processDefinitionKey;
-				}
-			};
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/durations" + String))
-			.success(function (data){
-				DataFactory.durations = data;
-			})
-			.error(function(){				
-				console.debug("error in getting durations");
-			});
 		};
 
 		DataFactory.getProcessDefWithFinishedInstances = function() {
@@ -666,7 +645,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * the chosen data, used for the legend
 		 */
 		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu,timeWindow){
-			//keyList is an array containing all keys of the chosen data. It will be used for the legend
+			//keyList is an array containing all keys of the chosen data. It is currently not used! Maybe it will be later
 			var keyList = [];
 			DataFactory.resultData = [];
 			var promises =[];
