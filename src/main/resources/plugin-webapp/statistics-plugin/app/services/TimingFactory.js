@@ -55,7 +55,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					console.log(TimingFactory.chosenData);
 				}
 				else {
-					var dataAndBins = Format.bringDataIntoBarPlotFormat(TimingFactory.chosenData,"processDefinitionKey","durationInMillis",function(d){return d/1000/60;},10);
+					var dataAndBins = Format.bringDataIntoBarPlotFormat(TimingFactory.chosenData,["activityName","processDefinitionKey"],"durationInMillis",function(d){return d/1000/60;},10);
 					TimingFactory.chosenData = dataAndBins.data;
 					TimingFactory.options = GraphFactory.getOptionsForTimeDistributionGraph(10,dataAndBins.thresholds);
 					console.log(TimingFactory.chosenData);
