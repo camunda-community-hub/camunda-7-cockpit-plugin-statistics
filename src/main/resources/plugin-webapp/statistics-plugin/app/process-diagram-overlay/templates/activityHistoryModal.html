@@ -41,10 +41,11 @@
 		<div>Number of activity instances below limit range: {{ instanceCountBelowLimitRange }}</div>
 		<div>Number of activity instances in limit range: {{ instanceCountInLimitRange }}</div>
     	<div>Number of activity instances above limit range: {{ instanceCountAboveLimitRange }}</div>
-	<highchart id="highchart" config="chartConfig" style="height: 500px; width: 800px;"></highchart>
+	<activity-duration-chart lower-duration-limit="lowerLimit.inMs" upper-duration-limit="upperLimit.inMs" data="historicActivityPlotData"></activity-duration-chart>
+	<!--highchart id="highchart" config="chartConfig" style="height: 500px; width: 800px;"></highchart-->
 	<!--div id="chart"></div-->
-	<nvd3 id="sparklineChart" options="optionsChart" data="historicActivityPlotData">
-	</nvd3>
+	<!--nvd3 id="sparklineChart" options="optionsChart" data="historicActivityPlotData">
+	</nvd3-->
 </div>
 <div class="modal-footer">
 	<button class="btn btn-warning" ng-click="closeModal()">Close</button>
