@@ -1,10 +1,19 @@
 <style>
 #circle {
-     width: 14px;
-     height: 14px;
-     -webkit-border-radius: 14px;
-     -moz-border-radius: 14px;
-     border-radius: 14px;
+	width: 14px;
+	height: 14px;
+	-webkit-border-radius: 14px;
+	-moz-border-radius: 14px;
+	border-radius: 14px;
+}
+div.custom .panel-default>.panel-heading {
+    background-color: #08C;
+        color: white;
+}
+
+div.custom2 .panel-default>.panel-heading {
+    background-color: white;
+        color: white;
 }
 </style>
 <div class="row">
@@ -19,10 +28,12 @@
 					<div class="well">
 						<div ng-repeat="item in selected">
 							<div style="border: 2px solid black">
-<!-- 								ng-show also depends on item.wholeProcess since even if we dont give it a color it would move the "process" in the list -->
-								<div id="circle" class ="pull-left" ng-style="item.color"></div>
-								<strong>{{item.process}}</strong> 
-								<i
+								<!-- 								ng-show also depends on item.wholeProcess since even if we dont give it a color it would move the "process" in the list -->
+								<div
+									id="circle"
+									class="pull-left"
+									ng-style="item.color"></div>
+								<strong>{{item.process}}</strong> <i
 									class="pull-right glyphicon glyphicon-ok"
 									ng-show="item.wholeProcess"></i>
 								<div
@@ -34,7 +45,10 @@
 									<div
 										ng-repeat="act in types.activities"
 										style="text-indent: 20px;">
-										<div id="circle" class ="pull-left" ng-style="act.color"></div>
+										<div
+											id="circle"
+											class="pull-left"
+											ng-style="act.color"></div>
 										{{act.activity}} <a
 											class="pull-right glyphicon glyphicon-remove"
 											ng-click="removeFromList(item.process,types.activityType,act.activity)"></a>
@@ -54,22 +68,21 @@
 				<div>
 					<input
 						type="radio"
-						ng-model="timeWindow.start"
-						value=""
-						ng-click="date.from=null">
+						ng-model="chosenOptions.timeWindow.start"
+						value="">
 					all
 				</div>
 				<div>
 					<input
 						type="radio"
-						ng-model="timeWindow.start"
+						ng-model="chosenOptions.timeWindow.start"
 						value="startedBefore">
 					started before
 				</div>
 				<div>
 					<input
 						type="radio"
-						ng-model="timeWindow.start"
+						ng-model="chosenOptions.timeWindow.start"
 						value="startedAfter">
 					started after
 				</div>
@@ -78,7 +91,7 @@
 					<datepicker
 						show-weeks="true"
 						class="well well-sm"
-						ng-model="timeWindow.startDate"></datepicker>
+						ng-model="chosenOptions.timeWindow.startDate"></datepicker>
 				</div>
 			</div>
 			<div class="col-lg-5 col-md-5 col-sm-5">
@@ -86,21 +99,21 @@
 				<div>
 					<input
 						type="radio"
-						ng-model="timeWindow.end"
+						ng-model="chosenOptions.timeWindow.end"
 						value="">
 					all
 				</div>
 				<div>
 					<input
 						type="radio"
-						ng-model="timeWindow.end"
+						ng-model="chosenOptions.timeWindow.end"
 						value="finishedBefore">
 					finished before
 				</div>
 				<div>
 					<input
 						type="radio"
-						ng-model="timeWindow.end"
+						ng-model="chosenOptions.timeWindow.end"
 						value="finishedAfter">
 					finished after
 				</div>
@@ -109,7 +122,7 @@
 					<datepicker
 						show-weeks="true"
 						class="well well-sm"
-						ng-model="timeWindow.endDate"></datepicker>
+						ng-model="chosenOptions.timeWindow.endDate"></datepicker>
 				</div>
 			</div>
 		</div>
@@ -134,97 +147,138 @@
 					show-meridian="ismeridian"></timepicker>
 			</div>
 		</div>
-		</tab> </tabset> </tab> <tab heading="config"> <tabset class="tabs-left"> <tab heading="x-Axis">
-		<div class="row">
-			<div class="col-lg-5 col-md-5 col-sm-5">
-				<h4>Choose the unit for the x-Axis</h4>
-				<div>
-					<input
-						type="radio"
-						ng-model="xAxis.time"
-						value="startTime">
-					start time
+		</tab> </tabset> </tab> 
+
+			<tab heading="properties to be plotted">
+			   <accordion>
+			   <div ng-class = "{'custom':propertiesBoolean.startTime}">
+			   <accordion-group is-open ="propertiesBoolean.startTime">
+			      <accordion-heading >
+			      <a
+						class="pull-left glyphicon"
+						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startTime, 'glyphicon-check': propertiesBoolean.startTime}"
+						ng-style="{color : 'black'}"></a><span style="text-decoration: underline;">start</span> time of data </accordion-heading>
+			      <div class = "col-md-2">
+			      <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">timeframe</button>
+			      <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">clustering</button>
+			      </div>
+			      <div class = "col-md-10">
+			      	<div collapse="isCollapsed">
+			      	<div>
+			      		<label>
+							<input
+									type="radio"
+									ng-model="chosenOptions.timeFrame"
+									value="noFrame">
+								no time frame
+							</input>
+						</label>
+					</div>
+			      	<div>
+			      		<label>
+							<input
+									type="radio"
+									ng-model="chosenOptions.timeFrame"
+									value="daily">
+								dayly
+							</input>
+						</label>
+					</div>
+					<div>
+						<label>
+							<input
+									type="radio"
+									ng-model="chosenOptions.timeFrame"
+									value="weekly">
+								weekly
+							</input>
+						</label>
+					</div>
+					</div>
+					<div collapse="!isCollapsed">
+						<div>
+					         <label>
+						         <input
+						            type="radio"
+						            ng-model="chosenOptions.cluster.algo"
+						            value="noClustering">
+						         	no clustering
+					         </label>
+					        </div>
+			      			<div>
+			         			<label>
+							         <input
+							            type="radio"
+							            ng-model="chosenOptions.cluster.algo"
+							            value="kmeans">
+							         	k means Algo
+							    </label>
+							         <input
+							            type="number"
+							            min="1"
+							            step="1"
+							            ng-model="chosenOptions.cluster.numberOfClusters">
+							</div>
+					</div>
+					</div>
+			   </accordion-group>
+			   </div>
+			   <div ng-class = "{'custom':propertiesBoolean.regression}">
+			   <accordion-group is-open ="propertiesBoolean.regression">
+			      <accordion-heading >
+				      <a
+						class="pull-left glyphicon"
+						ng-class="{'glyphicon-unchecked': !propertiesBoolean.regression, 'glyphicon-check': propertiesBoolean.regression}"
+						ng-style="{color : 'black'}"></a> 
+				      <span style="text-decoration: underline;">chronological development of the duration</span> of data 
+			      </accordion-heading>
+			      <div clas = "row">
+			      <div class = "col-lg-5 col-md-5 col-sm-5">
+					<div>
+					   <label class="checkbox"> <input ng-model="chosenOptions.showScatter"
+					       type="checkbox"> show scatter plot
+					   </label>
+					</div>
+					<div>
+					   <label class="checkbox"> <input ng-model="chosenOptions.showSplines"
+					       type="checkbox" /> show splines
+					   </label>
+					</div>
+					<div>
+					   <label class="checkbox"> <input
+					      ng-model="chosenOptions.showRegression" type="checkbox" />
+					   draw regression
+					   </label>
+					</div>
 				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="xAxis.time"
-						value="endTime">
-					end time
 				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="xAxis.time"
-						value="duration">
-					duration
-				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="xAxis.time"
-						value="distribution">
-					distribution
-				</div>
-				<label class="checkbox"> <input ng-model="options.spline"
-              ng-checked="1" type="checkbox"> show splines
-            </label>
-			</div>
-			<div class="col-lg-5 col-md-5 col-sm-5">
-				<h4>time-frame</h4>
-				<div>
-					<input
-						type="radio"
-						ng-model="timeFrameModel.frame"
-						value="daily">
-					dayly
-				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="timeFrameModel.frame"
-						value="weekly">
-					weekly
-				</div>
-			</div>
-			<!-- pic later in "Vorschau" button -->
-			<!-- 				<div class="col-lg-6 col-md-6 col-sm-6"> -->
-			<!-- 					<img ng-src="{{imageSource}}"></img> -->
-			<!-- 				</div> -->
-		</div>
-		</tab> <tab heading="clustering">
-		<div class="row">
-			<div>
-				<label>
-					<input
-						type="radio"
-						ng-model="clustering.algo"
-						value="noClustering">
-					no clustering
-				</label>
-			</div>
-			<div>
-				<label>
-					<input
-						type="radio"
-						ng-model="clustering.algo"
-						value="kmeans">
-					k means Algo
-				</label>
-				<input
-					type="number"
-					min="1"
-					step="1"
-					ng-model="clustering.numberOfClusters">
-			</div>
-		</div>
-		</tab> <tab
-			heading="appearance"
-			disabled="true"> </tab> </tabset> </tab> </tabset>
+			   </accordion-group>
+			   </div>
+			   <div ng-class = "{'custom':propertiesBoolean.distribution}">
+			   <accordion-group is-open ="propertiesBoolean.distribution">
+			      <accordion-heading >
+			      <a
+						class="pull-left glyphicon"
+						ng-class="{'glyphicon-unchecked': !propertiesBoolean.distribution, 'glyphicon-check': propertiesBoolean.distribution}"
+						ng-style="{color : 'black'}"></a><span style="text-decoration: underline;">distribution of the duration</span> of data </accordion-heading>
+					<h6>
+					adjust number of bins
+					</h6>
+					<input type="number" min="1" step="1"
+					   ng-model="chosenOptions.numberOfBins" ng-change="">
+			   </accordion-group>
+			   </div>
+			   </accordion>
+			</tab>
+
+ </tabset>
 	</div>
 </div>
 <div>
 	<button
 		class="btn btn-primary"
 		ng-click="apply()">Apply</button>
+		<button
+		class="btn btn-primary"
+		ng-click="update()">update</button>
 </div>

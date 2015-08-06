@@ -672,9 +672,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return $q.all(promises);
 //			.then(function(data){
 ////			DataFactory.resultData[index] = data;
-////			console.log(DataFactory.resultData);
-//			console.log(data);
-
 //			})
 		};
 

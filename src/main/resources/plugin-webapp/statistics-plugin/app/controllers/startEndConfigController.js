@@ -2,8 +2,29 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('startEndConfigController',['$scope','Uri','ScatterPlotConfigFactory', 'TimingFactory', function($scope, Uri, ScatterPlotConfigFactory,TimingFactory){
 
+		var getPropertyToPlot = function(booleans){
+			for (var property in booleans) {
+			    if (booleans.hasOwnProperty(property)) {	//check if its not a prototype property
+			        if(booleans[property]) return property;
+			    }
+			}
+			console.error("no optioin to plot was chosen!")
+		};
+		$scope.propertiesBoolean ={
+				startTime : false,
+				regression: false,
+				distribution: true
+		}
+		$scope.update = function(){
+			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
+			var update = TimingFactory.updateCharts($scope.chosenOptions);
+			$scope.data = update.data;
+			$scope.options = update.options;
+		};
 		$scope.apply = function(){
-			TimingFactory.getModelMenuData($scope.selected, $scope.xAxis.time, $scope.timeFrameModel.frame,$scope.timeWindow)
+			console.log($scope.chosenOptions);
+			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
+			TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
 			.then(function(){
 				$scope.data = TimingFactory.chosenData;
 				$scope.options = TimingFactory.options;
@@ -45,27 +66,33 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				}
 			}
 		};
-
-		$scope.clustering =  {
-				algo: "kmeans",
-				numberOfClusters: 5
+		
+		$scope.chosenOptions = {
+				propertyToPlot : "distribution",
+				numberOfBins : 10,
+				timeFrame: "daily",
+				cluster : {
+						algo: "kmeans",
+						numberOfClusters: 5
+				},
+				timeWindow : {
+						start: "",
+						startDate : null,
+						end: "",
+						endDate: null
+				},
+				showScatter: true,
+				showSplines: false,
+				showRegression: false
 		};
-
-		$scope.timeFrameModel  = {
-				frame : "weekly"
-		};
-
-		$scope.xAxis = {
-				time: "startTime"
-		};
-
-		$scope.timeWindow = {
-				start: "",
-				startDate : null,
-				end: "",
-				Date: null
-		};
-
+		//TODO: delete
+		$scope.isCollapsed = true;
+		
+		$scope.toggleSelection = function(e,selected) {
+			selected = !selected;
+			e.stopPropagation();e.preventDefault();
+		}; 
+		
 		//data to fill the accordion
 		$scope.menuData = [];
 		ScatterPlotConfigFactory.getMenuData()
