@@ -12,7 +12,44 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		TimingFactory.data = [];
 		TimingFactory.options = [];
-	
+		
+		TimingFactory.prepareData = function(rawData,options){
+			var timeString = (options.timeFrame ==="daily")?"24h":"Week";
+			if(options.propertyToPlot == "regression"){
+				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
+				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"],"startTime","durationInMillis",parseDate,function(d){return d/1000/60;});
+				console.log(TimingFactory.chosenData);
+				TimingFactory.options  = {
+						outerRegion:[5,95],
+						scatter  : options.showScatter,
+						regression : options.showRegressions,
+						spline : options.showSplines,
+						//TODO If it works put it all in chart
+						chart : {}
+						
+				};
+			}
+			else if(options.propertyToPlot == "startTime"||options.propertyToPlot == "endTime"){
+				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"] ,options.propertyToPlot,"",eval("Format.breakDateDownTo"+timeString));
+				console.log(TimingFactory.chosenData);
+				TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,options.cluster.numberOfClusters);
+				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(options.timeFrame),1000);
+				console.log(TimingFactory.chosenData);
+			}
+			else {
+				var dataAndBins = Format.bringDataIntoBarPlotFormat(rawData,["activityName","processDefinitionKey"],"durationInMillis",function(d){return d/1000/60;},options.numberOfBins);
+				TimingFactory.chosenData = dataAndBins.data;
+				TimingFactory.options = GraphFactory.getOptionsForTimeDistributionGraph(options.numberOfBins,dataAndBins.thresholds);
+				console.log(TimingFactory.chosenData);
+				console.log(TimingFactory.options);
+			}
+			return {"data" : TimingFactory.chosenData , "options": TimingFactory.options};
+		}
+		
+		TimingFactory.updateCharts = function(options){
+			console.log(options);
+			return TimingFactory.prepareData(TimingFactory.data,options);
+		};
 		/**
 		 * @selectedFromMenu: processes, and activities chosen by the user to plot
 		 * @xValue: either starttime or endtime of the processes will be plotted on the x Axis
@@ -24,43 +61,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		/**
 		 * formating is now happening inside the loop, if performance becomes an issue we have to think of sth new
 		 */
-		TimingFactory.getModelMenuData = function(selectedFromMenu,xValue, timeFrame,timeWindow){
-			var timeString = (timeFrame ==="daily")?"24h":"Week";
-			return DataFactory.getDataFromModelMenu(selectedFromMenu,timeWindow)
+		TimingFactory.getModelMenuData = function(selectedFromMenu,options){
+			console.log(options);
+			return DataFactory.getDataFromModelMenu(selectedFromMenu,options.timeWindow)
 			.then(function(promiseData){
 				console.log(promiseData);
-				TimingFactory.chosenData  =[];
+				TimingFactory.data  =[];
 				angular.forEach(promiseData, function(singleCallbackReturn,promiseIndex){
-					TimingFactory.chosenData = TimingFactory.chosenData.concat(singleCallbackReturn.data);
+					TimingFactory.data = TimingFactory.data.concat(singleCallbackReturn.data);
 				});
-				if(xValue == "duration"){
-					var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,["activityName","processDefinitionKey"],"startTime","durationInMillis",parseDate,function(d){return d/1000/60;});
-					console.log(TimingFactory.chosenData);
-					TimingFactory.options  = {
-							outerRegion:[5,95],
-							scatter  : true,
-							regression : true,
-							spline : false,
-							//TODO If it works put it all in chart
-							chart : {}
-							
-					};
-				}
-				else if(xValue == "startTime"||xValue == "endTime"){
-					TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(TimingFactory.chosenData,["activityName","processDefinitionKey"] ,xValue,"",eval("Format.breakDateDownTo"+timeString));
-					console.log(TimingFactory.chosenData);
-					TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,5);
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(timeFrame),1000);
-					console.log(TimingFactory.chosenData);
-				}
-				else {
-					var dataAndBins = Format.bringDataIntoBarPlotFormat(TimingFactory.chosenData,["activityName","processDefinitionKey"],"durationInMillis",function(d){return d/1000/60;},10);
-					TimingFactory.chosenData = dataAndBins.data;
-					TimingFactory.options = GraphFactory.getOptionsForTimeDistributionGraph(10,dataAndBins.thresholds);
-					console.log(TimingFactory.chosenData);
-					console.log(TimingFactory.options);
-				}
+				TimingFactory.prepareData(TimingFactory.data,options);
 			});
 		}
 		
