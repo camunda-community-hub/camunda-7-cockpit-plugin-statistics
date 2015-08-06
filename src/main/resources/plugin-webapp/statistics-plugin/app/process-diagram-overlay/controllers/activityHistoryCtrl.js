@@ -29,7 +29,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	});
 
 	module.controller('activityHistoryCtrl', ['$scope', '$modalInstance', 'DataFactory', 'SettingsFactory', 'activityId', '$filter', function($scope, $modalInstance, DataFactory, SettingsFactory, activityId, $filter){
-
+		
+		$scope.data = []; // TODO
+		
 		var durations = {
 				name: "durations",
 				type: "spline",
@@ -222,20 +224,20 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			for(var i in data) {
 				datetime = datetimeToMs(stringToDate(data[i].endTime));
 				if(datetime >= start && datetime <= end) {
-//					filteredData.push({
-//					"x": i,
-//					"y": data[i].duration,
-//					"activityId": data[i].id,
-//					"start": stringToDate(data[i].startTime),
-//					"end": stringToDate(data[i].endTime),
-//					"assignee": data[i].assignee
-//					});
+					filteredData.push({
+					"x": i,
+					"y": data[i].duration,
+					"activityId": data[i].id,
+					"start": stringToDate(data[i].startTime),
+					"end": stringToDate(data[i].endTime),
+					"assignee": data[i].assignee
+					});
 					durations.data.push([datetimeToMs(data[i].endTime), data[i].duration]);
 				}
 			}
 			updateDurationRange();
 			
-			//$scope.historicActivityPlotData =  filteredData;
+			$scope.historicActivityPlotData = filteredData;
 
 			getInstanceCount($scope.lowerLimit.inMs, $scope.upperLimit.inMs);
 		}
