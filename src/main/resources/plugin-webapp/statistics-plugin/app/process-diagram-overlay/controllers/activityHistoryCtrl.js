@@ -1,157 +1,22 @@
-/*
- * TODO:
- * - duration-Felder an durationRange anbinden
- * - range updaten beim draggen
- * - min/max beim draggen updaten (lower sollte nicht über upper gezogen werden)
- * - x-achse: nur min und max anzeigen
- * - label an duration upper and lower (oder an y-achse?)
- * - Einstellungen schöner machen
- * - batch zum Öffnen des Modals
- */
-
-
 'use strict'
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.filter('formatTime', function() {
-		return function(input) {
-			var milliseconds = parseInt((input%1000))
-			, seconds = parseInt((input/1000)%60)
-			, minutes = parseInt((input/(1000*60))%60)
-			, hours = parseInt((input/(1000*60*60)));
-
-			hours = (hours < 10) ? "0" + hours : hours;
-			minutes = (minutes < 10) ? "0" + minutes : minutes;
-			seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-			return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
-		}
-	});
-
-	module.controller('activityHistoryCtrl', ['$scope', '$modalInstance', 'DataFactory', 'SettingsFactory', 'activityId', '$filter', function($scope, $modalInstance, DataFactory, SettingsFactory, activityId, $filter){
+	module.controller('activityHistoryCtrl', ['$scope', '$rootScope', '$modalInstance', 'DataFactory', 'SettingsFactory', 'activityId', '$filter', function($scope, $rootScope, $modalInstance, DataFactory, SettingsFactory, activityId, $filter){
 		
 		$scope.$on('durationLimitChanged', function() {
 			getInstanceCount(SettingsFactory.lowerDurationLimitInMs, SettingsFactory.upperDurationLimitInMs);
 			$scope.$apply();
 		});
 		
+		$scope.$on('datetimeRangeChanged', function(event, start, end) {
+			$scope.start.datetime = start;
+			$scope.end.datetime = end;
+			$scope.showPlot();
+			$scope.$apply();
+		});
+		
 		var durations = {
-				name: "durations",
-				type: "spline",
 				data: [],
-				marker: {
-					enabled: true
-				},
-				draggableY: false
-		};
-		
-		$scope.lowerLimit = {
-				inMs: 180000,
-				hours: 0,
-				minutes: 3,
-				seconds: 0,
-				milliseconds: 0
-		};
-		
-		$scope.upperLimit = {
-				inMs: 72000000,
-				hours: 1,
-				minutes: 0,
-				seconds: 0,
-				milliseconds: 0
-		};
-		
-		$scope.calcDurationUpperLimit = function() {
-			$scope.upperLimit.inMs = (($scope.upperLimit.hours*60+$scope.upperLimit.minutes)*60+$scope.upperLimit.seconds)*1000+$scope.upperLimit.milliseconds;
-			getInstanceCount($scope.lowerLimit.inMs, $scope.upperLimit.inMs);
-			updateDurationRange();
-		};
-		
-		$scope.calcDurationLowerLimit = function() {
-			$scope.lowerLimit.inMs = (($scope.lowerLimit.hours*60+$scope.lowerLimit.minutes)*60+$scope.lowerLimit.seconds)*1000+$scope.lowerLimit.milliseconds;
-			getInstanceCount($scope.lowerLimit.inMs, $scope.upperLimit.inMs);
-			updateDurationRange();
-		}
-
-		var durationLowerLimit = {
-				name: "durationLowerLimit",
-				type: "line",
-				color: "rgb(181, 21, 43)",
-				data: [],
-				marker: {
-					enabled: false
-				},
-//				states: {
-//				hover: {
-//				lineWidth: 0
-//				}
-//				},
-//				enableMouseTracking: true,
-				draggable: true,
-				draggableY: true,
-				draggableSeries: true,
-				cursor: "ns-resize",
-				point: {
-					events: {
-						drag: function(e) {
-							$scope.lowerLimit.inMs = e.y;
-						},
-						drop: function() {
-							if(this.y < 0) this.y = 0;
-							else if(this.y > $scope.upperLimit.inMs) this.y = $scope.upperLimit.inMs;
-							$scope.lowerLimit.inMs = this.y;
-							updateDurationRange();
-							getInstanceCount(this.y, $scope.upperLimit.inMs);
-							updateLowerDurationLimit(this.y);
-						}
-					}
-				},
-				showInLegend: false
-		};
-		var durationUpperLimit = {
-				name: "durationUpperLimit",
-				type: "line",
-				color: "rgb(181, 21, 43)",
-				data: [],
-				marker: {
-					enabled: false
-				},
-//				states: {
-//				hover: {
-//				lineWidth: 0
-//				}
-//				},
-//				enableMouseTracking: true,
-				draggable: true,
-				draggableY: true,
-				draggableSeries: true,
-				cursor: "ns-resize",
-				point: {
-					events: {
-						drag: function(e) {
-							$scope.upperLimit.inMs = e.y;
-						},
-						drop: function() {
-							if(this.y < $scope.lowerLimit.inMs) this.y = $scope.lowerLimit.inMs;
-							$scope.upperLimit.inMs = this.y;
-							updateDurationRange();
-							getInstanceCount($scope.lowerLimit.inMs, this.y);
-							updateUpperDurationLimit(this.y);
-						}
-					}
-				},
-				showInLegend: false
-		};
-
-		var durationLimitRange = {
-			name: "durationLimitRange",
-			type: "arearange",
-			color: "rgba(181, 21, 43, 0.2)",
-			data: [],
-			marker: {
-				enabled: false
-			},
-			enableMouseTracking: false
 		};
 
 		var data = DataFactory.activityDurations[activityId];
@@ -162,12 +27,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		times.sort();
 		$scope.timeOptions = times;
 
-//		$scope.slider = {
-//				start: datetimeToMs($scope.timeOptions[0]),
-//				end: datetimeToMs($scope.timeOptions[$scope.timeOptions.length-1]),
-//				value: "" + datetimeToMs($scope.timeOptions[0]) + ";" + datetimeToMs($scope.timeOptions[$scope.timeOptions.length-1])
-//		};
-//
 		$scope.start = {
 				datetime: stringToDate($scope.timeOptions[0]),
 				dateOptions: {
@@ -185,6 +44,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				},
 				isOpen: false
 		};
+		
+		
 
 		$scope.openStart = function($event) {
 			$event.preventDefault();
@@ -211,14 +72,18 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			$modalInstance.close();
 		}
 
-		$scope.hasOnlyOneValue = function() {
-			if ($scope.slider.start == $scope.slider.end)
-				return true;
-			return false;
-		}
-
 		$scope.showPlot = function() {
 			var data = DataFactory.activityDurations[activityId];
+			
+			// check time (no options for min/max time in timepicker)
+			var minmaxDate = getMinMaxDate(data);
+			var minDate = minmaxDate[0];
+			var maxDate = minmaxDate[1];
+			var startDate = datetimeToMs($scope.start.datetime);
+			var endDate = datetimeToMs($scope.end.datetime);
+			if(startDate < minDate) $scope.start.datetime = msToDatetimeString(minDate);
+			if(endDate > maxDate) $scope.end.datetime = msToDatetimeString(maxDate);
+			
 			var filteredData = [];
 			var datetime;
 			durations.data = [];
@@ -235,6 +100,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					"activityId": data[i].id,
 					"start": stringToDate(data[i].startTime),
 					"end": stringToDate(data[i].endTime),
+					"datetime": datetimeToMs(data[i].endTime), 
 					"assignee": data[i].assignee
 					});
 					durations.data.push([datetimeToMs(data[i].endTime), data[i].duration]);
@@ -245,32 +111,21 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			SettingsFactory.lowerDurationLimitInMs = min;
 			SettingsFactory.upperDurationLimitInMs = max;
 			
-			updateDurationRange();
+			$rootScope.$broadcast('datetimeChanged', datetimeToMs($scope.start.datetime), datetimeToMs($scope.end.datetime));
 			
 			$scope.historicActivityPlotData = filteredData;
 
 			getInstanceCount(SettingsFactory.lowerDurationLimitInMs, SettingsFactory.upperDurationLimitInMs);
 		}
-				
-		function updateLowerDurationLimit(time) {
-			$scope.lowerLimit.milliseconds = parseInt((time%1000))
-			$scope.lowerLimit.seconds = parseInt((time/1000)%60)
-			$scope.lowerLimit.minutes = parseInt((time/(1000*60))%60)
-			$scope.lowerLimit.hours = parseInt((time/(1000*60*60)));
-		}
 		
-		function updateUpperDurationLimit(time) {
-			$scope.upperLimit.milliseconds = parseInt((time%1000))
-			$scope.upperLimit.seconds = parseInt((time/1000)%60)
-			$scope.upperLimit.minutes = parseInt((time/(1000*60))%60)
-			$scope.upperLimit.hours = parseInt((time/(1000*60*60)));
-		}
-		
-		function updateDurationRange() {
-			durationLowerLimit.data = [[durations.data[0][0], $scope.lowerLimit.inMs], [durations.data[durations.data.length-1][0], $scope.lowerLimit.inMs]];
-			durationUpperLimit.data = [[durations.data[0][0], $scope.upperLimit.inMs], [durations.data[durations.data.length-1][0], $scope.upperLimit.inMs]];
-			durationLimitRange.data = [[durationLowerLimit.data[0][0], $scope.lowerLimit.inMs, $scope.upperLimit.inMs], [durationLowerLimit.data[1][0], $scope.lowerLimit.inMs, $scope.upperLimit.inMs]];
-	
+		function getMinMaxDate(data) {
+			var min = Number.MAX_VALUE, max = 0, date;
+			angular.forEach(data, function(value, index) {
+				date = datetimeToMs(value.endTime);
+				if(date < min) min = date;
+				if(date > max) max = date;
+			});
+			return [min, max];
 		}
 
 		function getInstanceCount(lowerLimit, upperLimit) {
@@ -312,137 +167,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			return new Date(datesplitted[0], datesplitted[1]-1, datesplitted[2], timesplitted[0], timesplitted[1], timesplitted[2]);
 		}
 
-//		function msToTimeUnit(time) {
-//		switch($scope.selectedTimeUnit) {
-//		case "hr": return (time/1000/60/60).toFixed(2);
-//		case "min": return (time/1000/60).toFixed(2);
-//		case "sec": return (time/1000).toFixed(2);
-//		}
-//		}
-
 		function formatDate(date) {
 			return date.toUTCString();
 			//return date.toLocaleDateString() + ", " + date.toLocaleTimeString();
 		}
-
-		$scope.options = {
-				chart: {
-					type: 'sparklinePlus',
-					height: 450,
-					x: function(d, i) {
-						return i;
-					},
-					xTickFormat: function(d) {
-						return d3.time.format('%b %d, %I:%M %p')(new Date($scope.historicActivityPlotData[d].end.getTime()));
-					},
-					y: function(d, i) {
-						return d.y;
-					},
-					yTickFormat: function(d) {
-						return $filter('formatTime')(d);
-					},
-					transitionDuration: 250,
-					sparkline: {
-						width: 300,
-						height: 32,
-						animate: true,
-						margin: {
-							top: 2,
-							right: 0,
-							bottom: 2,
-							left: 0
-						}
-					},
-					width: null,
-					animate: true,
-					margin: {
-						top: 15,
-						right: 100,
-						bottom: 10,
-						left: 120
-					},
-					showLastValue: true,
-					alignValue: true,
-					rightAlignValue: false,
-					noData: "No durations available requirements",
-					color: function(d, i) {
-						if(Array.isArray(d) && d[i].y <= SettingsFactory.durationLimitInMs) return 'rgb(70, 136, 71)';
-						else if(Array.isArray(d) && d[i].y > SettingsFactory.durationLimitInMs) return 'rgb(181, 21, 43)';
-					}
-				}
-		};
-
-		$scope.chartConfig = {
-//				var chart = new Highcharts.Chart({
-				options: {
-					xAxis: {
-//						type: 'datetime',
-//						dateTimeLabelFormats: { // don't display the dummy year
-//							month: '%e. %b',
-//							year: '%b'
-//						},
-						lineWidth: 0,
-						gridLineWidth: 0,
-						minorGridLineWidth: 0,
-						lineColor: 'transparent',         
-						labels: {
-							enabled: false
-						},
-						minorTickLength: 0,
-						tickLength: 0,
-						title: {
-							text: null
-						}
-					},
-					title: {
-						text: null
-					},
-					yAxis: {
-						// plotBands für ausgewählten durations-Bereich
-						lineWidth: 0,
-						gridLineWidth: 0,
-						minorGridLineWidth: 0,
-						lineColor: 'transparent',         
-						labels: {
-							enabled: false
-						},
-						minorTickLength: 0,
-						tickLength: 0,
-						title: {
-							text: null
-						}
-					},
-					tooltip: {
-//						crosshairs: true,
-						formatter: function() {
-							if(this.series.name == "durations") {
-								var s = '<b>' + msToDatetimeString(this.x) + '</b>';
-								s += '<br/>duration: ' + $filter('formatTime')(this.y);
-								return s;
-							}
-							else if (this.series.name == "durationLowerLimit") {
-								var s = '<b>Lower duration Limit</b>';
-								s += '<br/>' + $filter('formatTime')(this.y);
-								return s;
-							}
-							else if (this.series.name == "durationUpperLimit") {
-								var s = '<b>Upper duration Limit</b>';
-								s += '<br/>' + $filter('formatTime')(this.y);
-								return s;
-							}
-						}
-					},
-					plotOptions: {
-			            series: {
-			                fillOpacity: 0.1
-			            }
-			        }
-				},
-				series: [ durationLimitRange,
-				          durations,
-				          durationLowerLimit,
-				          durationUpperLimit ]
-		};
 
 	}]);
 });

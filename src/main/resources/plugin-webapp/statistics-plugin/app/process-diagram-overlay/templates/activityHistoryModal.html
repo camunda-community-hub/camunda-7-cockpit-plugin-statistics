@@ -4,13 +4,7 @@
 </div>
 <div class="modal-body" ng-init="init()">
 	<table style="position: relative; z-index: 1000000 !important;">
-		<colgroup width="1000" span="2"></colgroup>
-		<tr>
-			<td>
-				<div>The duration format is HH:MM:SS.mmm.</div>
-			</td>
-			<td></td>
-		</tr>
+		<colgroup><col width="200"><col width="800"></colgroup>
 		<tr>
 			<td>
 				<label class="control-label">Start: </label>
@@ -31,28 +25,22 @@
 						</button>
     				</span>
 				</p>
-			<!--
-			<label class="control-label">Lower duration limit: </label>
-			<input ng-model="lowerLimit.hours" ng-change="calcDurationLowerLimit()" type="number" min="0" width="10px">
-			:
-			<input ng-model="lowerLimit.minutes" ng-change="calcDurationLowerLimit()" type="number" min="0" max="59" width="10px">
-			:
-			<input ng-model="lowerLimit.seconds" ng-change="calcDurationLowerLimit()" type="number" min="0" max="59" width="10px">
-			.
-			<input ng-model="lowerLimit.milliseconds" ng-change="calcDurationLowerLimit()" type="number" min="0" max="999" width="10px">	
-			<label class="control-label">Upper duration limit: </label>
-			<input ng-model="upperLimit.hours" ng-change="calcDurationUpperLimit()" type="number" min="0" width="10px">
-			:
-			<input ng-model="upperLimit.minutes" ng-change="calcDurationUpperLimit()" type="number" min="0" max="59" width="10px">
-			:
-			<input ng-model="upperLimit.seconds" ng-change="calcDurationUpperLimit()" type="number" min="0" max="59" width="10px">
-			.
-			<input ng-model="upperLimit.milliseconds" ng-change="calcDurationUpperLimit()" type="number" min="0" max="999" width="10px">
-			-->
 			</td>
 			<td>
+				<div id="navigator"><svg/></div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<hr>
+				<activity-duration-chart data="historicActivityPlotData"></activity-duration-chart>
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="center">
 				<table>
-					<colgroup width="400" span="2"></colgroup>
+					<colgroup><col width="200"><col width="50"></colgroup>
 					<tr>
 						<th>number of activity instances</th>
 						<th>{{ instanceCount }}</th>
@@ -73,11 +61,6 @@
 			</td>
 		</tr>
 	</table>
-	<activity-duration-chart data="historicActivityPlotData"></activity-duration-chart>
-	<!--highchart id="highchart" config="chartConfig" style="height: 500px; width: 800px;"></highchart-->
-	<!--div id="chart"></div-->
-	<!--nvd3 id="sparklineChart" options="optionsChart" data="historicActivityPlotData">
-	</nvd3-->
 </div>
 <div class="modal-footer">
 	<button class="btn btn-warning" ng-click="closeModal()">Close</button>
