@@ -3,45 +3,77 @@
 	<h3 class="modal-title">Activity History</h3>
 </div>
 <div class="modal-body" ng-init="init()">
-		<div>The duration format is HH:MM:SS.mmm.</div>
-		<label class="control-label">Start: </label>
-    	   <p class="input-group" style="width: 250px; position: relative; z-index: 1000000 !important;">
-    		<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="start.datetime" ng-change="showPlot()" is-open="start.isOpen" datepicker-options="start.dateOptions"/>
-    		<span class="input-group-btn">
-       			<button type="button" class="btn btn-default" ng-click="openStart($event)">
-					<i class="glyphicon glyphicon-calendar"></i>
-				</button>
-    		</span>
-		</p>
-		<label class="control-label">End: </label>
-		<p class="input-group" style="width: 250px; position: relative; z-index: 100000 !important;">
-    		<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="end.datetime" ng-change="showPlot()" is-open="end.isOpen" datepicker-options="end.dateOptions"/>
-    		<span class="input-group-btn">
-       			<button type="button" class="btn btn-default" ng-click="openEnd($event)">
-					<i class="glyphicon glyphicon-calendar"></i>
-				</button>
-    		</span>
-		</p>
-		<label class="control-label">Lower duration limit: </label>
-		<input ng-model="lowerLimit.hours" ng-change="calcDurationLowerLimit()" type="number" min="0" width="10px">
-		:
-		<input ng-model="lowerLimit.minutes" ng-change="calcDurationLowerLimit()" type="number" min="0" max="59" width="10px">
-		:
-		<input ng-model="lowerLimit.seconds" ng-change="calcDurationLowerLimit()" type="number" min="0" max="59" width="10px">
-		.
-		<input ng-model="lowerLimit.milliseconds" ng-change="calcDurationLowerLimit()" type="number" min="0" max="999" width="10px">	
-		<label class="control-label">Upper duration limit: </label>
-		<input ng-model="upperLimit.hours" ng-change="calcDurationUpperLimit()" type="number" min="0" width="10px">
-		:
-		<input ng-model="upperLimit.minutes" ng-change="calcDurationUpperLimit()" type="number" min="0" max="59" width="10px">
-		:
-		<input ng-model="upperLimit.seconds" ng-change="calcDurationUpperLimit()" type="number" min="0" max="59" width="10px">
-		.
-		<input ng-model="upperLimit.milliseconds" ng-change="calcDurationUpperLimit()" type="number" min="0" max="999" width="10px">
-		<div>Number of activity instances below limit range: {{ instanceCountBelowLimitRange }}</div>
-		<div>Number of activity instances in limit range: {{ instanceCountInLimitRange }}</div>
-    	<div>Number of activity instances above limit range: {{ instanceCountAboveLimitRange }}</div>
-	<activity-duration-chart lower-duration-limit="lowerLimit.inMs" upper-duration-limit="upperLimit.inMs" data="historicActivityPlotData"></activity-duration-chart>
+	<table style="position: relative; z-index: 1000000 !important;">
+		<colgroup width="1000" span="2"></colgroup>
+		<tr>
+			<td>
+				<div>The duration format is HH:MM:SS.mmm.</div>
+			</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>
+				<label class="control-label">Start: </label>
+    		 	  <p class="input-group" style="width: 250px; position: relative; z-index: 1000000 !important;">
+    				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="start.datetime" ng-change="showPlot()" is-open="start.isOpen" datepicker-options="start.dateOptions"/>
+    				<span class="input-group-btn">
+       					<button type="button" class="btn btn-default" ng-click="openStart($event)">
+							<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+    				</span>
+				</p>
+				<label class="control-label">End: </label>
+				<p class="input-group" style="width: 250px; position: relative; z-index: 100000 !important;">
+ 	   				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="end.datetime" ng-change="showPlot()" is-open="end.isOpen" datepicker-options="end.dateOptions"/>
+ 	   				<span class="input-group-btn">
+       					<button type="button" class="btn btn-default" ng-click="openEnd($event)">
+						<i class="glyphicon glyphicon-calendar"></i>
+						</button>
+    				</span>
+				</p>
+			<!--
+			<label class="control-label">Lower duration limit: </label>
+			<input ng-model="lowerLimit.hours" ng-change="calcDurationLowerLimit()" type="number" min="0" width="10px">
+			:
+			<input ng-model="lowerLimit.minutes" ng-change="calcDurationLowerLimit()" type="number" min="0" max="59" width="10px">
+			:
+			<input ng-model="lowerLimit.seconds" ng-change="calcDurationLowerLimit()" type="number" min="0" max="59" width="10px">
+			.
+			<input ng-model="lowerLimit.milliseconds" ng-change="calcDurationLowerLimit()" type="number" min="0" max="999" width="10px">	
+			<label class="control-label">Upper duration limit: </label>
+			<input ng-model="upperLimit.hours" ng-change="calcDurationUpperLimit()" type="number" min="0" width="10px">
+			:
+			<input ng-model="upperLimit.minutes" ng-change="calcDurationUpperLimit()" type="number" min="0" max="59" width="10px">
+			:
+			<input ng-model="upperLimit.seconds" ng-change="calcDurationUpperLimit()" type="number" min="0" max="59" width="10px">
+			.
+			<input ng-model="upperLimit.milliseconds" ng-change="calcDurationUpperLimit()" type="number" min="0" max="999" width="10px">
+			-->
+			</td>
+			<td>
+				<table>
+					<colgroup width="400" span="2"></colgroup>
+					<tr>
+						<th>number of activity instances</th>
+						<th>{{ instanceCount }}</th>
+					</tr>
+					<tr>
+						<td>below limit range:</td>
+						<td>{{ instanceCountBelowLimitRange }}</td>
+					</tr>
+					<tr>
+						<td>in limit range:</td>
+						<td>{{ instanceCountInLimitRange }}</td>
+					</tr>
+					<tr>
+						<td>above limit range:</td>
+						<td>{{ instanceCountAboveLimitRange }}</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<activity-duration-chart data="historicActivityPlotData"></activity-duration-chart>
 	<!--highchart id="highchart" config="chartConfig" style="height: 500px; width: 800px;"></highchart-->
 	<!--div id="chart"></div-->
 	<!--nvd3 id="sparklineChart" options="optionsChart" data="historicActivityPlotData">
