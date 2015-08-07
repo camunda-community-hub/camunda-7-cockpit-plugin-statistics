@@ -30,7 +30,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('activityHistoryCtrl', ['$scope', '$modalInstance', 'DataFactory', 'SettingsFactory', 'activityId', '$filter', function($scope, $modalInstance, DataFactory, SettingsFactory, activityId, $filter){
 		
-		$scope.data = []; // TODO
+		$scope.$on('durationLimitChanged', function() {
+			getInstanceCount(SettingsFactory.lowerDurationLimitInMs, SettingsFactory.upperDurationLimitInMs);
+			$scope.$apply();
+		});
 		
 		var durations = {
 				name: "durations",
@@ -221,6 +224,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			durations.data = [];
 			var start = datetimeToMs($scope.start.datetime);
 			var end = datetimeToMs($scope.end.datetime);
+			var min = Number.MAX_VALUE;
+			var max = 0;
 			for(var i in data) {
 				datetime = datetimeToMs(stringToDate(data[i].endTime));
 				if(datetime >= start && datetime <= end) {
@@ -233,13 +238,18 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					"assignee": data[i].assignee
 					});
 					durations.data.push([datetimeToMs(data[i].endTime), data[i].duration]);
+					if(data[i].duration < min) min = data[i].duration;
+					if(data[i].duration > max) max = data[i].duration;
 				}
 			}
+			SettingsFactory.lowerDurationLimitInMs = min;
+			SettingsFactory.upperDurationLimitInMs = max;
+			
 			updateDurationRange();
 			
 			$scope.historicActivityPlotData = filteredData;
 
-			getInstanceCount($scope.lowerLimit.inMs, $scope.upperLimit.inMs);
+			getInstanceCount(SettingsFactory.lowerDurationLimitInMs, SettingsFactory.upperDurationLimitInMs);
 		}
 				
 		function updateLowerDurationLimit(time) {
@@ -274,6 +284,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				else if (time <= upperLimit) $scope.instanceCountInLimitRange++;
 				else $scope.instanceCountAboveLimitRange++;
 			});
+			$scope.instanceCount = durations.data.length;
 		}
 
 		function datetimeToMs(datetime) {
@@ -314,7 +325,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			//return date.toLocaleDateString() + ", " + date.toLocaleTimeString();
 		}
 
-		$scope.optionsChart = {
+		$scope.options = {
 				chart: {
 					type: 'sparklinePlus',
 					height: 450,
