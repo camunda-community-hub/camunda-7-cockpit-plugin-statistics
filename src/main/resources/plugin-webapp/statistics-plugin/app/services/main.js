@@ -5,8 +5,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', [
     './GraphFactory',
     './TimingFactory',
     './SettingsFactory',
-    './UserInteractionFactory',
-    './ScatterPlotConfigFactory'
+    './UserInteractionFactory'
 ], function(module) {
 
 });

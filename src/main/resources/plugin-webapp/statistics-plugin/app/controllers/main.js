@@ -9,7 +9,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', [
   './timingCtrl',
   './slaChartCtrl',
   './feedbackCtrl',
-  './startEndConfigController'
+  './plotConfigController'
   '../process-diagram-overlay/controllers/overlayMenuCtrl',
   '../process-diagram-overlay/controllers/processDiagramCtrl',
   '../process-diagram-overlay/controllers/processDiagramSettingsCtrl',
