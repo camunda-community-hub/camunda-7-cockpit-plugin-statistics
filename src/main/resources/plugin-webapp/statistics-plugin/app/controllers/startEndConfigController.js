@@ -4,9 +4,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		var getPropertyToPlot = function(booleans){
 			for (var property in booleans) {
-			    if (booleans.hasOwnProperty(property)) {	//check if its not a prototype property
-			        if(booleans[property]) return property;
-			    }
+				if (booleans.hasOwnProperty(property)) {	//check if its not a prototype property
+					if(booleans[property]) return property;
+				}
 			}
 			console.error("no optioin to plot was chosen!")
 		};
@@ -15,6 +15,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				regression: false,
 				distribution: true
 		}
+		
+		$scope.infoDistribution= false;
 		$scope.update = function(){
 			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
 			var update = TimingFactory.updateCharts($scope.chosenOptions);
@@ -22,28 +24,39 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			$scope.options = update.options;
 		};
 		$scope.apply = function(){
-			console.log($scope.chosenOptions);
-			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
-			TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
-			.then(function(){
-				$scope.data = TimingFactory.chosenData;
-				$scope.options = TimingFactory.options;
-			});
+			console.log(angular.equals($scope.selected, copyOfSelected));
+			console.log($scope.selected);
+			console.log(copyOfSelected);
+			if(angular.equals($scope.selected, copyOfSelected)){
+				$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
+				var update = TimingFactory.updateCharts($scope.chosenOptions);
+				$scope.data = update.data;
+				$scope.options = update.options;
+			}
+			else{
+				$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
+				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
+				.then(function(){
+					$scope.data = TimingFactory.chosenData;
+					$scope.options = TimingFactory.options;
+				});
+			}
+			copyOfSelected = $scope.selected;
 		};
-		
+
 		$scope.chosenOptions = {
 				propertyToPlot : "distribution",
 				numberOfBins : 10,
 				timeFrame: "daily",
 				cluster : {
-						algo: "kmeans",
-						numberOfClusters: 5
+					algo: "kmeans",
+					numberOfClusters: 5
 				},
 				timeWindow : {
-						start: "",
-						startDate : null,
-						end: "",
-						endDate: null
+					start: "",
+					startDate : null,
+					end: "",
+					endDate: null
 				},
 				showScatter: true,
 				showSplines: false,
@@ -52,12 +65,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//TODO: delete
 		$scope.isCollapsed = true;
 		var requestToDataBank = false;
-		
+
 		$scope.toggleSelection = function(e,selected) {
 			selected = !selected;
 			e.stopPropagation();e.preventDefault();
 		}; 
-		
+
 		//data to fill the accordion
 		$scope.menuData = [];
 		ScatterPlotConfigFactory.getMenuData()
@@ -136,7 +149,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});
 				}
 			}
-			console.log($scope.selected);
 		};
 		//used by the remove icon in the list itself
 		$scope.removeFromList = function(process, type, activity){

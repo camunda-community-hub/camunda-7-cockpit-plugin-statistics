@@ -11,8 +11,8 @@ div.custom .panel-default>.panel-heading {
         color: white;
 }
 
-div.custom2 .panel-default>.panel-heading {
-    background-color: white;
+.chosen{
+		background-color: #08C;
         color: white;
 }
 </style>
@@ -157,10 +157,12 @@ div.custom2 .panel-default>.panel-heading {
 			      <a
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startTime, 'glyphicon-check': propertiesBoolean.startTime}"
-						ng-style="{color : 'black'}">&nbsp;</a><span style="text-decoration: underline;">start</span> time of data </accordion-heading>
+						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">start</span> time of data </accordion-heading>
 			      <div class = "col-md-2">
-			      <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">timeframe</button>
-			      <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">clustering</button>
+				      <div class = "btn-group-vertical">
+					      <button class="btn btn-default" ng-style="!isCollapsed&&{'background-color': '#08C','color': 'white'}" ng-click="isCollapsed = !isCollapsed">timeframe</button>
+					      <button class="btn btn-default" ng-style="!isCollapsed&&{'background-color': '#08C','color': 'white'}" ng-click="isCollapsed = !isCollapsed">clustering</button>
+				      </div>
 			      </div>
 			      <div class = "col-md-10">
 			      	<div collapse="isCollapsed">
@@ -230,8 +232,9 @@ div.custom2 .panel-default>.panel-heading {
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.regression, 'glyphicon-check': propertiesBoolean.regression}"
 						ng-style="{color : 'black'}"></a>&nbsp;
-				      <span style="text-decoration: underline;">chronological development of the duration</span> of data 
+				      <span style="text-decoration: underline;">time series of duration</span> of data 
 			      </accordion-heading>
+			      <div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="infoRegression=!infoRegression"></a></div>
 			      <div clas = "row">
 			      <div class = "col-lg-5 col-md-5 col-sm-5">
 					<div>
@@ -252,6 +255,28 @@ div.custom2 .panel-default>.panel-heading {
 					</div>
 				</div>
 				</div>
+				<div ng-show=infoRegression>
+					 <br>
+					 <br>
+					 <h2>Info</h2>
+						<dl class="dl-horizontal">
+	  						<dt>What can i plot here?</dt>
+	  						<dd>the time series of the durations of the chosen processes/activites</dd>
+	  						<dt>Purpose</dt>
+	  						<dd>To assess the change over time of duration</dd>
+	  						<dt>What's on the x axis?</dt>
+	  						<dd>the start time of the processes.</dd>
+	  						<dt>What's on the y axis?</dt>
+	  						<dd>the duration of the process started at the x axis time value</dd>
+	  						<dt>"show scatter plot"</dt>
+	  						<dd>the processes are displayed as circles</dd>
+	  						<dt>"show splines"</dt>
+	  						<dd>linearly interpolates the discrete data to get a continuous plot</dd>
+	  						<dt>"draw regression"</dt>
+	  						<dd>shows a linear regression line to observe a trend in the time series. <mark>This makes only sense if there really 
+	  						is a linear trend!</mark></dd>
+						</dl>
+					</div>
 			   </accordion-group>
 			   </div>
 			   <div ng-class = "{'custom':propertiesBoolean.distribution}">
@@ -261,11 +286,31 @@ div.custom2 .panel-default>.panel-heading {
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.distribution, 'glyphicon-check': propertiesBoolean.distribution}"
 						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">distribution of the duration</span> of data </accordion-heading>
-					<h6>
+					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="infoDistribution=!infoDistribution"></a></div>
+					<h4>
 					adjust number of bins
-					</h6>
+					</h4>
 					<input type="number" min="1" step="1"
-					   ng-model="chosenOptions.numberOfBins" ng-change="">
+					   ng-model="chosenOptions.numberOfBins">
+					 <div ng-show=infoDistribution>
+					 <br>
+					 <br>
+					 <h2>Info</h2>
+						<dl class="dl-horizontal">
+	  						<dt>What can i plot here?</dt>
+	  						<dd>the durations of the chosen processes/activites</dd>
+	  						<dt>Purpose</dt>
+	  						<dd>To roughly assess the probability distribution of the durations 
+	  						by depicting the frequencies of observations occurring in certain ranges of values</dd>
+	  						<dt>What's on the x axis?</dt>
+	  						<dd>the boundery of the ranges of values (bins) in percent of the range from the minimal duration to the maximal duration</dd>
+	  						<dt>What's on the y axis?</dt>
+	  						<dd>the absolut frequencies of the durations observed in the bins</dd>
+	  						<dt>"number of bins"</dt>
+	  						<dd>changing the number of bins affects the width of the range of the bins. Choosing more bins results in smaller bins 
+	  						and thus a higher accuracy</dd>
+						</dl>
+					</div>
 			   </accordion-group>
 			   </div>
 			   </accordion>
