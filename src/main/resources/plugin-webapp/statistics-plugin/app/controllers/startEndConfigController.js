@@ -28,43 +28,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			.then(function(){
 				$scope.data = TimingFactory.chosenData;
 				$scope.options = TimingFactory.options;
-				//make an iterator over the 10 d3 default colors
-				//TODO if more then 10 are selected we need the 20 color scale
-				var colorIterator = makeIterator(d3.scale.category10().range());
-				var colorDictionary =[];
-				angular.forEach($scope.selected, function(processObject){
-					if(processObject.wholeProcess){
-						var color = colorIterator.next();
-						processObject.color = {"background-color" : color };
-						colorDictionary.push({"key" : processObject.process, "color": color});
-					}
-					angular.forEach(processObject.activityTypes, function(activityTypeObject){
-						angular.forEach(activityTypeObject.activities, function(activityObject){
-							var color = colorIterator.next();
-							activityObject.color = {"background-color" : color};
-							colorDictionary.push({"key":activityObject.activity, "color": color});
-						})
-					})
-				})
-				$scope.options.chart.color = function(d, i) {
-			        keyIndex = colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
-			        return colorDictionary[keyIndex].color;
-			    };
 			});
-		};
-		/**
-		 * @return: an iterator over an array. When the end is reached it starts all over again
-		 */
-		function makeIterator(array){
-			var nextIndex = 0;
-
-			return {
-				next: function(){
-					if(nextIndex >= array.length)
-						nextIndex =0 ;
-					return array[nextIndex++];
-				}
-			}
 		};
 		
 		$scope.chosenOptions = {
@@ -87,6 +51,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 		//TODO: delete
 		$scope.isCollapsed = true;
+		var requestToDataBank = false;
 		
 		$scope.toggleSelection = function(e,selected) {
 			selected = !selected;
@@ -102,6 +67,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		//data chosen from the user in the accordion
 		$scope.selected = [];
+		var copyOfSelected = [];
 		//next two methods are used by the child controllers in the accordion
 		//adds or deletes the chosenItem
 		//TODO: think if input parameters are really necessary
