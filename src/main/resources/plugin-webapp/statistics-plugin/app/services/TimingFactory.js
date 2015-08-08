@@ -2,6 +2,23 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('TimingFactory',['DataFactory','Format','GraphFactory','$rootScope', function(DataFactory,Format, GraphFactory,$rootScope) {
 		var TimingFactory = {};
 
+		TimingFactory.menuData = [];
+		TimingFactory.getMenuData = function(){
+			return DataFactory.getActivityNamesTypesProcDefinition()
+			.then(function () {
+				var menuData = Format.bringSortedDataInPlotFormat
+					(DataFactory.activityNamesTypesProcDefinition,"procDefKey","type","activityName",undefined,undefined);
+				for(var i = 0; i< menuData.length;i++){
+					menuData[i].values = Format.bringNotSortedDataInPlotFormat(menuData[i].values,"x","y",undefined,undefined,undefined);
+					var j = DataFactory.activityNamesTypesProcDefinition.map(function(e) { return e.procDefKey; }).indexOf(menuData[i].key);
+					//add procDefId (we need that later to get the results from database using Rest API)
+					menuData[i].Id = DataFactory.activityNamesTypesProcDefinition[j].procDefId;
+				}
+				TimingFactory.menuData = menuData;
+			});
+		};
+		
+		
 		var getTimeFormat = function(timeFrame){
 			if(timeFrame==="daily")
 				return "%H:%M";
@@ -46,8 +63,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return {"data" : TimingFactory.chosenData , "options": TimingFactory.options};
 		}
 		
+		/**
+		 * updates data without a call to the database
+		 */
 		TimingFactory.updateCharts = function(options){
-			console.log(options);
 			return TimingFactory.prepareData(TimingFactory.data,options,TimingFactory.options.chart.color);
 		};
 		/**
@@ -69,7 +88,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			//".color" properties of the legend are also set here. since changing something in selectedFromMenu also affects
 			//the view (since it is $scope.selected)
 			//TODO if more then 10 are selected we need the 20 color scale
-			var colorIterator = makeIterator(d3.scale.category10().range());
+			var colorIterator = makeIterator(d3.scale.category20().range());
 			var colorDictionary =[];
 			angular.forEach(selectedFromMenu, function(processObject){
 				if(processObject.wholeProcess){

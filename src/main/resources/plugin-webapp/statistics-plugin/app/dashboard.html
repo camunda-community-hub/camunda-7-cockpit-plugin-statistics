@@ -17,7 +17,7 @@
   </tab> -->
   <tab heading="Timing" select="handleTabClick('startEnd')"
 		ng-controller="timingCtrl">
-		  <div class="row" ng-controller = "startEndConfigController">
+		  <div class="row" ng-controller = "plotConfigController">
 				<div class="col-lg-7 col-md-7 col-sm-7">
 					<div id="timingChartDiv" ng-if = "chosenOptions.propertyToPlot=='startTime'||chosenOptions.propertyToPlot=='endTime'||chosenOptions.propertyToPlot=='distribution'">
 						<nvd3 options="options" data="data"></nvd3>
