@@ -157,7 +157,7 @@ div.custom2 .panel-default>.panel-heading {
 			      <a
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startTime, 'glyphicon-check': propertiesBoolean.startTime}"
-						ng-style="{color : 'black'}"></a><span style="text-decoration: underline;">start</span> time of data </accordion-heading>
+						ng-style="{color : 'black'}">&nbsp;</a><span style="text-decoration: underline;">start</span> time of data </accordion-heading>
 			      <div class = "col-md-2">
 			      <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">timeframe</button>
 			      <button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">clustering</button>
@@ -229,7 +229,7 @@ div.custom2 .panel-default>.panel-heading {
 				      <a
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.regression, 'glyphicon-check': propertiesBoolean.regression}"
-						ng-style="{color : 'black'}"></a> 
+						ng-style="{color : 'black'}"></a>&nbsp;
 				      <span style="text-decoration: underline;">chronological development of the duration</span> of data 
 			      </accordion-heading>
 			      <div clas = "row">
@@ -260,7 +260,7 @@ div.custom2 .panel-default>.panel-heading {
 			      <a
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.distribution, 'glyphicon-check': propertiesBoolean.distribution}"
-						ng-style="{color : 'black'}"></a><span style="text-decoration: underline;">distribution of the duration</span> of data </accordion-heading>
+						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">distribution of the duration</span> of data </accordion-heading>
 					<h6>
 					adjust number of bins
 					</h6>
@@ -277,7 +277,7 @@ div.custom2 .panel-default>.panel-heading {
 <div>
 	<button
 		class="btn btn-primary"
-		ng-click="apply()">Apply</button>
+		ng-click="apply()">Apply changes</button>
 		<button
 		class="btn btn-primary"
 		ng-click="update()">update</button>
