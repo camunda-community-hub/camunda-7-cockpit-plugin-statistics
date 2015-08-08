@@ -1,7 +1,20 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('startEndConfigController',['$scope','Uri','ScatterPlotConfigFactory', 'TimingFactory', function($scope, Uri, ScatterPlotConfigFactory,TimingFactory){
-
+		
+		//initialize the setting for the configuration menu
+		
+		//regulates which property should be plotted and at the same time
+		//which property-window is open, since those two tings go hand in hand
+		$scope.propertiesBoolean ={
+				startTime : false,
+				regression: false,
+				distribution: true
+		}
+		
+		/**
+		 * determines from $scope.propertiesBoolean which property is to be plotted
+		 */
 		var getPropertyToPlot = function(booleans){
 			for (var property in booleans) {
 				if (booleans.hasOwnProperty(property)) {	//check if its not a prototype property
@@ -10,40 +23,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 			console.error("no optioin to plot was chosen!")
 		};
-		$scope.propertiesBoolean ={
-				startTime : false,
-				regression: false,
-				distribution: true
+		
+		//regulates which info panels should be shown. Default is none
+		$scope.info = {
+				startTimeInfo:false,
+				regressionInfo: false,
+				distributionInfo: false
 		}
 		
-		$scope.infoDistribution= false;
-		$scope.update = function(){
-			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
-			var update = TimingFactory.updateCharts($scope.chosenOptions);
-			$scope.data = update.data;
-			$scope.options = update.options;
-		};
-		$scope.apply = function(){
-			console.log(angular.equals($scope.selected, copyOfSelected));
-			console.log($scope.selected);
-			console.log(copyOfSelected);
-			if(angular.equals($scope.selected, copyOfSelected)){
-				$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
-				var update = TimingFactory.updateCharts($scope.chosenOptions);
-				$scope.data = update.data;
-				$scope.options = update.options;
-			}
-			else{
-				$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
-				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
-				.then(function(){
-					$scope.data = TimingFactory.chosenData;
-					$scope.options = TimingFactory.options;
-				});
-			}
-			copyOfSelected = $scope.selected;
-		};
-
+		//the data of the menu which is important for database requests and graph options
 		$scope.chosenOptions = {
 				propertyToPlot : "distribution",
 				numberOfBins : 10,
@@ -62,14 +50,45 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				showSplines: false,
 				showRegression: false
 		};
-		//TODO: delete
-		$scope.isCollapsed = true;
+		//init which option is shown in start time of data properts
+		$scope.showClustering = true;
+		
+		//each time applyChanges is called requestToDataBank is set back to false
+		//and each time a change occurs which needs other data then what we got it is set to true
+		//those changes would be either other activities/processes or another time window for the other changes in the menu
+		//we only have to reformat the data. This is done for performance
 		var requestToDataBank = false;
-
-		$scope.toggleSelection = function(e,selected) {
-			selected = !selected;
-			e.stopPropagation();e.preventDefault();
-		}; 
+		
+		/**
+		 * is called each time a change happens that makes a new request to the database necessary
+		 */
+		$scope.changeRequestToDataBase = function(){
+			requestToDataBank = true;
+		};
+		
+		/**
+		 * realizes the changes made in the menu
+		 */
+		$scope.applyChanges = function(){
+			console.debug("new request to database necessary:")
+			console.debug(requestToDataBank);
+			if(!requestToDataBank){
+				$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
+				var update = TimingFactory.updateCharts($scope.chosenOptions);
+				$scope.data = update.data;
+				$scope.options = update.options;
+			}
+			else{
+				$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
+				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
+				.then(function(){
+					$scope.data = TimingFactory.chosenData;
+					$scope.options = TimingFactory.options;
+				});
+			}
+			//reset requestToDataBank since new data just arrived
+			requestToDataBank = false;
+		};
 
 		//data to fill the accordion
 		$scope.menuData = [];
@@ -80,15 +99,16 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		//data chosen from the user in the accordion
 		$scope.selected = [];
-		var copyOfSelected = [];
 		//next two methods are used by the child controllers in the accordion
 		//adds or deletes the chosenItem
 		//TODO: think if input parameters are really necessary
 		//each time something is added it also gets a color
 		//if it is deleted it gets deleted from the color dictionary and the iterator is set one step back
 		$scope.change = function(chosenItem,add,processIndexMenu,activityTypeIndexMenu,activityIndexMenu){
-			console.debug("change");
-			//find out if the process has been inserted before????
+			//selected data has been changed so next time apply mehtod is called we have to request new data from 
+			//the data base
+			requestToDataBank = true;
+			//find out if the process has been inserted before
 			var indexProcess = $scope.selected.map(function(e) { return e.process; }).indexOf(chosenItem.process);
 			//Case: process has been inserted before
 			if(indexProcess >= 0){
@@ -170,9 +190,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	}]);
 
 	module.controller('processItemController',['$scope', function($scope){
-		//when the tooltips are displayed sth goes wrong
-//		$scope.tooltip ="This will select the process..";
-		$scope.isSelected = false;//ng-init
+		$scope.isSelected = false;
 		$scope.toggleSelection = function(e,processIndex) {
 			$scope.isSelected= !$scope.isSelected;
 			e.stopPropagation();e.preventDefault();
@@ -181,11 +199,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	}]);
 
 	module.controller('activityTypeController',['$scope', function($scope){
-//		$scope.$watch('isSelected', function(newVal, oldVal){
-//		if(newVal!=oldVal)
-//		$scope.$broadcast('isSelectedChange',{"val":newVal})
-//		});
-
 		//listens for the event when an item is removed from the list with the remove icon
 		//and unchecks the box, so the list and boxes stay in sync
 		//and if the activityType is unchecked it fires an event that
@@ -209,8 +222,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 		});
 
-//		$scope.tooltip ="This will select all activities of that type..";
-		$scope.isSelected = false;//ng-init
+		$scope.isSelected = false;
 		this.isSelected = $scope.isSelected;
 		$scope.toggleSelection = function(e) {
 			$scope.isSelected= !$scope.isSelected;
@@ -236,8 +248,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 		});
 
-		$scope.isSelected = false;//ng-init
-//		$scope.tooltip ="...";
+		$scope.isSelected = false;
 		$scope.toggleSelection = function(processIndex,activityTypeIndex,activityIndex) {
 			var insert ={"process":$scope.processItem.key, "wholeProcess": false, "activityType":$scope.activityType.key, "activity": $scope.activity.x};
 			$scope.change( insert,$scope.isSelected,processIndex,activityTypeIndex,activityIndex );

@@ -69,29 +69,33 @@ div.custom .panel-default>.panel-heading {
 					<input
 						type="radio"
 						ng-model="chosenOptions.timeWindow.start"
-						value="">
+						value=""
+						ng-change="changeRequestToDataBase()">
 					all
 				</div>
 				<div>
 					<input
 						type="radio"
 						ng-model="chosenOptions.timeWindow.start"
-						value="startedBefore">
+						value="startedBefore"
+						ng-change="changeRequestToDataBase()">
 					started before
 				</div>
 				<div>
 					<input
 						type="radio"
 						ng-model="chosenOptions.timeWindow.start"
-						value="startedAfter">
+						value="startedAfter"
+						ng-change="changeRequestToDataBase()">
 					started after
 				</div>
-				<div collapse="timeWindow.start==''">
-					<div class="alert alert-info">{{timeWindow.startDate | date: 'longDate'}}</div>
+				<div collapse="chosenOptions.timeWindow.start==''">
+					<div class="alert alert-info">{{chosenOptions.timeWindow.startDate | date: 'longDate'}}</div>
 					<datepicker
 						show-weeks="true"
 						class="well well-sm"
-						ng-model="chosenOptions.timeWindow.startDate"></datepicker>
+						ng-model="chosenOptions.timeWindow.startDate"
+						ng-change="changeRequestToDataBase()"></datepicker>
 				</div>
 			</div>
 			<div class="col-lg-5 col-md-5 col-sm-5">
@@ -100,29 +104,33 @@ div.custom .panel-default>.panel-heading {
 					<input
 						type="radio"
 						ng-model="chosenOptions.timeWindow.end"
-						value="">
+						value=""
+						ng-change="changeRequestToDataBase()">
 					all
 				</div>
 				<div>
 					<input
 						type="radio"
 						ng-model="chosenOptions.timeWindow.end"
-						value="finishedBefore">
+						value="finishedBefore"
+						ng-change="changeRequestToDataBase()">
 					finished before
 				</div>
 				<div>
 					<input
 						type="radio"
 						ng-model="chosenOptions.timeWindow.end"
-						value="finishedAfter">
+						value="finishedAfter"
+						ng-change="changeRequestToDataBase()">
 					finished after
 				</div>
-				<div collapse="timeWindow.end==''">
-					<div class="alert alert-info">{{timeWindow.endDate | date: 'longDate'}}</div>
+				<div collapse="chosenOptions.timeWindow.end==''">
+					<div class="alert alert-info">{{chosenOptions.timeWindow.endDate | date: 'longDate'}}</div>
 					<datepicker
 						show-weeks="true"
 						class="well well-sm"
-						ng-model="chosenOptions.timeWindow.endDate"></datepicker>
+						ng-model="chosenOptions.timeWindow.endDate"
+						ng-change="changeRequestToDataBase()"></datepicker>
 				</div>
 			</div>
 		</div>
@@ -158,14 +166,15 @@ div.custom .panel-default>.panel-heading {
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startTime, 'glyphicon-check': propertiesBoolean.startTime}"
 						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">start</span> time of data </accordion-heading>
+					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.startTimeInfo=!info.startTimeInfo"></a></div>
 			      <div class = "col-md-2">
 				      <div class = "btn-group-vertical">
-					      <button class="btn btn-default" ng-style="!isCollapsed&&{'background-color': '#08C','color': 'white'}" ng-click="isCollapsed = !isCollapsed">timeframe</button>
-					      <button class="btn btn-default" ng-style="!isCollapsed&&{'background-color': '#08C','color': 'white'}" ng-click="isCollapsed = !isCollapsed">clustering</button>
+					      <button class="btn btn-default" ng-style="!showClustering&&{'background-color': '#08C','color': 'white'}" ng-click="showClustering = !showClustering">timeframe</button>
+					      <button class="btn btn-default" ng-style="showClustering&&{'background-color': '#08C','color': 'white'}" ng-click="showClustering = !showClustering">clustering</button>
 				      </div>
 			      </div>
 			      <div class = "col-md-10">
-			      	<div collapse="isCollapsed">
+			      	<div collapse="showClustering">
 			      	<div>
 			      		<label>
 							<input
@@ -197,7 +206,7 @@ div.custom .panel-default>.panel-heading {
 						</label>
 					</div>
 					</div>
-					<div collapse="!isCollapsed">
+					<div collapse="!showClustering">
 						<div>
 					         <label>
 						         <input
@@ -223,6 +232,32 @@ div.custom .panel-default>.panel-heading {
 							</div>
 					</div>
 					</div>
+					<div ng-show=info.startTimeInfo>
+					 <br>
+					 <br>
+						<dl class="dl-horizontal">
+							<h3>Plot</h3>
+	  						<dt>What can i plot here?</dt>
+	  						<dd>The start times of the processes/activites on a weekly scale or a daily scale</dd>
+	  						<dt>Purpose</dt>
+	  						<dd>To asses the times where more or fewer processes are started either in relation to a week or a day</dd>
+	  						<dt>What's on the x axis?</dt>
+	  						<dd>The start time of the processes depending on the chosen timeframe this will be a time containing a week day and a time
+	  						or just a time. <mark>When a weekly timeframe is chosen only the week day and the time of the starting time of a process will be
+	  						plotted. Thus e.g. a process having started last week Tuesday 13:30 and a process having started this Tuesday 13:40 would be right
+	  						next to each other in the plot. Meaning the rest of information of the starting time of a process outside the chosen timeframe 
+	  						will be ignored.</mark>
+	  						This is done to observe patterns in the chosen timeframe. e.g. a pizza service could find out that most of its processes usually start
+	  						at Sunday evening</dd>
+	  						<dt>What's on the y axis?</dt>
+	  						<dd>All the processes/activities belonging to the same key will be plotted at the same y value</dd>
+	  						<h3>Options</h3>
+	  						<dt>timeframe</dt>
+	  						<dd>...</dd>
+	  						<dt>clustering</dt>
+	  						<dd>To get a better impression over the data a clustering algorith can be used....</dd>
+						</dl>
+					</div> 
 			   </accordion-group>
 			   </div>
 			   <div ng-class = "{'custom':propertiesBoolean.regression}">
@@ -234,9 +269,10 @@ div.custom .panel-default>.panel-heading {
 						ng-style="{color : 'black'}"></a>&nbsp;
 				      <span style="text-decoration: underline;">time series of duration</span> of data 
 			      </accordion-heading>
-			      <div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="infoRegression=!infoRegression"></a></div>
+			      <div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.regressionInfo=!info.regressionInfo"></a></div>
 			      <div clas = "row">
-			      <div class = "col-lg-5 col-md-5 col-sm-5">
+			      <!-- need this div so that the checkboxes stay away from the side -->
+			      <div class = "col-lg-12 col-md-12 col-sm-5">
 					<div>
 					   <label class="checkbox"> <input ng-model="chosenOptions.showScatter"
 					       type="checkbox"> show scatter plot
@@ -253,29 +289,30 @@ div.custom .panel-default>.panel-heading {
 					   draw regression
 					   </label>
 					</div>
-				</div>
-				</div>
-				<div ng-show=infoRegression>
+					<div ng-show=info.regressionInfo>
 					 <br>
 					 <br>
-					 <h2>Info</h2>
 						<dl class="dl-horizontal">
+							<h3>Plot</h3>
 	  						<dt>What can i plot here?</dt>
-	  						<dd>the time series of the durations of the chosen processes/activites</dd>
+	  						<dd>The time series of the durations of the chosen processes/activites</dd>
 	  						<dt>Purpose</dt>
 	  						<dd>To assess the change over time of duration</dd>
 	  						<dt>What's on the x axis?</dt>
-	  						<dd>the start time of the processes.</dd>
+	  						<dd>The start time of the processes.</dd>
 	  						<dt>What's on the y axis?</dt>
-	  						<dd>the duration of the process started at the x axis time value</dd>
-	  						<dt>"show scatter plot"</dt>
-	  						<dd>the processes are displayed as circles</dd>
-	  						<dt>"show splines"</dt>
-	  						<dd>linearly interpolates the discrete data to get a continuous plot</dd>
-	  						<dt>"draw regression"</dt>
-	  						<dd>shows a linear regression line to observe a trend in the time series. <mark>This makes only sense if there really 
+	  						<dd>The duration of the process started at the x axis time value</dd>
+	  						<h3>Options</h3>
+	  						<dt>show scatter plot</dt>
+	  						<dd>The processes are displayed as circles</dd>
+	  						<dt>show splines</dt>
+	  						<dd>Linearly interpolates the discrete data to get a continuous plot</dd>
+	  						<dt>draw regression</dt>
+	  						<dd>Shows a linear regression line to observe a trend in the time series. <mark>This makes only sense if there really 
 	  						is a linear trend!</mark></dd>
 						</dl>
+					</div> 
+				</div>
 					</div>
 			   </accordion-group>
 			   </div>
@@ -286,28 +323,29 @@ div.custom .panel-default>.panel-heading {
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.distribution, 'glyphicon-check': propertiesBoolean.distribution}"
 						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">distribution of the duration</span> of data </accordion-heading>
-					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="infoDistribution=!infoDistribution"></a></div>
+					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.distributionInfo=!info.distributionInfo"></a></div>
 					<h4>
 					adjust number of bins
 					</h4>
 					<input type="number" min="1" step="1"
 					   ng-model="chosenOptions.numberOfBins">
-					 <div ng-show=infoDistribution>
+					 <div ng-show=info.distributionInfo>
 					 <br>
 					 <br>
-					 <h2>Info</h2>
 						<dl class="dl-horizontal">
+							<h3>Plot</h3>
 	  						<dt>What can i plot here?</dt>
-	  						<dd>the durations of the chosen processes/activites</dd>
+	  						<dd>The durations of the chosen processes/activites</dd>
 	  						<dt>Purpose</dt>
 	  						<dd>To roughly assess the probability distribution of the durations 
 	  						by depicting the frequencies of observations occurring in certain ranges of values</dd>
 	  						<dt>What's on the x axis?</dt>
-	  						<dd>the boundery of the ranges of values (bins) in percent of the range from the minimal duration to the maximal duration</dd>
+	  						<dd>The boundery of the ranges of values (bins) in percent of the range from the minimal duration to the maximal duration</dd>
 	  						<dt>What's on the y axis?</dt>
-	  						<dd>the absolut frequencies of the durations observed in the bins</dd>
-	  						<dt>"number of bins"</dt>
-	  						<dd>changing the number of bins affects the width of the range of the bins. Choosing more bins results in smaller bins 
+	  						<dd>The absolut frequencies of the durations observed in the bins</dd>
+	  						<h3>Options</h3>
+	  						<dt>number of bins</dt>
+	  						<dd>Changing the number of bins affects the width of the range of the bins. Choosing more bins results in smaller bins 
 	  						and thus a higher accuracy</dd>
 						</dl>
 					</div>
@@ -319,11 +357,9 @@ div.custom .panel-default>.panel-heading {
  </tabset>
 	</div>
 </div>
+<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 <div>
 	<button
 		class="btn btn-primary"
-		ng-click="apply()">Apply changes</button>
-		<button
-		class="btn btn-primary"
-		ng-click="update()">update</button>
+		ng-click="applyChanges()">Apply changes</button>
 </div>

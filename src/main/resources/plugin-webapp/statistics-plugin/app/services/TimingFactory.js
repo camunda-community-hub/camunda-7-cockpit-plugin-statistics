@@ -26,7 +26,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						spline : options.showSplines,
 						//TODO If it works put it all in chart
 						chart : {}
-						
 				};
 			}
 			else if(options.propertyToPlot == "startTime"||options.propertyToPlot == "endTime"){
@@ -53,11 +52,11 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		};
 		/**
 		 * @selectedFromMenu: processes, and activities chosen by the user to plot
-		 * @xValue: either starttime or endtime of the processes will be plotted on the x Axis
+		 * @xValue: either start time or end time of the processes will be plotted on the x Axis
 		 * @timeFrame: either focus on weekly dates i.e. the rest of the date will be ignored
 		 * or focus on time only i.e. weekday, year will be ignored
 		 * @date: an object containing date.to a date, date.from a date
-		 * if specified only procs/acts in this period are ploted
+		 * if specified only procs/acts in this period are plotted
 		 */
 		/**
 		 * formating is now happening inside the loop, if performance becomes an issue we have to think of sth new
