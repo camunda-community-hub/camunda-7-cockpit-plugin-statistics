@@ -7,7 +7,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//regulates which property should be plotted and at the same time
 		//which property-window is open, since those two tings go hand in hand
 		$scope.propertiesBoolean ={
-				startTime : false,
+				startEndTime : false,
 				regression: false,
 				distribution: true
 		};
@@ -26,32 +26,33 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		//regulates which info panels should be shown. Default is none
 		$scope.info = {
-				startTimeInfo:false,
+				startEndTimeInfo:false,
 				regressionInfo: false,
 				distributionInfo: false
 		};
 		
 		//the data of the menu which is important for database requests and graph options
 		$scope.chosenOptions = {
-				propertyToPlot : "distribution",
-				numberOfBins : 10,
-				timeFrame: "daily",
-				cluster : {
+				propertyToPlot : "distribution",	//the plot 
+				numberOfBins : 10,					//belongs to distribution plot 
+				time: "startTime",					//belongs to start-end plot
+				timeFrame: "daily",					//belongs to start-end plot, specifies the time focus
+				cluster : {							//belongs to start-end plot
 					algo: "kmeans",
 					numberOfClusters: 5
 				},
-				timeWindow : {
+				timeWindow : {						//belongs to data, specifies the time window the data is chosen from
 					start: "",
 					startDate : null,
 					end: "",
 					endDate: null
 				},
-				showScatter: true,
-				showSplines: false,
-				showRegression: false
+				showScatter: true,					//belongs to time-series plot
+				showSplines: false,					//belongs to time-series plot
+				showRegression: false				//belongs to time-series plot
 		};
 		//init which option is shown in start time of data properts
-		$scope.showClustering = true;
+		$scope.showClustering = false;
 		
 		//each time applyChanges is called requestToDataBank is set back to false
 		//and each time a change occurs which needs other data then what we got it is set to true
