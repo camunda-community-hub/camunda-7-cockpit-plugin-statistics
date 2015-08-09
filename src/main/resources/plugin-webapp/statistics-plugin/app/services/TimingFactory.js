@@ -19,11 +19,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		};
 		
 		
-		var getTimeFormat = function(timeFrame){
+		var getTimeFormatAndParser = function(timeFrame){
 			if(timeFrame==="daily")
-				return "%H:%M";
+				return {"format" : "%H:%M", "parser": eval("Format.breakDateDownTo24h") };
 			else if(timeFrame==="weekly")
-				return "%a %H:%M";
+				return {"format" : "%a %H:%M", "parser": eval("Format.breakDateDownToWeek") };
+			else if(timeFrame === "noFrame")
+				return {"format": "%Y-%m-%dT%H", "parser": d3.time.format("%Y-%m-%dT%H:%M:%S").parse };
 			else console.debug("Error: no known time frame was chosen")
 		};
 
@@ -31,7 +33,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		TimingFactory.options = [];
 		
 		TimingFactory.prepareData = function(rawData,options,colorScale){
-			var timeString = (options.timeFrame ==="daily")?"24h":"Week";
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"],"startTime","durationInMillis",parseDate,function(d){return d/1000/60;});
@@ -45,10 +46,11 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				};
 			}
 			else if(options.propertyToPlot == "startEndTime"){
-				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"] ,options.time,"",eval("Format.breakDateDownTo"+timeString));
+				var formatAndParser = getTimeFormatAndParser(options.timeFrame);
+				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"] ,options.time,"",formatAndParser.parser);
 				if(options.cluster.algo == "kmeans")
 					TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,options.cluster.numberOfClusters);
-				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(options.timeFrame), options.cluster.algo == "kmeans", 1000);
+				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(formatAndParser.format, options.cluster.algo == "kmeans", 1000);
 			}
 			else {
 				var dataAndBins = Format.bringDataIntoBarPlotFormat(rawData,["activityName","processDefinitionKey"],"durationInMillis",function(d){return d/1000/60;},options.numberOfBins);

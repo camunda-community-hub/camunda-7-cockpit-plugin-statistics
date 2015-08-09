@@ -14,8 +14,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 //			                color: d3.scal.category10().range(),
 //						sizeDomain: [1,10],	//see https://github.com/krispo/angular-nvd3/issues/49 for more info
 
+			            //TODO: no idea why tooltips and size function dont work if d.size is not defined as in the no clustering case
 //						size : function(d){
-//							return d.size;
+//							return 0.25;
 //						},
 			                showLabels: true,
 			                transitionDuration: 500,
@@ -25,9 +26,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 			                tooltips: true,
 						tooltipContent : function(key, x, y, e, graph) {
-							var d = e.series.values[e.pointIndex];
-			                				return '<h3>' + key + '</h3>' +
-							'<p>instances started/ended around that time: <b>' + d.clusterSize;
+											console.log("hallo");
+			                				return '<h3>' + key + '</h3>';
 						},
 						tooltipYContent : function(key, x, y) { return '<strong>' + key + '</strong>' },
 						tooltipXContent : function(key, x, y, e) { 
@@ -56,8 +56,14 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			                }
 			            }
 			};
-			if(clustered)
+			if(clustered) {
 				options.chart.size = function(d){ return d.size; };
+				options.chart.tooltipContent = function(key, x, y, e, graph) {
+					var d = e.series.values[e.pointIndex];
+	                				return '<h3>' + key + '</h3>' +
+					'<p>instances started/ended around that time: <b>' + d.clusterSize;
+					};
+			}
 			return options;
 			
 		};
