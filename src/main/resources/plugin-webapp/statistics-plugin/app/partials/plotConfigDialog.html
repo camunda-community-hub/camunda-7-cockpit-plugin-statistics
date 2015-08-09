@@ -216,7 +216,7 @@ div.custom .panel-default>.panel-heading {
 									type="radio"
 									ng-model="chosenOptions.timeFrame"
 									value="daily">
-								dayly
+								daily
 							</input>
 						</label>
 					</div>
@@ -261,32 +261,41 @@ div.custom .panel-default>.panel-heading {
 							</accordion-group>
 					</accordion>
 					</div>
+					<div class = "row">
+					<div class = "col-md-12">
 					<div ng-show=info.startEndTimeInfo>
 					 <br>
 					 <br>
 						<dl class="dl-horizontal">
 							<h3>Plot</h3>
 	  						<dt>What can i plot here?</dt>
-	  						<dd>The start times of the processes/activites on a weekly scale or a daily scale</dd>
+	  						<dd>The start times or end times of the process/activity instances</dd>
 	  						<dt>Purpose</dt>
-	  						<dd>To asses the times where more or fewer processes are started either in relation to a week or a day</dd>
+	  						<dd>To identify patterns in the starting or ending times of the instances. e.g. accumulations of starting instances</dd>
 	  						<dt>What's on the x axis?</dt>
-	  						<dd>The start time of the processes depending on the chosen timeframe this will be a time containing a week day and a time
-	  						or just a time. <mark>When a weekly timeframe is chosen only the week day and the time of the starting time of a process will be
-	  						plotted. Thus e.g. a process having started last week Tuesday 13:30 and a process having started this Tuesday 13:40 would be right
-	  						next to each other in the plot. Meaning the rest of information of the starting time of a process outside the chosen timeframe 
-	  						will be ignored.</mark>
-	  						This is done to observe patterns in the chosen timeframe. e.g. a pizza service could find out that most of its processes usually start
-	  						at Sunday evening</dd>
+	  						<dd>
+	  							<ol class = "dl-horizontal">
+	  								<li><strong>no timeframe</strong><br>
+	  								The start or end time of the instances. The format is here YYYY-mm-dd-hh</li>
+	  								<li><strong>daily</strong><br>
+	  								Only the time of day of starting or ending time is viewed. Year, month and day get cut off. So in the plot it will not
+	  								possible to see a difference between instances starting at the same time of day but at a different day.</li>
+	  								<li><strong>weekly</strong><br>
+	  								Only the weekday and the time of day will be displayed. Year and month get cut off.</li>
+	  							</ol>
+	  						</dd>
 	  						<dt>What's on the y axis?</dt>
-	  						<dd>All the processes/activities belonging to the same key will be plotted at the same y value</dd>
+	  						<dd>All the processes/activities instances belonging to the same key will be plotted at the same y value</dd>
 	  						<h3>Options</h3>
 	  						<dt>timeframe</dt>
-	  						<dd>...</dd>
+	  						<dd>see the description above</dd>
 	  						<dt>clustering</dt>
-	  						<dd>To get a better impression over the data a clustering algorith can be used....</dd>
+	  						<dd>To get a better impression over the data the k-means clustering algorithm can be used.
+	  						The number of clusters k is an input parameter: an inappropriate choice of k may yield poor results.</dd>
 						</dl>
 					</div> 
+					</div>
+					</div>
 			   </accordion-group>
 			   </div>
 			   <div ng-class = "{'custom':propertiesBoolean.regression}">
@@ -326,18 +335,18 @@ div.custom .panel-default>.panel-heading {
 	  						<dt>What can i plot here?</dt>
 	  						<dd>The time series of the durations of the chosen processes/activites</dd>
 	  						<dt>Purpose</dt>
-	  						<dd>To assess the change over time of duration</dd>
+	  						<dd>To assess the change over time of the durations</dd>
 	  						<dt>What's on the x axis?</dt>
-	  						<dd>The start time of the processes.</dd>
+	  						<dd>The start time of the instances.</dd>
 	  						<dt>What's on the y axis?</dt>
-	  						<dd>The duration of the process started at the x axis time value</dd>
+	  						<dd>The duration of the instances</dd>
 	  						<h3>Options</h3>
 	  						<dt>show scatter plot</dt>
-	  						<dd>The processes are displayed as circles</dd>
+	  						<dd>Shows the instances as circles</dd>
 	  						<dt>show splines</dt>
 	  						<dd>Linearly interpolates the discrete data to get a continuous plot</dd>
 	  						<dt>draw regression</dt>
-	  						<dd>Shows a linear regression line to observe a trend in the time series. <mark>This makes only sense if there really 
+	  						<dd>Shows a linear regression line to observe a trend in the time series. <mark>This only makes sense if there really 
 	  						is a linear trend!</mark></dd>
 						</dl>
 					</div> 
@@ -369,9 +378,10 @@ div.custom .panel-default>.panel-heading {
 	  						<dd>To roughly assess the probability distribution of the durations 
 	  						by depicting the frequencies of observations occurring in certain ranges of values</dd>
 	  						<dt>What's on the x axis?</dt>
-	  						<dd>The boundery of the ranges of values (bins) in percent of the range from the minimal duration to the maximal duration</dd>
+	  						<dd>The durations of the chosen process/activity instances starting with their minimal duration and ending with their maximum.
+								This range of durations is divided into @number_of_bins bins. The end and start values of these bins are given in percent of the range.</dd>
 	  						<dt>What's on the y axis?</dt>
-	  						<dd>The absolute frequencies of the durations observed in the bins</dd>
+	  						<dd>The absolute frequencies of the process/activity instances</dd>
 	  						<h3>Options</h3>
 	  						<dt>number of bins</dt>
 	  						<dd>Changing the number of bins affects the width of the range of the bins. Choosing more bins results in smaller bins 
