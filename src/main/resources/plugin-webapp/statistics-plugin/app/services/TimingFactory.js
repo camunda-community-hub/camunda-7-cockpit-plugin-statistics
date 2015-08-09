@@ -35,7 +35,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"],"startTime","durationInMillis",parseDate,function(d){return d/1000/60;});
-				console.log(TimingFactory.chosenData);
 				TimingFactory.options  = {
 						outerRegion:[5,95],
 						scatter  : options.showScatter,
@@ -45,19 +44,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						chart : {}
 				};
 			}
-			else if(options.propertyToPlot == "startTime"||options.propertyToPlot == "endTime"){
-				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"] ,options.propertyToPlot,"",eval("Format.breakDateDownTo"+timeString));
-				console.log(options.cluster.numberOfClusters);
-				TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,options.cluster.numberOfClusters);
-				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(options.timeFrame),1000);
-				console.log(TimingFactory.chosenData);
+			else if(options.propertyToPlot == "startEndTime"){
+				TimingFactory.chosenData = Format.bringSortedDataInPlotFormat(rawData,["activityName","processDefinitionKey"] ,options.time,"",eval("Format.breakDateDownTo"+timeString));
+				if(options.cluster.algo == "kmeans")
+					TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData,options.cluster.numberOfClusters);
+				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(getTimeFormat(options.timeFrame), options.cluster.algo == "kmeans", 1000);
 			}
 			else {
 				var dataAndBins = Format.bringDataIntoBarPlotFormat(rawData,["activityName","processDefinitionKey"],"durationInMillis",function(d){return d/1000/60;},options.numberOfBins);
 				TimingFactory.chosenData = dataAndBins.data;
 				TimingFactory.options = GraphFactory.getOptionsForTimeDistributionGraph(options.numberOfBins,dataAndBins.thresholds);
-				console.log(TimingFactory.chosenData);
-				console.log(TimingFactory.options);
 			}
 			TimingFactory.options.chart.color = colorScale;
 			return {"data" : TimingFactory.chosenData , "options": TimingFactory.options};

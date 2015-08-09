@@ -1,10 +1,9 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('GraphFactory', function() {
 		var GraphFactory = [];
-		//add some info that will be displayed as tooltip
-		GraphFactory.timeDistViews = [{'name':'chronological development','info':"ich bin ein cooler Plot"},{'name':'distribution', 'info':"ich aber auch!!"}];
 		
-		GraphFactory.getOptionsForStartEndTimeGraph = function(timeFormat,width){
+		 //if clustered we add a size function displaying the cluster sizes
+		GraphFactory.getOptionsForStartEndTimeGraph = function(timeFormat, clustered, width){
 			var options = {
 					 chart: {
 			                type: 'scatterChart',
@@ -15,9 +14,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 //			                color: d3.scal.category10().range(),
 //						sizeDomain: [1,10],	//see https://github.com/krispo/angular-nvd3/issues/49 for more info
 
-						size : function(d){
-							return d.size;
-						},
+//						size : function(d){
+//							return d.size;
+//						},
 			                showLabels: true,
 			                transitionDuration: 500,
 			                labelThreshold: 0.01,
@@ -57,6 +56,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			                }
 			            }
 			};
+			if(clustered)
+				options.chart.size = function(d){ return d.size; };
 			return options;
 			
 		};

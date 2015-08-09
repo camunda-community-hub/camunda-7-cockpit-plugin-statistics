@@ -15,6 +15,11 @@ div.custom .panel-default>.panel-heading {
 		background-color: #08C;
         color: white;
 }
+#innerAccordion .panel-default>.panel-heading {
+	background-color: #f5f5f5;
+/* 	background-color: white; */
+	color: black;
+}
 </style>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12">
@@ -159,23 +164,43 @@ div.custom .panel-default>.panel-heading {
 
 			<tab heading="properties to be plotted">
 			   <accordion>
-			   <div ng-class = "{'custom':propertiesBoolean.startTime}">
-			   <accordion-group is-open ="propertiesBoolean.startTime">
+			   <div ng-class = "{'custom':propertiesBoolean.startEndTime}">
+			   <accordion-group is-open ="propertiesBoolean.startEndTime">
 			      <accordion-heading >
 			      <a
 						class="pull-left glyphicon"
-						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startTime, 'glyphicon-check': propertiesBoolean.startTime}"
-						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">start</span> time of data </accordion-heading>
-					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.startTimeInfo=!info.startTimeInfo"></a></div>
-			      <div class = "col-md-2">
-				      <div class = "btn-group-vertical">
-					      <button class="btn btn-default" ng-style="!showClustering&&{'background-color': '#08C','color': 'white'}" ng-click="showClustering = !showClustering">timeframe</button>
-					      <button class="btn btn-default" ng-style="showClustering&&{'background-color': '#08C','color': 'white'}" ng-click="showClustering = !showClustering">clustering</button>
-				      </div>
-			      </div>
-			      <div class = "col-md-10">
-			      	<div collapse="showClustering">
+						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startEndTime, 'glyphicon-check': propertiesBoolean.startEndTime}"
+						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">start time / end time</span></accordion-heading>
+					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.startEndTimeInfo=!info.startEndTimeInfo"></a></div>
+					<div id="innerAccordion" class= "col-md-6">
+					<accordion>
+						<accordion-group heading = "time">
+						<div class = "col-md-12">
+						<div>
+			      		<label>
+							<input
+									type="radio"
+									ng-model="chosenOptions.time"
+									value="startTime">
+								start time
+							</input>
+						</label>
+					</div>
 			      	<div>
+			      		<label>
+							<input
+									type="radio"
+									ng-model="chosenOptions.time"
+									value="endTime">
+								end time
+							</input>
+						</label>
+					</div>
+					</div>
+						</accordion-group>
+						<accordion-group heading = "timeframe">
+						<div class = "col-md-12">
+						<div>
 			      		<label>
 							<input
 									type="radio"
@@ -206,7 +231,9 @@ div.custom .panel-default>.panel-heading {
 						</label>
 					</div>
 					</div>
-					<div collapse="!showClustering">
+						</accordion-group>
+						<accordion-group heading = "clustering">
+							<div class = "col-md-12">
 						<div>
 					         <label>
 						         <input
@@ -230,9 +257,11 @@ div.custom .panel-default>.panel-heading {
 							            step="1"
 							            ng-model="chosenOptions.cluster.numberOfClusters">
 							</div>
+							</div>
+							</accordion-group>
+					</accordion>
 					</div>
-					</div>
-					<div ng-show=info.startTimeInfo>
+					<div ng-show=info.startEndTimeInfo>
 					 <br>
 					 <br>
 						<dl class="dl-horizontal">
@@ -267,7 +296,7 @@ div.custom .panel-default>.panel-heading {
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.regression, 'glyphicon-check': propertiesBoolean.regression}"
 						ng-style="{color : 'black'}"></a>&nbsp;
-				      <span style="text-decoration: underline;">time series of duration</span> of data 
+				      <span style="text-decoration: underline;">time series of duration</span>
 			      </accordion-heading>
 			      <div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.regressionInfo=!info.regressionInfo"></a></div>
 			      <div clas = "row">
@@ -322,7 +351,7 @@ div.custom .panel-default>.panel-heading {
 			      <a
 						class="pull-left glyphicon"
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.distribution, 'glyphicon-check': propertiesBoolean.distribution}"
-						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">distribution of the duration</span> of data </accordion-heading>
+						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">distribution of duration</span></accordion-heading>
 					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.distributionInfo=!info.distributionInfo"></a></div>
 					<h4>
 					adjust number of bins
@@ -342,7 +371,7 @@ div.custom .panel-default>.panel-heading {
 	  						<dt>What's on the x axis?</dt>
 	  						<dd>The boundery of the ranges of values (bins) in percent of the range from the minimal duration to the maximal duration</dd>
 	  						<dt>What's on the y axis?</dt>
-	  						<dd>The absolut frequencies of the durations observed in the bins</dd>
+	  						<dd>The absolute frequencies of the durations observed in the bins</dd>
 	  						<h3>Options</h3>
 	  						<dt>number of bins</dt>
 	  						<dd>Changing the number of bins affects the width of the range of the bins. Choosing more bins results in smaller bins 
