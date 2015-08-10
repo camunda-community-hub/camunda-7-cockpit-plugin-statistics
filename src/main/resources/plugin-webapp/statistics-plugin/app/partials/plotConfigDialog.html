@@ -29,6 +29,7 @@ div.custom .panel-default>.panel-heading {
 				<menu></menu>
 			</div>
 			<div class="col-lg-6 col-md-6 col-sm-6">
+			<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "showLegend"></sp-show-selected-data>
 				<div ng-show="selected.length">
 					<div class="well">
 						<div ng-repeat="item in selected">

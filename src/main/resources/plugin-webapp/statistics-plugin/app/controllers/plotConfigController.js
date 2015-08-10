@@ -6,7 +6,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		 * test
 		 */
 		$scope.name = 'Tobias';
-		
+		$scope.showLegend = false;
 		
 		//initialize the setting for the configuration menu
 		
@@ -197,6 +197,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 		//used by the remove icon in the list itself
 		$scope.removeFromList = function(process, type, activity) {
+			console.log(process);
+			console.log(type);
+			console.log(activity);
 			//right now that cant happen, but if we include sth to delete processes in the list next 
 			//to the menu it must be implemented
 			if (!type) {}
