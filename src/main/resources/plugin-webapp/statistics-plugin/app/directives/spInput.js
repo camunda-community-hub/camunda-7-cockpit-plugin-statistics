@@ -4,10 +4,10 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		      restrict: 'E',
 		      transclude: true,
 		      scope: {
-		    	  type: '@',
+		    	  type: '@',		//the difference between the @ and the = notation is in the binding behaviour
 		    	  value:'@',
 		    	  spModel: '=',
-		    	  spChange: '&'
+		    	  spChange: '&'		//functions have to be assigned with the & operator
 		      },
 		      templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/sp-input.html'))
 		    };		

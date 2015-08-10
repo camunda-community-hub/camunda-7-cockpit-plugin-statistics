@@ -1,5 +1,7 @@
 /**
- * 
+ * This factory matches the acces points for html with its identifiers.
+ * in html the element must have the "transclude-to" attribute and in the directive there must be 
+ * in acces point with the transclude-id.
  */
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory("MultiTranscludeFactory", function() {

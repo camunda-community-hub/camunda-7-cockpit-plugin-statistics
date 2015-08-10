@@ -1,0 +1,37 @@
+<div ng-show="selectedData.length">
+	<div class="well">
+		<div ng-repeat="item in selectedData">
+			<div style="border: 2px solid black">
+				<!-- 								ng-show also depends on item.wholeProcess since even if we dont give it a color it would move the "process" in the list -->
+				<div
+					ng-if="showLegend"
+					id="circle"
+					class="pull-left"
+					ng-style="item.color"></div>
+				<strong>{{item.process}}</strong> <i
+					class="pull-right glyphicon glyphicon-ok"
+					ng-show="item.wholeProcess"></i>
+				<div
+					ng-repeat="types in item.activityTypes"
+					style="text-indent: 10px; font-style: italic;">
+					{{types.activityType}} <a
+						class="pull-right glyphicon glyphicon-remove"
+						ng-click="removeFct({process: item.process, activityType: types.activityType, activity: undefined})"></a>
+					<div
+						ng-repeat="act in types.activities"
+						style="text-indent: 20px;">
+						<div
+							ng-if="showLegend"
+							id="circle"
+							class="pull-left"
+							ng-style="act.color"></div>
+						{{act.activity}} <a
+							class="pull-right glyphicon glyphicon-remove"
+							ng-click="removeFct({process: item.process, activityType: types.activityType, activity: undefined})"></a>
+					</div>
+				</div>
+			</div>
+			<br>
+		</div>
+	</div>
+</div>
