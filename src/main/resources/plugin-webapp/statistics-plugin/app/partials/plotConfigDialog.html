@@ -70,30 +70,9 @@ div.custom .panel-default>.panel-heading {
 		<div class="row">
 			<div class="col-lg-5 col-md-5 col-sm-5">
 				<h4>specify start date</h4>
-				<div>
-					<input
-						type="radio"
-						ng-model="chosenOptions.timeWindow.start"
-						value=""
-						ng-change="changeRequestToDataBase()">
-					all
-				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="chosenOptions.timeWindow.start"
-						value="startedBefore"
-						ng-change="changeRequestToDataBase()">
-					started before
-				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="chosenOptions.timeWindow.start"
-						value="startedAfter"
-						ng-change="changeRequestToDataBase()">
-					started after
-				</div>
+				<sp-input type = "radio" value = "" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">all</sp-input>
+				<sp-input type = "radio" value = "startedBefore" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">started before</sp-input>
+				<sp-input type = "radio" value = "startedAfter" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">started after</sp-input>			
 				<div collapse="chosenOptions.timeWindow.start==''">
 					<div class="alert alert-info">{{chosenOptions.timeWindow.startDate | date: 'longDate'}}</div>
 					<datepicker
@@ -105,30 +84,9 @@ div.custom .panel-default>.panel-heading {
 			</div>
 			<div class="col-lg-5 col-md-5 col-sm-5">
 				<h4>specify end date</h4>
-				<div>
-					<input
-						type="radio"
-						ng-model="chosenOptions.timeWindow.end"
-						value=""
-						ng-change="changeRequestToDataBase()">
-					all
-				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="chosenOptions.timeWindow.end"
-						value="finishedBefore"
-						ng-change="changeRequestToDataBase()">
-					finished before
-				</div>
-				<div>
-					<input
-						type="radio"
-						ng-model="chosenOptions.timeWindow.end"
-						value="finishedAfter"
-						ng-change="changeRequestToDataBase()">
-					finished after
-				</div>
+				<sp-input type = "radio" value = "" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">all</sp-input>			
+				<sp-input type = "radio" value = "finishedBefore" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">finished before</sp-input>
+				<sp-input type = "radio" value = "finishedAfter" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">finished after</sp-input>				
 				<div collapse="chosenOptions.timeWindow.end==''">
 					<div class="alert alert-info">{{chosenOptions.timeWindow.endDate | date: 'longDate'}}</div>
 					<datepicker
@@ -176,90 +134,34 @@ div.custom .panel-default>.panel-heading {
 					<accordion>
 						<accordion-group heading = "time">
 						<div class = "col-md-12">
-						<div>
-			      		<label>
-							<input
-									type="radio"
-									ng-model="chosenOptions.time"
-									value="startTime">
-								start time
-							</input>
-						</label>
-					</div>
-			      	<div>
-			      		<label>
-							<input
-									type="radio"
-									ng-model="chosenOptions.time"
-									value="endTime">
-								end time
-							</input>
-						</label>
-					</div>
+						<sp-input type="radio" value ="startTime" sp-model = "chosenOptions.time">start time</sp-input>
+						<sp-input type="radio" value ="endTime" sp-model = "chosenOptions.time">end time</sp-input>
 					</div>
 						</accordion-group>
 						<accordion-group heading = "timeframe">
 						<div class = "col-md-12">
-						<div>
-			      		<label>
-							<input
-									type="radio"
-									ng-model="chosenOptions.timeFrame"
-									value="noFrame">
-								no time frame
-							</input>
-						</label>
-					</div>
-			      	<div>
-			      		<label>
-							<input
-									type="radio"
-									ng-model="chosenOptions.timeFrame"
-									value="daily">
-								daily
-							</input>
-						</label>
-					</div>
-					<div>
-						<label>
-							<input
-									type="radio"
-									ng-model="chosenOptions.timeFrame"
-									value="weekly">
-								weekly
-							</input>
-						</label>
-					</div>
+						<sp-input type="radio" value ="noFrame" sp-model = "chosenOptions.timeFrame">no time frame</sp-input>
+						<sp-input type="radio" value ="daily" sp-model = "chosenOptions.timeFrame">daily</sp-input>
+						<sp-input type="radio" value ="weekly" sp-model = "chosenOptions.timeFrame">weekly</sp-input>
 					</div>
 						</accordion-group>
 						<accordion-group heading = "clustering">
 							<div class = "col-md-12">
-						<div>
-					         <label>
-						         <input
-						            type="radio"
-						            ng-model="chosenOptions.cluster.algo"
-						            value="noClustering">
-						         	no clustering
-					         </label>
-					        </div>
-			      			<div>
-			         			<label>
-							         <input
-							            type="radio"
-							            ng-model="chosenOptions.cluster.algo"
-							            value="kmeans">
-							         	k means Algo
-							    </label>
-							         <input
+ 							<sp-input type="radio" value ="noClustering" sp-model = "chosenOptions.cluster.algo">no clustering</sp-input>
+ 							<sp-input type="radio" value ="kmeans" sp-model = "chosenOptions.cluster.algo" sp = "">k means Algo</sp-input>
+							        <input
 							            type="number"
 							            min="1"
 							            step="1"
 							            ng-model="chosenOptions.cluster.numberOfClusters">
 							</div>
-							</div>
 							</accordion-group>
 					</accordion>
+					</div>
+					<div class= "col-md-6">
+					<input id="slider1" type="range" min="100" max="500" step="10" /> 
+					 <sp-alert type="radio" value ="noClustering" my-var = "chosenOptions.cluster.algo">no clustering</sp-alert>
+					 <alert>hallo</alert>
 					</div>
 					<div class = "row">
 					<div class = "col-md-12">
@@ -397,6 +299,8 @@ div.custom .panel-default>.panel-heading {
 	</div>
 </div>
 <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+<br>
+<br>
 <div>
 	<button
 		class="btn btn-primary"

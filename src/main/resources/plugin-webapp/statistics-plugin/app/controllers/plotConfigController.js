@@ -2,6 +2,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
 		
+		/**
+		 * test
+		 */
+		$scope.name = 'Tobias';
+		
+		
 		//initialize the setting for the configuration menu
 		
 		//regulates which property should be plotted and at the same time
@@ -64,6 +70,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		 * is called each time a change happens that makes a new request to the database necessary
 		 */
 		$scope.changeRequestToDataBase = function() {
+			console.log("triggered");
 			requestToDataBank = true;
 		}
 		
