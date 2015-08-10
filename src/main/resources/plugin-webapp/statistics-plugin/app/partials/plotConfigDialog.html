@@ -165,17 +165,10 @@ div.custom .panel-default>.panel-heading {
 					</div>
 					<div class = "row">
 					<div class = "col-md-12">
-					<div ng-show=info.startEndTimeInfo>
-					 <br>
-					 <br>
-						<dl class="dl-horizontal">
-							<h3>Plot</h3>
-	  						<dt>What can i plot here?</dt>
-	  						<dd>The start times or end times of the process/activity instances</dd>
-	  						<dt>Purpose</dt>
-	  						<dd>To identify patterns in the starting or ending times of the instances. e.g. accumulations of starting instances</dd>
-	  						<dt>What's on the x axis?</dt>
-	  						<dd>
+					<sp-plot-info sp-show = "info.startEndTimeInfo">
+						<span transclude-to="plot">The start times or end times of the process/activity instances</span>
+						<span transclude-to="purpose">To identify patterns in the starting or ending times of the instances. e.g. accumulations of starting instances</span>
+	  					<span transclude-to="xAxis">
 	  							<ol class = "dl-horizontal">
 	  								<li><strong>no timeframe</strong><br>
 	  								The start or end time of the instances. The format is here YYYY-mm-dd-hh</li>
@@ -185,17 +178,16 @@ div.custom .panel-default>.panel-heading {
 	  								<li><strong>weekly</strong><br>
 	  								Only the weekday and the time of day will be displayed. Year and month get cut off.</li>
 	  							</ol>
-	  						</dd>
-	  						<dt>What's on the y axis?</dt>
-	  						<dd>All the processes/activities instances belonging to the same key will be plotted at the same y value</dd>
-	  						<h3>Options</h3>
-	  						<dt>timeframe</dt>
+						</span>
+						<span transclude-to="yAxis">All the processes/activities instances belonging to the same key will be plotted at the same y value</span>
+						<span transclude-to="options">
+							<dt>timeframe</dt>
 	  						<dd>see the description above</dd>
 	  						<dt>clustering</dt>
 	  						<dd>To get a better impression over the data the k-means clustering algorithm can be used.
 	  						The number of clusters k is an input parameter: an inappropriate choice of k may yield poor results.</dd>
-						</dl>
-					</div> 
+	  					</span>
+	  				</sp-plot-info>
 					</div>
 					</div>
 			   </accordion-group>
@@ -213,45 +205,24 @@ div.custom .panel-default>.panel-heading {
 			      <div clas = "row">
 			      <!-- need this div so that the checkboxes stay away from the side -->
 			      <div class = "col-lg-12 col-md-12 col-sm-5">
-					<div>
-					   <label class="checkbox"> <input ng-model="chosenOptions.showScatter"
-					       type="checkbox"> show scatter plot
-					   </label>
-					</div>
-					<div>
-					   <label class="checkbox"> <input ng-model="chosenOptions.showSplines"
-					       type="checkbox" /> show splines
-					   </label>
-					</div>
-					<div>
-					   <label class="checkbox"> <input
-					      ng-model="chosenOptions.showRegression" type="checkbox" />
-					   draw regression
-					   </label>
-					</div>
-					<div ng-show=info.regressionInfo>
-					 <br>
-					 <br>
-						<dl class="dl-horizontal">
-							<h3>Plot</h3>
-	  						<dt>What can i plot here?</dt>
-	  						<dd>The time series of the durations of the chosen processes/activites</dd>
-	  						<dt>Purpose</dt>
-	  						<dd>To assess the change over time of the durations</dd>
-	  						<dt>What's on the x axis?</dt>
-	  						<dd>The start time of the instances.</dd>
-	  						<dt>What's on the y axis?</dt>
-	  						<dd>The duration of the instances</dd>
-	  						<h3>Options</h3>
-	  						<dt>show scatter plot</dt>
+			      <sp-input type = "checkbox" sp-model = "chosenOptions.showScatter">show scatter plot</sp-input>
+			      <sp-input type = "checkbox" sp-model = "chosenOptions.showSplines">show splines</sp-input>
+			      <sp-input type = "checkbox" sp-model = "chosenOptions.showRegression">draw regression</sp-input>
+			      <sp-plot-info sp-show = "info.regressionInfo">
+						<span transclude-to="plot">The time series of the durations of the chosen processes/activites</span>
+						<span transclude-to="purpose">To assess the change over time of the durations</span>
+	  					<span transclude-to="xAxis">The start time of the instances</span>
+						<span transclude-to="yAxis">The duration of the instances</span>
+						<span transclude-to="options">
+							<dt>show scatter plot</dt>
 	  						<dd>Shows the instances as circles</dd>
 	  						<dt>show splines</dt>
 	  						<dd>Linearly interpolates the discrete data to get a continuous plot</dd>
 	  						<dt>draw regression</dt>
 	  						<dd>Shows a linear regression line to observe a trend in the time series. <mark>This only makes sense if there really 
 	  						is a linear trend!</mark></dd>
-						</dl>
-					</div> 
+	  					</span>
+	  				</sp-plot-info>
 				</div>
 					</div>
 			   </accordion-group>
@@ -269,32 +240,23 @@ div.custom .panel-default>.panel-heading {
 					</h4>
 					<input type="number" min="1" step="1"
 					   ng-model="chosenOptions.numberOfBins">
-					 <div ng-show=info.distributionInfo>
-					 <br>
-					 <br>
-						<dl class="dl-horizontal">
-							<h3>Plot</h3>
-	  						<dt>What can i plot here?</dt>
-	  						<dd>The durations of the chosen processes/activites</dd>
-	  						<dt>Purpose</dt>
-	  						<dd>To roughly assess the probability distribution of the durations 
-	  						by depicting the frequencies of observations occurring in certain ranges of values</dd>
-	  						<dt>What's on the x axis?</dt>
-	  						<dd>The durations of the chosen process/activity instances starting with their minimal duration and ending with their maximum.
-								This range of durations is divided into @number_of_bins bins. The end and start values of these bins are given in percent of the range.</dd>
-	  						<dt>What's on the y axis?</dt>
-	  						<dd>The absolute frequencies of the process/activity instances</dd>
-	  						<h3>Options</h3>
-	  						<dt>number of bins</dt>
+					<sp-plot-info sp-show = "info.distributionInfo">
+						<span transclude-to="plot">The durations of the chosen processes/activites</span>
+						<span transclude-to="purpose">To roughly assess the probability distribution of the durations 
+	  						by depicting the frequencies of observations occurring in certain ranges of values</span>
+	  					<span transclude-to="xAxis">The durations of the chosen process/activity instances starting with their minimal duration and ending with their maximum.
+								This range of durations is divided into @number_of_bins bins. The end and start values of these bins are given in percent of the range.</span>
+						<span transclude-to="yAxis">The absolute frequencies of the process/activity instances</span>
+						<span transclude-to="options">
+							<dt>number of bins</dt>
 	  						<dd>Changing the number of bins affects the width of the range of the bins. Choosing more bins results in smaller bins 
 	  						and thus a higher accuracy</dd>
-						</dl>
-					</div>
+	  					</span>
+	  				</sp-plot-info>
 			   </accordion-group>
 			   </div>
 			   </accordion>
 			</tab>
-
  </tabset>
 	</div>
 </div>
