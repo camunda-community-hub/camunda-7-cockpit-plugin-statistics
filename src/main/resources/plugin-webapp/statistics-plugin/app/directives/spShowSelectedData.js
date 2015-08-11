@@ -8,7 +8,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		      scope: {
 		    	  selectedData: '=',
 		    	  showLegend: '=',
-		    	  showSlider: '@',
+		    	  showSlider: '=',
 		    	  removeFct: '&'
 		      },
 		      templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/sp-show-selected-data.html'))

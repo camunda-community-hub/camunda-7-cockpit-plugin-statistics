@@ -3,31 +3,69 @@
 		<div ng-repeat="item in selectedData">
 			<div style="border: 2px solid black">
 				<!-- 								ng-show also depends on item.wholeProcess since even if we dont give it a color it would move the "process" in the list -->
-				<div
-					ng-if="showLegend"
-					id="circle"
-					class="pull-left"
-					ng-style="item.color"></div>
-				<strong>{{item.process}}</strong> <i
+				<div ng-if="showLegend">
+					<div
+						ng-if="showLegend"
+						id="circle"
+						class="pull-left"
+						ng-style="item.color"></div> <strong>{{item.process}}</strong> <i
 					class="pull-right glyphicon glyphicon-ok"
 					ng-show="item.wholeProcess"></i>
+				</div>
+				<div
+					class="row"
+					ng-if="showSlider">
+					<div class="col-md-6">
+						<strong>{{item.process}}</strong>
+					</div>
+					<div class="col-md-1">
+						{{item.cluster}}
+					</div>
+					<div class="col-md-5">
+						<input
+							ng-if="showSlider&&item.wholeProcess"
+							ng-model="item.cluster"
+							type="range"
+							min="100"
+							max="500"
+							step="10" />
+					</div>
+				</div>
 				<div
 					ng-repeat="types in item.activityTypes"
 					style="text-indent: 10px; font-style: italic;">
-					{{types.activityType}} <a
+					<u>{{types.activityType}}</u> <a
+						ng-if="showLegend"
 						class="pull-right glyphicon glyphicon-remove"
 						ng-click="removeFct({process: item.process, activityType: types.activityType, activity: undefined})"></a>
 					<div
-						ng-repeat="act in types.activities"
+						ng-repeat="(actIndex,act) in types.activities"
 						style="text-indent: 20px;">
-						<div
-							ng-if="showLegend"
-							id="circle"
-							class="pull-left"
-							ng-style="act.color"></div>
-						{{act.activity}} <a
+						<div ng-if="showLegend">
+							<div
+								id="circle"
+								class="pull-left"
+								ng-style="act.color"></div> {{act.activity}} <a
 							class="pull-right glyphicon glyphicon-remove"
-							ng-click="removeFct({process: item.process, activityType: types.activityType, activity: undefined})"></a>
+							ng-click="removeFct({process: item.process, activityType: types.activityType, activity: act.activity})"></a>
+						</div>
+						<div
+							class="row"
+							ng-if="showSlider">
+							<div class="col-md-6">{{act.activity}}</div>
+							<div class="col-md-1">
+							{{act.cluster}}
+							</div>
+							<div class="col-md-5">
+								<input
+									ng-if="showSlider"
+									ng-model = "act.cluster"
+									type="range"
+									min="100"
+									max="500"
+									step="10" />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

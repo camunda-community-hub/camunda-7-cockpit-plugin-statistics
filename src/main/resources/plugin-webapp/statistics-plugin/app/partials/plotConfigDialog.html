@@ -29,42 +29,7 @@ div.custom .panel-default>.panel-heading {
 				<menu></menu>
 			</div>
 			<div class="col-lg-6 col-md-6 col-sm-6">
-			<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "showLegend"></sp-show-selected-data>
-				<div ng-show="selected.length">
-					<div class="well">
-						<div ng-repeat="item in selected">
-							<div style="border: 2px solid black">
-								<!-- 								ng-show also depends on item.wholeProcess since even if we dont give it a color it would move the "process" in the list -->
-								<div
-									id="circle"
-									class="pull-left"
-									ng-style="item.color"></div>
-								<strong>{{item.process}}</strong> <i
-									class="pull-right glyphicon glyphicon-ok"
-									ng-show="item.wholeProcess"></i>
-								<div
-									ng-repeat="types in item.activityTypes"
-									style="text-indent: 10px; font-style: italic;">
-									{{types.activityType}} <a
-										class="pull-right glyphicon glyphicon-remove"
-										ng-click="removeFromList(item.process,types.activityType,undefined)"></a>
-									<div
-										ng-repeat="act in types.activities"
-										style="text-indent: 20px;">
-										<div
-											id="circle"
-											class="pull-left"
-											ng-style="act.color"></div>
-										{{act.activity}} <a
-											class="pull-right glyphicon glyphicon-remove"
-											ng-click="removeFromList(item.process,types.activityType,act.activity)"></a>
-									</div>
-								</div>
-							</div>
-							<br>
-						</div>
-					</div>
-				</div>
+			<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "showSlider" show-slider = "showLegend"></sp-show-selected-data>
 			</div>
 		</div>
 		</tab> <tab heading="time-window"> <tabset class="tabs-left"> <tab heading="date">
@@ -131,7 +96,8 @@ div.custom .panel-default>.panel-heading {
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startEndTime, 'glyphicon-check': propertiesBoolean.startEndTime}"
 						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">start time / end time</span></accordion-heading>
 					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.startEndTimeInfo=!info.startEndTimeInfo"></a></div>
-					<div id="innerAccordion" class= "col-md-6">
+					<div class = "row" collapse = "!showClusterMenu.show">
+					<div id="innerAccordion" class= "col-md-6" >
 					<accordion>
 						<accordion-group heading = "time">
 						<div class = "col-md-12">
@@ -155,14 +121,21 @@ div.custom .panel-default>.panel-heading {
 							            min="1"
 							            step="1"
 							            ng-model="chosenOptions.cluster.numberOfClusters">
+							            <button
+											class="btn btn-default"
+											ng-click="showClusterMenu.show=!showClusterMenu.show">edit cluster</button>
 							</div>
 							</accordion-group>
 					</accordion>
 					</div>
-					<div class= "col-md-6">
-					<input id="slider1" type="range" min="100" max="500" step="10" /> 
-					 <sp-alert type="radio" value ="noClustering" my-var = "chosenOptions.cluster.algo">no clustering</sp-alert>
-					 <alert>hallo</alert>
+					</div>
+					<div class = "row" collapse = "showClusterMenu.show" >
+					<div class= "col-md-12">
+					<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-slider="showSlider" show-legend = "showLegend"></sp-show-selected-data>
+					<button
+											class="btn btn-default"
+											ng-click="showClusterMenu.show=!showClusterMenu.show">edit cluster</button>
+					</div>
 					</div>
 					<div class = "row">
 					<div class = "col-md-12">
