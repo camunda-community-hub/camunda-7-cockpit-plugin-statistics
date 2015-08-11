@@ -5,8 +5,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		/**
 		 * test
 		 */
-		$scope.name = 'Tobias';
 		$scope.showLegend = false;
+		$scope.showSlider = true;
+		$scope.showClusterMenu = {
+				show: true
+		};
+
+		
 		
 		//initialize the setting for the configuration menu
 		
@@ -151,7 +156,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				//Case: activityType has been added before
 				if (indexActivityType>=0) {
 					if (add) {
-						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.push({"activity": chosenItem.activity});
+						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.push({"activity": chosenItem.activity, "cluster": 5});
 						//controls weather now all activities of this type are checked and then also checks the type
 						if ($scope.selected[indexProcess].activityTypes[indexActivityType].activities.length==$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length) {
 							$scope.$broadcast('checkActivityType',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityType});
@@ -176,7 +181,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				}
 				//activityType has not been added yet
 				else {
-					$scope.selected[indexProcess].activityTypes.push({"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]});
+					$scope.selected[indexProcess].activityTypes.push({"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity, "cluster": 5}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
 					if ($scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length==1)
 						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});
@@ -186,9 +191,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			else {
 				//add whole process
 				if (chosenItem.wholeProcess)
-					$scope.selected.push({"process":chosenItem.process, "procDefId": $scope.menuData[processIndexMenu].Id,"wholeProcess": true, "activityTypes":[]});
+					$scope.selected.push({"process":chosenItem.process, "procDefId": $scope.menuData[processIndexMenu].Id,"wholeProcess": true,  "cluster": 5, "activityTypes":[]});
 				else if (add) {//need this for the case: all activities unchecked, type still checked
-					$scope.selected.push({"process":chosenItem.process,"procDefId": $scope.menuData[processIndexMenu].Id, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
+					$scope.selected.push({"process":chosenItem.process,"procDefId": $scope.menuData[processIndexMenu].Id, "wholeProcess": false, "cluster": 5, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity, "cluster": 5}]}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
 					if ($scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length==1)
 						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});
