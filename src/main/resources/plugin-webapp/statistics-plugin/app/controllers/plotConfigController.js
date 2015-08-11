@@ -2,17 +2,20 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
 		
+		var data,options;	//needed if we want to get the data without displaying it e.g. for clustering ranges
 		/**
 		 * test
 		 */
+		$scopenumberOfInstancesMap = "hihi";
+		
+		
+		
 		$scope.showLegend = false;
 		$scope.showSlider = true;
 		$scope.showClusterMenu = {
 				show: true
 		};
 
-		
-		
 		//initialize the setting for the configuration menu
 		
 		//regulates which property should be plotted and at the same time
@@ -90,6 +93,17 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		    $scope.alerts.splice(index, 1);
 		}
 		
+//		$scope.requestData = function() {
+//			if ($scope.selected.length==0) {
+//				addAlert("missingData"); 
+//				return;
+//			}
+//			TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
+//			.then(function(){
+//				data = TimingFactory.chosenData;
+//				options = TimingFactory.options;
+//			});
+//		}
 		/**
 		 * realizes the changes made in the menu
 		 */
@@ -109,11 +123,17 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				var update = TimingFactory.updateCharts($scope.chosenOptions);
 				$scope.data = update.data;
 				$scope.options = update.options;
+				$scope.parseX = TimingFactory.parseX;
+				$scope.parseY = TimingFactory.parseY;
 			} else {
 				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
 				.then(function(){
-					$scope.data = TimingFactory.chosenData;
+					$scope.data = TimingFactory.dataForPlot;
 					$scope.options = TimingFactory.options;
+					$scope.parseX = TimingFactory.parseX;
+					$scope.parseY = TimingFactory.parseY;
+					$scope.numberOfInstancesMap = TimingFactory.numberOfInstancesMap
+					console.log($scope.numberOfInstancesMap);
 				});
 			}
 			//reset requestToDataBank since new data just arrived

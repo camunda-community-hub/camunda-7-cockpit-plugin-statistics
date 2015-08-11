@@ -2,6 +2,40 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('Format', function() {
 		var Format = {};
 
+		/**
+		 * puts the whole data elements in the proper key box
+		 * THE ORDER IN KEY ARRAY MATTERS
+		 * @data{Object} the raw data from the database
+		 * @keyArray{Array} containing Strings which are the attributes that should be extracted as keys
+		 * Be careful! the order in keyArray matters! The data element might have both attributes, but if it has the
+		 * first one, than the first one will be taken as key
+		 * @attributesArray{Array} of Strings contains the attributes that should be copied to the newly formated Data
+		 * @return data in key format with the chosen attributes
+		 */
+		Format.bringSortedDataInKeyFormat = function(data, keyArray, attributesArray){
+			var formatedData = [];
+			var i = -1;
+			angular.forEach(data ,function(element){
+				if (typeof keyArray == "string") var key = keyArray;
+				else {
+					var key = !element.hasOwnProperty(keyArray[0]) ? keyArray[1] : keyArray[0];
+				}
+				if (typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]) {
+					formatedData.push({"key": element[key], "values": []});
+					i++;
+				};
+//				formatedData[i].values.push(element);
+				var newDataElement = {};
+				for( var j = 0; j < attributesArray.length; j++){
+					if(element.hasOwnProperty(attributesArray[j]))
+						newDataElement[attributesArray[j]] = element[attributesArray[j]];
+				}
+				formatedData[i].values.push(newDataElement);
+			});
+			console.log(formatedData);
+			return formatedData;
+		};
+
 		/**method that either sets the year, month and day of a data to a hardcoded date
 		 * or sets the year and month to a harcoded day
 		 * 
@@ -10,7 +44,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * 
 		 * if year and month but day and time are important use the second option
 		 * 
-		 * @param date is a String in the Camunda database timestamp format: %Y-%m-%dT%H:%M:%S
+		 * @date{String}a String in the Camunda database timestamp format: %Y-%m-%dT%H:%M:%S
 		 * @param beakDownFormat
 		 */
 		Format.breakDateDown = function(date,breakDownFormat){
@@ -47,7 +81,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * 
 		 * @param data the data that will be formated. Data needs to be sorted by its key property for 
 		 * this function to work!!
-		 * @param keyArray a string or an array of strings, if the object does not have the first string as an attribute, the second is tried
+		 * @param keyArray a string or an array of strings, if the object does not have the first string as an attribute, the second is tried!!!!!!!! SO THE ORDER MATTERS!!!
 		 * @param x the property of data that will be plotted on the x axis
 		 * @param y the property of data that will be plotted on the y axis, if no y value is specified each key will get 
 		 * a dummy y property, so all points belonging to one key will have the same y value
@@ -67,17 +101,17 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			angular.forEach(data ,function(element){
 				if(typeof keyArray == "string") var key = keyArray;
 				else {
-				var key = eval("element." + keyArray[0]) == undefined? keyArray[1] : keyArray[0];
+					var key = !element.hasOwnProperty(keyArray[0]) ? keyArray[1] : keyArray[0];
 				}
-				if(typeof formatedData[i] == "undefined" || formatedData[i].key!=eval("element." +key)){
-					formatedData.push({"key": eval("element." +key), "values": []});
+				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
+					formatedData.push({"key": element[key], "values": []});
 					i++;
 				};
-				var yValue = (typeof y == "undefined" || y == "")? i+1:eval("element."+y);
+				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
 				//remove this when query doesnt give nullvalues anymore
-				if(eval("element."+x) == null);
+				if(element[x] == null);
 				else  {
-					formatedData[i].values.push({"x": parseX(eval("element."+x)), "y": parseY(yValue)  });
+					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
 				}
 			});
 			return formatedData;
@@ -92,73 +126,81 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var formatedData = [];
 			var i = -1;
 			angular.forEach(data, function(element){
-				if(typeof formatedData[i] == "undefined" || formatedData[i].key!=eval("element." +key)){
-					i = formatedData.map(function(e) {return e.key;}).indexOf(eval("element." +key));
+				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
+					i = formatedData.map(function(e) {return e.key;}).indexOf(element[key]);
 					if(i==-1){
-						formatedData.push({"key": eval("element." +key), "values": []});
+						formatedData.push({"key": element[key], "values": []});
 						i= formatedData.length-1;
 					};
 				};
-				var yValue = (typeof y == "undefined" || y == "")? i+1:eval("element."+y);
+				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
 				//remove this when query doesnt give nullvalues anymore
-				if(eval("element."+x) == null) {
-				  
+				if(element[x] == null) {
+
 				} else {  
-					formatedData[i].values.push({"x": parseX(eval("element."+x)), "y": parseY(yValue)  });
+					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
 				}
 			});
 			return formatedData;
 		};
 
-		Format.bringDataIntoBarPlotFormat = function(startData,key,x,parseX,numberOfBins){
-			var all=[];
-			for (var i =0; i<startData.length; i++){
-				all[i]=parseX(eval("startData["+i+"]." + x));
+
+		var getGlobalMinMax = function (formatedData, attribute) {
+			var min, max;
+			var values = formatedData[0].values.map(function(d) {return d[attribute]; });
+			min = d3.min(values);
+			max = d3.max(values);
+
+			for (var i = 1; i < formatedData.length; i++){
+				if(formatedData[i].values.length > 0) {
+					values = formatedData[i].values.map(function(d) {return d[attribute]; });
+					console.log(values);
+					console.log(min);
+					console.log(d3.min(values));
+					min = Math.min(min, d3.min(values));
+					max = Math.max(max, d3.max(values));
+				}
 			};
-			var formatedData = [];
-			var data = Format.bringSortedDataInPlotFormat(startData,key,x,undefined,parseX,undefined);
-			//put them into one long array to be able to use d3.layout.histogram
+			return { min: min, max: max};
+		};
 
 
-			var minMax = [];
-			var min = d3.min(all);
-			var max = d3.max(all);
-			var range = max - min;
+		/**
+		 * @formatedData {Array} data from database that has been formated
+		 * @x {String} the property of the data we are interested in
+		 * @numberOfBins {Number}
+		 * @return {object} An object with "data" property containing for each key data d = { x: numberOfCurrentBin, y: observations in the bin}
+		 * and the "thresholds" property  containing the thresholds of the bins in the unit of the data.
+		 */
+		Format.bringDataIntoBarPlotFormat = function(formatedData, x ,numberOfBins){
+			//get global min and max to calculate range and bins
+			var minMax = getGlobalMinMax(formatedData, x);
+			var range = minMax["max"] - minMax["min"];
 			var binSize = range/numberOfBins;
-//			minMax[0]={"min": min , "max": min + binSize };
+
+			//calculate thresholds
 			var thresholds = [];
 			for(var i = 0;i<=numberOfBins;i++){
-//				$scope.minMax[i] = {"min": $scope.minMax[i-1].max , "max": $scope.minMax[i-1].max + binSize };
-				thresholds[i]= i*binSize+min;
+				thresholds[i]= i*binSize + minMax["min"];
 			};
-//			console.debug(thresholds);
+
 			var dataInBins = [];
-			for( var i = 0; i< data.length; i++){
-				formatedData.push({"key": data[i].key , "values": []});
-				allInOne = [];
-				for(var j = 0; j<data[i].values.length; j++){
-					allInOne[j] = data[i].values[j].x;
-				};
-//				console.debug(allInOne);
+			var outputData = [];
+			for( var i = 0; i < formatedData.length; i++){
+				outputData.push({"key": formatedData[i].key , "values": []});
+				//for each key use d3 to bin the data
 				dataInBins = d3.layout.histogram()
 				.bins(thresholds)
-				(allInOne);
+				(formatedData[i].values.map(function(d) {if(d[x]!==null) return d[x]; }));	//neglect null values!
 
-
-				var array = [1,1.5,3,4];
-				var dataInBins2 = d3.layout.histogram()
-				.bins([1,2,4])
-				(array);
-//				console.debug(dataInBins2);
-
-
-//				console.debug(dataInBins);
 				for(var j = 0; j< numberOfBins; j++){
-					formatedData[i].values.push({"x": j, "y": dataInBins[j].length});
+					outputData[i].values.push({"x": j, "y": dataInBins[j].length});
 				};
 			};
-			return {"data":formatedData, "thresholds": thresholds};
-		}
+			return {"data":outputData, "thresholds": thresholds};
+
+		};
+
 
 		/**
 		 * takes formated data as input and return a cluster
@@ -186,7 +228,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			};
 			return clusterArray;
 		}
-		
+
 		Format.getKMeansClusterFromFormatedData = function(formatedData, kmeans){
 			var clusterArray = new Array(formatedData.length);
 			for(var i=0; i<formatedData.length; i++){
@@ -201,26 +243,26 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 				//canonical vlaues as new values, old y
 				for(var k=0; k<cluster.length; k++){
-				  if(cluster[k].cluster) {
-				    var clusterSize = cluster[k].cluster.length;
-	          var size = clusterSize/formatedData[i].values.length ;
-	          clusterArray[i].values.push({"x": cluster[k].centroid , "y" : formatedData[i].values[0].y, "size": size, "clusterSize":clusterSize });
-				  }
+					if(cluster[k].cluster) {
+						var clusterSize = cluster[k].cluster.length;
+						var size = clusterSize/formatedData[i].values.length ;
+						clusterArray[i].values.push({"x": cluster[k].centroid , "y" : formatedData[i].values[0].y, "size": size, "clusterSize":clusterSize });
+					}
 				}; 
 			};
-			
+
 			var indicesToRemove = [];
-			
+
 			for(i in clusterArray) {
-			  if(!clusterArray[i].values) {
-			    indicesToRemove.push(i);
-			  }
+				if(!clusterArray[i].values) {
+					indicesToRemove.push(i);
+				}
 			}
-			
+
 			for(i in indicesToRemove) {
-			    clusterArray.splice(indicesToRemove[i], 1);
+				clusterArray.splice(indicesToRemove[i], 1);
 			}
-			
+
 			console.debug("returning cluster array...");
 			return clusterArray;
 		}

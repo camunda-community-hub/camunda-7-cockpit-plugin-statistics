@@ -3,12 +3,15 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		var GraphFactory = [];
 		
 		 //if clustered we add a size function displaying the cluster sizes
-		GraphFactory.getOptionsForStartEndTimeGraph = function(timeFormat, clustered, width){
+		GraphFactory.getOptionsForStartEndTimeGraph = function(formatAndParser, clustered, width, x, colorScale){
 			var options = {
 					 chart: {
 			                type: 'scatterChart',
 			                height: 400,
 			                width: width,
+			                color: colorScale,
+			                x: function(d) { return  formatAndParser.parser(d[x]); },
+			                y: function(d) { return d.series +1; },
 			                //color function is set in the Controller for the plot
 			                //if nothing is specified nvd3 will choose d3 color20 as default
 //			                color: d3.scal.category10().range(),
@@ -31,13 +34,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						},
 						tooltipYContent : function(key, x, y) { return '<strong>' + key + '</strong>' },
 						tooltipXContent : function(key, x, y, e) { 
-							var time = d3.time.format(timeFormat)(new Date(e.point.x[0]));
+							var time = d3.time.format(formatAndParser.format)(new Date(e.point.x[0]));
 							return '<strong>' + time + '</strong>' 
 			                				},
 			                xAxis: {
-							tickFormat : function(d) {
-								return d3.time.format(timeFormat)(new Date(d))
-							}
+								tickFormat : function(d) {
+									return d3.time.format(formatAndParser.format)(new Date(d))
+								}
 			                },
 			                
 			                yAxis: {
@@ -64,26 +67,27 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					'<p>instances started/ended around that time: <b>' + d.clusterSize;
 					};
 			}
+//			if(formatAndParser.format == "%a %H:%M")
+//				options.chart.height = 401;
+//			else if ()
 			return options;
 			
 		};
 		
-		GraphFactory.getOptionsForTimeDistributionGraph = function(bins,thresholds){
+		GraphFactory.getOptionsForTimeDistributionGraph = function(bins, thresholds, parseX, colorScale){
 			var options = {
 					 chart: {
 			                type: 'multiBarChart',
 			                height: 400,
 			                width: 1000,
-			                color: d3.scale.category10().range(),
-			                x: function(d){return d.x;},
-			                y: function(d){return d.y;},
+			                color: colorScale,
 			                showLabels: true,
 			                transitionDuration: 500,
 			                labelThreshold: 0.01,
 			                reduceXTicks : false, //we want all ticks to be displayed!
 			                // e is the mouse event
 			                tooltip : function(key, x, y, e, graph) {
-			                	var String = (thresholds[e.point.x]).toFixed(2) + ' min - ' + (thresholds[e.point.x+1]).toFixed(2)+" min";
+			                	var String = (parseX(thresholds[e.point.x])).toFixed(2) + ' min - ' + (parseX(thresholds[e.point.x+1])).toFixed(2)+" min";
 			                	return '<h3>' + key + '</h3>' +
 			                	'<p>' + y + ' on ' +  String + '</p>'
 			                	},
@@ -111,6 +115,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return options;
 			
 		}
+		
 		return GraphFactory;
 	});
 });

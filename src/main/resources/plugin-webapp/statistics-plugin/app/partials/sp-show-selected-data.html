@@ -26,9 +26,9 @@
 							ng-if="showSlider&&item.wholeProcess"
 							ng-model="item.cluster"
 							type="range"
-							min="100"
-							max="500"
-							step="10" />
+							min="0"
+							max="{{numberOfInstancesMap[item.process].startedInst}}"
+							step="1" />
 					</div>
 				</div>
 				<div
@@ -58,12 +58,13 @@
 							</div>
 							<div class="col-md-5">
 								<input
+									ng-init = "act.cluster = Math.raound(Math.sqrt(numberOfInstancesMap[act.activity].startedInst))"
 									ng-if="showSlider"
 									ng-model = "act.cluster"
 									type="range"
-									min="100"
-									max="500"
-									step="10" />
+									min="0"
+									max="{{numberOfInstancesMap[act.activity].startedInst}}"
+									step="1" />
 							</div>
 						</div>
 					</div>

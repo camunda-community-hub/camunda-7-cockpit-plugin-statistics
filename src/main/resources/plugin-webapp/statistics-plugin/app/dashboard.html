@@ -20,10 +20,10 @@
 		  <div class="row" ng-controller = "plotConfigController">
 				<div class="col-lg-7 col-md-7 col-sm-7">
 					<div id="timingChartDiv" ng-if = "chosenOptions.propertyToPlot=='startEndTime'||chosenOptions.propertyToPlot=='distribution'">
-						<nvd3 options="options" data="data"></nvd3>
+						<nvd3 options="options" data="data" api = "api"></nvd3>
 					</div>
 					<div id="regPlotDiv" ng-if="chosenOptions.propertyToPlot=='regression'">
-        				<regression-plot data="data" options="options"> </regression-plot>
+        				<regression-plot data="data" options="options" parse-x = "parseX(x)" parse-y = "parseY(y)"> </regression-plot>
      				</div>
 				</div>
 				<div class="col-lg-5 col-md-5 col-sm-5 well">
