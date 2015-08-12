@@ -76,6 +76,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			path.attr("d", area).attr("class", "area");
 			path.enter().append('svg:path').attr("d", area).attr("class", "area");
 			path.exit().remove();
+			path.moveToBack();
+
 		}
 		
 		function updateNavigator(viewport, start, end, height) {
@@ -91,7 +93,17 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			.selectAll('rect')
 			.attr('height', height);
 		}
-
+		
+		
+		d3.selection.prototype.moveToBack = function() { 
+		    return this.each(function() { 
+		        var firstChild = this.parentNode.firstChild; 
+		        if (firstChild) { 
+		            this.parentNode.insertBefore(this, firstChild); 
+		        } 
+		    }); 
+		};
+		
 		function link(scope,element,attrs){
 			
 			// draw navigation chart
