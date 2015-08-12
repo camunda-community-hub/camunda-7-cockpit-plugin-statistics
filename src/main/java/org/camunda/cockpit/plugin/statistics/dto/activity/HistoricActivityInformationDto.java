@@ -5,7 +5,7 @@ import org.camunda.cockpit.plugin.statistics.dto.common.CommonDatesDto;
 public class HistoricActivityInformationDto extends CommonDatesDto {
 
 	private String procDefKey;
-	private int duration;
+	private long duration;
 	private String type;
 	private String activityName;
 	private String id;
@@ -17,10 +17,10 @@ public class HistoricActivityInformationDto extends CommonDatesDto {
 	public void setProcDefKey(String procDefKey) {
 		this.procDefKey = procDefKey;
 	}
-	public int getDuration() {
+	public long getDuration() {
 		return duration;
 	}
-	public void setDuration(int duration) {
+	public void setDuration(long duration) {
 		this.duration = duration;
 	}
 	public String getType() {
