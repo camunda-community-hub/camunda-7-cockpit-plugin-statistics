@@ -104,8 +104,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		}
 
-		DataFactory.getAllHistoricActivitiesInformationByProcDefKey = function(procDefKey, activityName, activityType) {
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/historic-activity-information?procDefKey="+procDefKey+"&activityName="+activityName+"&activityType="+activityType))
+		DataFactory.getAllHistoricActivitiesInformationByProcDefKey = function(procDefKey, activityId, activityType) {
+			return $http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?procDefKey="+procDefKey+"&activityName="+activityId+"&activityType="+activityType))
 			.success(function(data) {
 				if(procDefKey!=undefined) {
 					DataFactory.allHistoricActivitiesInformationByProcDefKey[procDefKey] = data;

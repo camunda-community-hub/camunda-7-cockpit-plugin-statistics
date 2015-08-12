@@ -33,32 +33,46 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			return false;
 		}
 
-		$scope.showHistory = function() {
+		$scope.showTaskHistory = function() {
 			if(~$scope.bpmnElement.$type.indexOf("Task"))
 				return true;
 			return false;
 		}
+		
+		$scope.showEventHistory = function() {
+			if(~$scope.bpmnElement.$type.indexOf("IntermediateCatchEvent"))
+				return true;
+			return false;
+		}
 
+		// sort data by endTime
+		function compare(a,b) {
+			if(a.endTime < b.endTime) return -1;
+			if(a.endTime > b.endTime) return 1;
+			return 0;
+		} 
+		
 		$scope.showActivityHistoryInformation = function() {
 			DataFactory.activityDurations = {};
-			DataFactory.getAllHistoricActivitiesInformationByProcDefKey(DataFactory.processDefinitionKey, $scope.bpmnElement.name, getTaskType($scope.bpmnElement.$type)).
+			DataFactory.getAllHistoricActivitiesInformationByProcDefKey(DataFactory.processDefinitionKey, $scope.bpmnElement.name, getType($scope.bpmnElement.$type)).
 			then(function() {
 				var id = $scope.bpmnElement.id;
-				var data = DataFactory.allHistoricActivitiesInformationByProcDefKey[DataFactory.processDefinitionKey].reverse();
+				var data = DataFactory.allHistoricActivitiesInformationByProcDefKey[DataFactory.processDefinitionKey];
 				angular.forEach(data, function(activity, index, list) {
-					if(activity.duration==null || activity.endTime==null || activity.duration <= 0) return;
+					if(activity.durationInMillis==null || activity.endTime==null || activity.durationInMillis <= 0) return;
 					else {
 						// store durations for "Activity History" modal (to avoid requesting data again)
 						if(typeof DataFactory.activityDurations[id] == "undefined")
 							DataFactory.activityDurations[id] = [];
 						DataFactory.activityDurations[id].push({
 							id: activity.id,
-							duration: activity.duration,
+							duration: activity.durationInMillis,
 							startTime: activity.startTime,
 							endTime: activity.endTime
 						});
 					}
 				});
+				DataFactory.activityDurations[id].sort(compare);
 				var len = 0;
 				for(var key in DataFactory.activityDurations) len++;
 				if(len == 0) {
@@ -82,7 +96,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			});
 		}
 
-		function getTaskType(type_long) {
+		function getType(type_long) {
 			var type_short = $filter('split')(type_long, ':', 1);
 			return type_short.substring(0,1).toLowerCase()+type_short.substring(1);
 		}

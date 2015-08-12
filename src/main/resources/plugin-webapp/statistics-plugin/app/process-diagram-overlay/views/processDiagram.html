@@ -21,7 +21,11 @@
 			instancesMetLimit }}</div>
 	</div>
 	<a class="badge badge-bottom-middle" type="button"
-		ng-show="showHistory()" ng-click="showActivityHistoryInformation()">
+		ng-show="showTaskHistory()" ng-click="showActivityHistoryInformation()">
+		<span class="glyphicon glyphicon-stats"></span>
+	</a>
+	<a class="badge badge-event" type="button"
+		ng-show="showEventHistory()" ng-click="showActivityHistoryInformation()">
 		<span class="glyphicon glyphicon-stats"></span>
 	</a>
 </div>
