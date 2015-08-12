@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
 	<tabset>
-		<tab heading="Highlight Settings">
+		<tab heading="Highlight" active="$parent.onlyHighlight">
 		<div style="margin-top: 5px; margin-bottom: 10px;">Highlight specific process elements.</div>
 			<form class="form-horizontal form-group">
 				<label class="control-label">Task Type: </label>
@@ -34,7 +34,7 @@
 	</tabset>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-primary" ng-click="highlightUsertasks()">Apply Settings</button>
+	<button class="btn btn-primary" ng-click="highlightTasks()">Apply Settings</button>
 	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>
 </script>
