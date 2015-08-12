@@ -7,6 +7,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
     
     // settings of process diagram
     SettingsFactory.showOnlyBadInformation = false;
+    SettingsFactory.onlyHighlight = false;
     
     SettingsFactory.pluginSettings = {};
     

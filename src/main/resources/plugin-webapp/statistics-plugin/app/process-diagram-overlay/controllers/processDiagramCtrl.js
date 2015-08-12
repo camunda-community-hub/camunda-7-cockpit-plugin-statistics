@@ -23,11 +23,24 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			else
 				return false;
 		}
+		
+		$scope.getType = function() {
+			return $scope.type;
+		}
 
 		$scope.highlight = function() {
-			if(isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id)) {
+			if(isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id)!=null) {
 				return true;
-			} else if(isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id)) {
+			} else if(isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id)!=null) {
+				return true;
+			}
+			return false;
+		}
+		
+		$scope.onlyHighlight = function() {
+			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id);
+			if(SettingsFactory.onlyHighlight && type!=null) {
+				$scope.type = type;
 				return true;
 			}
 			return false;
@@ -43,18 +56,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if(~$scope.bpmnElement.$type.indexOf("IntermediateCatchEvent"))
 				return true;
 			return false;
-		}
-
-		// sort data by endTime
-		function compare(a,b) {
-			if(a.endTime < b.endTime) return -1;
-			if(a.endTime > b.endTime) return 1;
-			return 0;
 		} 
 		
 		$scope.showActivityHistoryInformation = function() {
 			DataFactory.activityDurations = {};
-			DataFactory.getAllHistoricActivitiesInformationByProcDefKey(DataFactory.processDefinitionKey, $scope.bpmnElement.name, getType($scope.bpmnElement.$type)).
+			DataFactory.getAllHistoricActivitiesInformationByProcDefKey(DataFactory.processDefinitionKey, $scope.bpmnElement.id, getShortType($scope.bpmnElement.$type)).
 			then(function() {
 				var id = $scope.bpmnElement.id;
 				var data = DataFactory.allHistoricActivitiesInformationByProcDefKey[DataFactory.processDefinitionKey];
@@ -62,7 +68,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					if(activity.durationInMillis==null || activity.endTime==null || activity.durationInMillis <= 0) return;
 					else {
 						// store durations for "Activity History" modal (to avoid requesting data again)
-						if(typeof DataFactory.activityDurations[id] == "undefined")
+						if(angular.isUndefined(DataFactory.activityDurations[id]))
 							DataFactory.activityDurations[id] = [];
 						DataFactory.activityDurations[id].push({
 							id: activity.id,
@@ -72,7 +78,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						});
 					}
 				});
-				DataFactory.activityDurations[id].sort(compare);
 				var len = 0;
 				for(var key in DataFactory.activityDurations) len++;
 				if(len == 0) {
@@ -82,13 +87,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						size: 'sm'
 					});
 				} else {
+					DataFactory.activityDurations[id].sort(compare);
 					$scope.modalInstance = $modal.open({
 						templateUrl: 'activityHistoryModal.html',
 						controller: 'activityHistoryCtrl',
 						size: 'lg',
 						resolve: {
 							activityId: function () {
-								return $scope.bpmnElement.id;
+								return id;
 							}
 						}
 					});
@@ -96,21 +102,27 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			});
 		}
 
-		function getType(type_long) {
+		function getShortType(type_long) {
 			var type_short = $filter('split')(type_long, ':', 1);
 			return type_short.substring(0,1).toLowerCase()+type_short.substring(1);
 		}
 
 		function isElementContainedIn(object, elementId) {
-			var returnValue = false;
-			if(typeof object[elementId] != "undefined") {
+			var returnValue = null;
+			if(!angular.isUndefined(object[elementId])) {
 				$scope.instancesExceededLimit = object[elementId].instancesExceededLimit;
 				$scope.instancesMetLimit = object[elementId].instancesMetLimit;
-				returnValue = true;
+				returnValue = object[elementId].type;
 			}
 			return returnValue;
 		}
 
+		// sort data by endTime
+		function compare(a,b) {
+			if(a.endTime < b.endTime) return -1;
+			if(a.endTime > b.endTime) return 1;
+			return 0;
+		}
 	}]);
 
 });
