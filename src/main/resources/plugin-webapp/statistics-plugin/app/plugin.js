@@ -1,11 +1,8 @@
 ngDefine('cockpit.plugin.statistics-plugin', ['./lib/d3',
-                                              './lib/nv.d3',
+                                              './lib/nv.d3.own',
                                               './lib/clusterfck-0.1',
-                                              './lib/highcharts_draggable-points',
-                                              'module:highcharts-ng:./lib/highcharts-ng',
                                               'module:nvd3:./lib/angular-nvd3',
                                               'module:ui.bootstrap.datetimepicker:./lib/datetime-picker',
-                                              //'module:ngDraggable:./lib/ngDraggable',
                                               'module:cockpit.plugin.statistics-plugin.controllers:./controllers/main',
                                               'module:cockpit.plugin.statistics-plugin.directives:./directives/main',
                                               'module:cockpit.plugin.statistics-plugin.services:./services/main'

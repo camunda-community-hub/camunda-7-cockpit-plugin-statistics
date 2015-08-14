@@ -21,7 +21,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 			return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 		}
-
+		
 		function getY(data, height, y) {
 			var minmax = getMinMax(data);
 			var value = height-y;
@@ -131,7 +131,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.orient('bottom')
 				.ticks(8)
 				//.tickValues(d3.time.month.range(minDate, maxDate))
-				.tickFormat(d3.time.format("%b %y"));
+				.tickFormat(d3.time.format("%b '%y"));
 			
 			var line = d3.svg.line()
 				.x(function(d) {
@@ -187,7 +187,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 					
 					var margin = { top: 20, right: 80, bottom: 10, left: 110 };
 	
-					var chart = nv.models.sparklinePlus();
+					var chart = nv.models.sparklinePlus($rootScope);
 					chart.margin(margin)
 					.x(function(d,i) { return i })
 					.xTickFormat(function(d) {
@@ -198,11 +198,17 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 					})
 					.width(800)
 					.noData("No data available for the chosen time span");
-					
+
 					var svg = d3.select('#chart svg')
 					.data([scope.data])
 					.attr("height", 450)
+//					.on("mouseover", function(d, i) {
+//						alert(d.x);
+//					})
 					.call(chart);
+					
+					var hover = d3.select('.nv-hoverArea')
+					.on("mou")
 	
 					if(scope.data.length > 0) {
 						/*START draggable duration limits*/

@@ -38,7 +38,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2" class="center">
+			<td class="left">
 				<table>
 					<colgroup><col width="200"><col width="50"></colgroup>
 					<tr>
@@ -56,6 +56,50 @@
 					<tr>
 						<td>above limit range:</td>
 						<td>{{ instanceCountAboveLimitRange }}</td>
+					</tr>
+				</table>
+			</td>
+			<td class="center">
+				<table>
+					<colgroup><col width="250"><col width="150"></colgroup>
+					<tr>
+						<th colspan="2">Information about selected activity instance:</th>
+					</tr>
+					<tr>
+						<td>Start date:</td>
+						<td>{{ currentValueData.start | transformDatetime }}</td>
+					</tr>
+					<tr>
+						<td>End date:</td>
+						<td>{{ currentValueData.end | transformDatetime }}</td>
+					</tr>
+					<tr>
+						<td>Duration (HH:MM:SS.mmm): </td>
+						<td>{{ currentValueData.y  | formatTime }}</td>
+					</tr>
+					<tr>
+						<td>Assignee:</td>
+						<td>{{ currentValueData.assignee }}</td>
+					</tr>
+					<tr>
+						<td>Process Key:</td>
+						<td>{{ currentValueData.processKey }}</td>
+					</tr>
+					<tr>
+						<td>Process Definition ID:</td>
+						<td>{{ currentValueData.processDefId }}</td>
+					</tr>
+					<tr>
+						<td>Process Instance ID:</td>
+						<td>{{ currentValueData.processId }}</td>
+					</tr>
+					<tr>
+						<td>Activity Definiction ID:</td>
+						<td>{{ currentValueData.activityDefId }}</td>
+					</tr>
+					<tr>
+						<td>Activity Instance ID:</td>
+						<td>{{ currentValueData.activityId }}</td>
 					</tr>
 				</table>
 			</td>
