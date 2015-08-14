@@ -6,21 +6,27 @@
 		<result property="activityName" column="ACT_NAME" />
 		<result property="type" column="ACT_TYPE" />
 		<result property="procDefKey" column="PROC_DEF_KEY" />
+		<result property="procDefId" column="PROC_DEF_ID" />
+		<result property="procInstId" column="PROC_INST_ID" />
 		<result property="duration" column="DURATION" />
 		<result property="startTime" column="START_TIME" />
 		<result property="endTime" column="END_TIME" />
-		<result property="id" column="ID" />
+		<result property="id" column="INST_ID" />
+		<result property="defId" column="DEF_ID" />
 		<result property="assignee" column="ASSIGNEE" />
 	</resultMap>
 	<select id="selectHistoricActivityInformationWithProcDefKey"
 		resultMap="historicActivityInformationMap">
 		SELECT
-			ACT_NAME_ as ACT_NAME,
-			ACT_TYPE_ as ACT_TYPE,
+			A.ACT_NAME_ as ACT_NAME,
+			A.ACT_TYPE_ as ACT_TYPE,
 			def.KEY_ as PROC_DEF_KEY,
-			DURATION_ as DURATION,
-			A.ID_ as ID,
-			ASSIGNEE_ as ASSIGNEE,
+			A.PROC_DEF_ID_ as PROC_DEF_ID,
+			A.PROC_INST_ID_ as PROC_INST_ID,
+			A.DURATION_ as DURATION,
+			A.ID_ as INST_ID,
+			A.ACT_ID_ as DEF_ID,
+			A.ASSIGNEE_ as ASSIGNEE,
 			<!-- start,end time -->
 			<include refid="cockpit.statistics.commonDates"/>
 		FROM ACT_HI_ACTINST A

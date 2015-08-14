@@ -74,7 +74,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 							id: activity.id,
 							duration: activity.durationInMillis,
 							startTime: activity.startTime,
-							endTime: activity.endTime
+							endTime: activity.endTime,
+							procInstId: activity.processInstanceId,
+							procDefId: activity.processDefinitionId,
+							procDefKey: activity.processDefinitionKey,
+							defId: activity.activityId,
+							assignee: activity.assignee
 						});
 					}
 				});

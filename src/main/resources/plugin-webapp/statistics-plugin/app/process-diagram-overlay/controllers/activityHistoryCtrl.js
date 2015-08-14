@@ -1,7 +1,48 @@
 'use strict'
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
+	module.filter('transformDatetime', function() {
+		return function(input) {
+			if(angular.isDefined(input)) {
+				var datetime = input.toString().split(' ');
+				return datetime[0] + ", " + datetime[2] + " " + datetime[1] + " " + datetime[3] + ", " + datetime[4];
+			}
+			return "";
+		}
+	});
+	
+	module.filter('formatTime', function() {
+		return function(input) {
+			if(angular.isDefined(input)) {
+				var milliseconds = parseInt((input%1000));
+				var seconds = parseInt((input/1000)%60);
+				var minutes = parseInt((input/(1000*60))%60);
+				var hours = parseInt((input/(1000*60*60)));
+	
+				if(hours < 0) hours = "00";
+				else hours = (hours < 10) ? "0" + hours : hours;
+				if(minutes < 0) minutes = "00";
+				else minutes = (minutes < 10) ? "0" + minutes : minutes;
+				if(seconds < 0) seconds = "00";
+				else seconds = (seconds < 10) ? "0" + seconds : seconds;
+				if(milliseconds < 0) milliseconds = "000";
+	
+				return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+			}
+			return "";
+		}
+	});
+	
 	module.controller('activityHistoryCtrl', ['$scope', '$rootScope', '$modalInstance', 'DataFactory', 'SettingsFactory', 'activityId', '$filter', function($scope, $rootScope, $modalInstance, DataFactory, SettingsFactory, activityId, $filter){
+		
+		$scope.$on('showSparklineValue', function(event, index) {
+			$scope.currentValueData = $scope.historicActivityPlotData[index];
+			$scope.$apply();
+		});
+		
+		$scope.$on('hideSparklineValue', function(event) {
+			$scope.$apply();
+		});
 		
 		$scope.$on('durationLimitChanged', function() {
 			getInstanceCount(SettingsFactory.lowerDurationLimitInMs, SettingsFactory.upperDurationLimitInMs);
@@ -97,7 +138,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					filteredData.push({
 					"x": i,
 					"y": data[i].duration,
+					"processId": data[i].procInstId,
+					"processDefId": data[i].procDefId,
+					"processKey": data[i].procDefKey,
 					"activityId": data[i].id,
+					"activityDefId": data[i].defId,
 					"start": stringToDate(data[i].startTime),
 					"end": stringToDate(data[i].endTime),
 					"datetime": datetimeToMs(data[i].endTime), 
