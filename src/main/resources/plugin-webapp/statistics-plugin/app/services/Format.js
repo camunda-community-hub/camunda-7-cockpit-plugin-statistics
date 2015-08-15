@@ -154,9 +154,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			for (var i = 1; i < formatedData.length; i++){
 				if(formatedData[i].values.length > 0) {
 					values = formatedData[i].values.map(function(d) {return d[attribute]; });
-					console.log(values);
-					console.log(min);
-					console.log(d3.min(values));
 					min = Math.min(min, d3.min(values));
 					max = Math.max(max, d3.max(values));
 				}
@@ -229,7 +226,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return clusterArray;
 		}
 
-		Format.getKMeansClusterFromFormatedData = function(formatedData, kmeans){
+		Format.getKMeansClusterFromFormatedData = function(formatedData, formatAndParser, x, numberOfInstancesMap){
 			var clusterArray = new Array(formatedData.length);
 			for(var i=0; i<formatedData.length; i++){
 				if(formatedData[i].values.length == 0) continue;
@@ -237,16 +234,18 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				var dataArray =[];
 				//bring x values in the format used by cluster algo
 				for(var j=0; j<formatedData[i].values.length; j++){
-					dataArray[j] =[formatedData[i].values[j].x.getTime()];
+					dataArray[j] =[formatAndParser.parser(formatedData[i].values[j][x]).getTime()];
 				};
-				var cluster = clusterfck.kmeans(dataArray,kmeans);
+				var cluster = clusterfck.kmeans(dataArray, numberOfInstancesMap[formatedData[i].key].numberOfClusters);
 
 				//canonical vlaues as new values, old y
 				for(var k=0; k<cluster.length; k++){
 					if(cluster[k].cluster) {
 						var clusterSize = cluster[k].cluster.length;
-						var size = clusterSize/formatedData[i].values.length ;
-						clusterArray[i].values.push({"x": cluster[k].centroid , "y" : formatedData[i].values[0].y, "size": size, "clusterSize":clusterSize });
+						var size = clusterSize/ numberOfInstancesMap[formatedData[i].key].startedInst;
+						var value = {"size": size, "clusterSize": clusterSize};
+						value[x] = cluster[k].centroid[0];
+						clusterArray[i].values.push(value);
 					}
 				}; 
 			};
@@ -264,6 +263,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			}
 
 			console.debug("returning cluster array...");
+			console.log(clusterArray);
 			return clusterArray;
 		}
 

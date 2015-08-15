@@ -120,7 +120,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			console.debug("new request to database necessary:");
 			console.debug(requestToDataBank);
 			if (!requestToDataBank) {
-				var update = TimingFactory.updateCharts($scope.chosenOptions);
+				var update = TimingFactory.updateCharts($scope.chosenOptions, $scope.numberOfInstancesMap);
 				$scope.data = update.data;
 				$scope.options = update.options;
 				$scope.parseX = TimingFactory.parseX;

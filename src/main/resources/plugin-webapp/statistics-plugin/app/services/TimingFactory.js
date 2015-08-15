@@ -21,9 +21,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		var getTimeFormatAndParser = function(timeFrame){
 			if(timeFrame==="daily")
-				return {"format" : "%H:%M", "parser": eval("Format.breakDateDownTo24h") };
+				return {"format" : "%H:%M", "parser": Format.breakDateDownTo24h };
 				else if(timeFrame==="weekly")
-					return {"format" : "%a %H:%M", "parser": eval("Format.breakDateDownToWeek") };
+					return {"format" : "%a %H:%M", "parser": Format.breakDateDownToWeek };
 					else if(timeFrame === "noFrame")
 						return {"format": "%Y-%m-%dT%H", "parser": d3.time.format("%Y-%m-%dT%H:%M:%S").parse };
 						else console.debug("Error: no known time frame was chosen")
@@ -31,9 +31,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		TimingFactory.data = [];
 		TimingFactory.options = [];
-		
-		
-		TimingFactory.prepareData = function(formatedData, options, colorScale) {
+
+
+		TimingFactory.prepareData = function(formatedData, options, colorScale, numberOfInstancesMap) {
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 				TimingFactory.options  = {
@@ -54,10 +54,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			}
 			else if(options.propertyToPlot == "startEndTime") {
 				var formatAndParser = getTimeFormatAndParser(options.timeFrame);
-//				if(options.cluster.algo == "kmeans")
-//					TimingFactory.chosenData = Format.getKMeansClusterFromFormatedData(TimingFactory.chosenData, options.cluster.numberOfClusters);
+				if(options.cluster.algo == "kmeans")
+					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(formatedData, formatAndParser, options.time, numberOfInstancesMap);
+				else TimingFactory.dataForPlot = formatedData;
 				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(formatAndParser, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
-				TimingFactory.dataForPlot = formatedData;
 			}
 			else {
 				var dataAndBins = Format.bringDataIntoBarPlotFormat(formatedData, "durationInMillis", options.numberOfBins);
@@ -70,8 +70,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		/**
 		 * updates data without a call to the database
 		 */
-		TimingFactory.updateCharts = function(options){
-			return TimingFactory.prepareData(TimingFactory.formatedData, options, TimingFactory.options.chart.color);
+		TimingFactory.updateCharts = function(options, numberOfInstancesMap){
+			return TimingFactory.prepareData(TimingFactory.formatedData, options, TimingFactory.options.chart.color, numberOfInstancesMap);
 		};
 		/**
 		 * @selectedFromMenu: processes, and activities chosen by the user to plot
@@ -126,7 +126,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		};
 
-		
+
 		var getNumberOfInstances = function(formatedData) {
 			var numberOfInstancesMap = {};
 			for (var i = 0; i < formatedData.length; i++) {

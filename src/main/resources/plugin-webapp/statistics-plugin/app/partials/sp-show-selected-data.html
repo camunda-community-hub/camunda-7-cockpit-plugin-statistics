@@ -19,12 +19,12 @@
 						<strong>{{item.process}}</strong>
 					</div>
 					<div class="col-md-1">
-						{{item.cluster}}
+						{{numberOfInstancesMap[item.process].numberOfClusters}}
 					</div>
 					<div class="col-md-5">
 						<input
 							ng-if="showSlider&&item.wholeProcess"
-							ng-model="item.cluster"
+							ng-model="numberOfInstancesMap[item.process].numberOfClusters"
 							type="range"
 							min="0"
 							max="{{numberOfInstancesMap[item.process].startedInst}}"
@@ -54,17 +54,17 @@
 							ng-if="showSlider">
 							<div class="col-md-6">{{act.activity}}</div>
 							<div class="col-md-1">
-							{{act.cluster}}
+							{{numberOfInstancesMap[act.activity].numberOfClusters}}
 							</div>
 							<div class="col-md-5">
 								<input
-									ng-init = "act.cluster = Math.raound(Math.sqrt(numberOfInstancesMap[act.activity].startedInst))"
-									ng-if="showSlider"
-									ng-model = "act.cluster"
+									ng-if="showSlider&&!(numberOfInstancesMap[act.activity]==undefined)"
+									ng-model = "numberOfInstancesMap[act.activity].numberOfClusters"
 									type="range"
 									min="0"
 									max="{{numberOfInstancesMap[act.activity].startedInst}}"
 									step="1" />
+								<span ng-if= numberOfInstancesMap[act.activity]==undefined>no data available</span>
 							</div>
 						</div>
 					</div>
