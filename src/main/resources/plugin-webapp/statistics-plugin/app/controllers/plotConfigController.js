@@ -2,18 +2,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
 		
-		var data,options;	//needed if we want to get the data without displaying it e.g. for clustering ranges
-		/**
-		 * test
-		 */
-		$scopenumberOfInstancesMap = "hihi";
-		
-		
-		
 		$scope.showLegend = false;
 		$scope.showSlider = true;
 		$scope.showClusterMenu = {
-				show: true
+				show: false
 		};
 
 		//initialize the setting for the configuration menu
@@ -52,8 +44,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				time: "startTime",					//belongs to start-end plot
 				timeFrame: "daily",					//belongs to start-end plot, specifies the time focus
 				cluster : {							//belongs to start-end plot
-					algo: "kmeans",
-					numberOfClusters: 5
+					algo: "kmeans"
 				},
 				timeWindow : {						//belongs to data, specifies the time window the data is chosen from
 					start: "",
@@ -93,30 +84,57 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		    $scope.alerts.splice(index, 1);
 		}
 		
-//		$scope.requestData = function() {
-//			if ($scope.selected.length==0) {
-//				addAlert("missingData"); 
-//				return;
-//			}
-//			TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
-//			.then(function(){
-//				data = TimingFactory.chosenData;
-//				options = TimingFactory.options;
-//			});
-//		}
-		/**
-		 * realizes the changes made in the menu
+		
+		
+		
+		/**checks weather we need to request data from the data base to display the slider menu,
+		 * since we need to know how many instances of each selected data group we have, to be able to show the 
+		 * adequate range for the clustering. If a request has to be made, nothing will be shown in the plot
+		 * @return{boolean} true if slider menu can be shown, false if not
 		 */
-		$scope.applyChanges = function() {
-			if ($scope.selected.length==0) {
+		$scope.getDataForClusterSlider = function() {
+			//check weather we have enough data to display cluster sliders
+			if (!checkValidity()) return false;
+			//if the data is already in memory do not call database, just display sliders
+			if(!requestToDataBank) return true;
+			
+			TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions, false)
+			.then(function(){
+				$scope.numberOfInstancesMap = TimingFactory.numberOfInstancesMap
+			});
+			
+			//reset requestToDataBank since new data just arrived
+			requestToDataBank = false;
+			//show sliders
+			return true;
+		};
+		
+		
+		
+		
+		
+		/**
+		 * checks weather a request to database can be made or not
+		 * i.e. if some data to plot was selected and if a plot type is selected
+		 * @return{boolean} 
+		 */
+		var checkValidity = function() {
+			if ($scope.selected.length == 0) {
 				addAlert("missingData"); 
-				return;
+				return false;
 			}
 			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
 			if ($scope.chosenOptions.propertyToPlot=="") {
 				addAlert("missingProperty");
-				return;
+				return false;
 			}
+			return true;
+		}
+		/**
+		 * realizes the changes made in the menu
+		 */
+		$scope.applyChanges = function() {
+			if (!checkValidity()) return;
 			console.debug("new request to database necessary:");
 			console.debug(requestToDataBank);
 			if (!requestToDataBank) {
@@ -126,14 +144,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.parseX = TimingFactory.parseX;
 				$scope.parseY = TimingFactory.parseY;
 			} else {
-				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions)
+				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions, true)
 				.then(function(){
 					$scope.data = TimingFactory.dataForPlot;
 					$scope.options = TimingFactory.options;
 					$scope.parseX = TimingFactory.parseX;
 					$scope.parseY = TimingFactory.parseY;
 					$scope.numberOfInstancesMap = TimingFactory.numberOfInstancesMap
-					console.log($scope.numberOfInstancesMap);
 				});
 			}
 			//reset requestToDataBank since new data just arrived
@@ -176,7 +193,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				//Case: activityType has been added before
 				if (indexActivityType>=0) {
 					if (add) {
-						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.push({"activity": chosenItem.activity, "cluster": 5});
+						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.push({"activity": chosenItem.activity});
 						//controls weather now all activities of this type are checked and then also checks the type
 						if ($scope.selected[indexProcess].activityTypes[indexActivityType].activities.length==$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length) {
 							$scope.$broadcast('checkActivityType',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityType});
@@ -201,7 +218,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				}
 				//activityType has not been added yet
 				else {
-					$scope.selected[indexProcess].activityTypes.push({"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity, "cluster": 5}]});
+					$scope.selected[indexProcess].activityTypes.push({"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
 					if ($scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length==1)
 						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});
@@ -211,9 +228,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			else {
 				//add whole process
 				if (chosenItem.wholeProcess)
-					$scope.selected.push({"process":chosenItem.process, "procDefId": $scope.menuData[processIndexMenu].Id,"wholeProcess": true,  "cluster": 5, "activityTypes":[]});
+					$scope.selected.push({"process":chosenItem.process, "procDefId": $scope.menuData[processIndexMenu].Id,"wholeProcess": true, "activityTypes":[]});
 				else if (add) {//need this for the case: all activities unchecked, type still checked
-					$scope.selected.push({"process":chosenItem.process,"procDefId": $scope.menuData[processIndexMenu].Id, "wholeProcess": false, "cluster": 5, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity, "cluster": 5}]}]});
+					$scope.selected.push({"process":chosenItem.process,"procDefId": $scope.menuData[processIndexMenu].Id, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
 					if ($scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length==1)
 						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});

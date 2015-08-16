@@ -1,5 +1,5 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
-	module.factory('TimingFactory',['DataFactory','Format','GraphFactory','$rootScope', function(DataFactory,Format, GraphFactory,$rootScope) {
+	module.factory('TimingFactory',['DataFactory','Format','GraphFactory', 'kMeansFactory', '$rootScope', function(DataFactory, Format, GraphFactory, kMeansFactory, $rootScope) {
 		var TimingFactory = {};
 
 		TimingFactory.menuData = [];
@@ -21,17 +21,26 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		var getTimeFormatAndParser = function(timeFrame){
 			if(timeFrame==="daily")
-				return {"format" : "%H:%M", "parser": Format.breakDateDownTo24h };
+				return {format : "%H:%M", parser: Format.breakDateDownTo24h };
 				else if(timeFrame==="weekly")
-					return {"format" : "%a %H:%M", "parser": Format.breakDateDownToWeek };
+					return {format : "%a %H:%M", parser: Format.breakDateDownToWeek };
 					else if(timeFrame === "noFrame")
-						return {"format": "%Y-%m-%dT%H", "parser": d3.time.format("%Y-%m-%dT%H:%M:%S").parse };
+						return {format: "%Y-%m-%dT%H", parser: d3.time.format("%Y-%m-%dT%H:%M:%S").parse };
 						else console.debug("Error: no known time frame was chosen")
 		};
 
 		TimingFactory.data = [];
 		TimingFactory.options = [];
-
+		
+		var filterFormatedData = function(formatedData, attribute) {
+			var filteredData = [];
+			angular.forEach(formatedData, function(keyObject) {
+				filteredKeyObject = { key: keyObject.key };
+				filteredKeyObject.values = keyObject.values.map(function(d) {return d[attribute] == null? null : d}).filter(function(d) { return d != null });
+				filteredData.push(filteredKeyObject);
+			})
+			return filteredData;
+		}
 
 		TimingFactory.prepareData = function(formatedData, options, colorScale, numberOfInstancesMap) {
 			if(options.propertyToPlot == "regression"){
@@ -54,10 +63,15 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			}
 			else if(options.propertyToPlot == "startEndTime") {
 				var formatAndParser = getTimeFormatAndParser(options.timeFrame);
-				if(options.cluster.algo == "kmeans")
-					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(formatedData, formatAndParser, options.time, numberOfInstancesMap);
-				else TimingFactory.dataForPlot = formatedData;
-				TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(formatAndParser, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
+				var filteredData = filterFormatedData(formatedData, options.time);
+				console.log(filteredData);
+				if(options.cluster.algo == "kmeans") {
+					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData, formatAndParser, options.time, numberOfInstancesMap);
+					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : "%H:%M", "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
+				} else {
+					TimingFactory.dataForPlot = filteredData;
+					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(formatAndParser, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
+				}
 			}
 			else {
 				var dataAndBins = Format.bringDataIntoBarPlotFormat(formatedData, "durationInMillis", options.numberOfBins);
@@ -71,7 +85,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * updates data without a call to the database
 		 */
 		TimingFactory.updateCharts = function(options, numberOfInstancesMap){
-			return TimingFactory.prepareData(TimingFactory.formatedData, options, TimingFactory.options.chart.color, numberOfInstancesMap);
+			return TimingFactory.prepareData(TimingFactory.formatedData, options, TimingFactory.colorScale, numberOfInstancesMap);
 		};
 		/**
 		 * @selectedFromMenu: processes, and activities chosen by the user to plot
@@ -81,7 +95,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		/**
 		 * formating is now happening inside the loop, if performance becomes an issue we have to think of sth new
 		 */
-		TimingFactory.getModelMenuData = function(selectedFromMenu, options){
+		TimingFactory.getModelMenuData = function(selectedFromMenu, options, evaluateData){
 			console.log(options);
 			//make an iterator over the 10 d3 default colors
 			//colorDictionary is a map which assigns each key a color. This map is used to make 
@@ -97,6 +111,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					processObject.color = {"background-color" : color };
 					colorDictionary.push({"key" : processObject.process, "color": color});
 				}
+				else
+					delete processObject.color;	//in case its still there from previous calls
 				angular.forEach(processObject.activityTypes, function(activityTypeObject){
 					angular.forEach(activityTypeObject.activities, function(activityObject){
 						var color = colorIterator.next();
@@ -107,7 +123,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				})
 			})
 			//the colorfunction used in the plots
-			var colorScale = function(d, i) {
+			TimingFactory.colorScale = function(d, i) {
 				keyIndex = colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
 				return colorDictionary[keyIndex].color;
 			};
@@ -117,12 +133,14 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				angular.forEach(promiseData, function(singleCallbackReturn,promiseIndex){
 					TimingFactory.data = TimingFactory.data.concat(singleCallbackReturn.data);
 				});
-//				//if we only want the data to know the ranges for the clustering, then this will be false
-//				if(processData)
 				TimingFactory.formatedData = Format.bringSortedDataInKeyFormat(TimingFactory.data, ["activityName","processDefinitionKey"], 
 						["processDefinitionId", "processDefinitionKey", "activityId", "activityName", "startTime", "endTime", "durationInMillis"]);
-				TimingFactory.numberOfInstancesMap = getNumberOfInstances(TimingFactory.formatedData);
-				TimingFactory.prepareData(TimingFactory.formatedData, options, colorScale);
+				var numberOfInstancesMap = getNumberOfInstances(TimingFactory.formatedData);
+				//init numberOfInstancesMap with some reasonable default values
+				TimingFactory.numberOfInstancesMap = kMeansFactory.ruleOfThumb(numberOfInstancesMap, options.time);
+				//if we only want the data to know the ranges for the clustering, then this will be false
+				if(evaluateData)
+					TimingFactory.prepareData(TimingFactory.formatedData, options, TimingFactory.colorScale, TimingFactory.numberOfInstancesMap);
 			});
 		};
 

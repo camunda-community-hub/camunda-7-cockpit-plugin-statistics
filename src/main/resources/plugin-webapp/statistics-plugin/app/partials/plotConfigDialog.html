@@ -96,7 +96,7 @@ div.custom .panel-default>.panel-heading {
 						ng-class="{'glyphicon-unchecked': !propertiesBoolean.startEndTime, 'glyphicon-check': propertiesBoolean.startEndTime}"
 						ng-style="{color : 'black'}"></a>&nbsp;<span style="text-decoration: underline;">start time / end time</span></accordion-heading>
 					<div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.startEndTimeInfo=!info.startEndTimeInfo"></a></div>
-					<div class = "row" collapse = "!showClusterMenu.show">
+					<div class = "row" collapse = "showClusterMenu.show">
 					<div id="innerAccordion" class= "col-md-6" >
 					<accordion>
 						<accordion-group heading = "time">
@@ -116,25 +116,18 @@ div.custom .panel-default>.panel-heading {
 							<div class = "col-md-12">
  							<sp-input type="radio" value ="noClustering" sp-model = "chosenOptions.cluster.algo">no clustering</sp-input>
  							<sp-input type="radio" value ="kmeans" sp-model = "chosenOptions.cluster.algo" sp = "">k means Algo</sp-input>
-							        <input
-							            type="number"
-							            min="1"
-							            step="1"
-							            ng-model="chosenOptions.cluster.numberOfClusters">
-							            <button
-											class="btn btn-default"
-											ng-click="showClusterMenu.show=!showClusterMenu.show">edit cluster</button>
+							<button class="btn btn-default" ng-click="showClusterMenu.show = getDataForClusterSlider()">edit number of clusters</button>
 							</div>
 							</accordion-group>
 					</accordion>
 					</div>
 					</div>
-					<div class = "row" collapse = "showClusterMenu.show" >
+					<div class = "row" collapse = "!showClusterMenu.show" >
 					<div class= "col-md-12">
-					<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-slider="showSlider" show-legend = "showLegend" number-of-instances-map = "numberOfInstancesMap"></sp-show-selected-data>
-					<button
-											class="btn btn-default"
-											ng-click="showClusterMenu.show=!showClusterMenu.show">edit cluster</button>
+					<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" 
+											show-slider="showSlider" show-legend = "showLegend" number-of-instances-map = "numberOfInstancesMap"
+											time = chosenOptions.time ></sp-show-selected-data>
+					<button class="btn btn-default" ng-click="showClusterMenu.show=!showClusterMenu.show">back to menu</button>
 					</div>
 					</div>
 					<div class = "row">
@@ -159,7 +152,9 @@ div.custom .panel-default>.panel-heading {
 	  						<dd>see the description above</dd>
 	  						<dt>clustering</dt>
 	  						<dd>To get a better impression over the data the k-means clustering algorithm can be used.
-	  						The number of clusters k is an input parameter: an inappropriate choice of k may yield poor results.</dd>
+	  						The number of clusters k is an input parameter: an inappropriate choice of k may yield poor results.
+	  						It gets initialized with a rule of thumb. The result may not exactly have the chosen number of Clusters.
+	  						This happens since the algorithm may return empty clusters which will be ignored here.</dd>
 	  					</span>
 	  				</sp-plot-info>
 					</div>

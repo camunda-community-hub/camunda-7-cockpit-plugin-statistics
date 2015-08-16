@@ -27,7 +27,7 @@
 							ng-model="numberOfInstancesMap[item.process].numberOfClusters"
 							type="range"
 							min="0"
-							max="{{numberOfInstancesMap[item.process].startedInst}}"
+							max="{{numberOfInstancesMap[item.process][instances]}}"
 							step="1" />
 					</div>
 				</div>
@@ -62,7 +62,7 @@
 									ng-model = "numberOfInstancesMap[act.activity].numberOfClusters"
 									type="range"
 									min="0"
-									max="{{numberOfInstancesMap[act.activity].startedInst}}"
+									max="{{numberOfInstancesMap[act.activity][instances]}}"
 									step="1" />
 								<span ng-if= numberOfInstancesMap[act.activity]==undefined>no data available</span>
 							</div>
