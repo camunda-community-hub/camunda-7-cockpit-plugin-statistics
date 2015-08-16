@@ -2,8 +2,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
 		
-		$scope.showLegend = false;
-		$scope.showSlider = true;
+		$scope.changeView = function() {
+			$scope.legendView = !$scope.legendView;
+		}
+		$scope.legendView = false;
 		$scope.showClusterMenu = {
 				show: false
 		};
@@ -155,6 +157,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 			//reset requestToDataBank since new data just arrived
 			requestToDataBank = false;
+			//get into legend view
+			console.log("legendview");
+			console.log($scope.legendView);
+			$scope.legendView = true;
+			console.log($scope.legendView);
 		}
 
 		//data to fill the accordion

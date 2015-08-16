@@ -21,7 +21,7 @@ div.custom .panel-default>.panel-heading {
 	color: black;
 }
 </style>
-<div class="row">
+<div class="row" collapse = "legendView" >
 	<div class="col-lg-12 col-md-12 col-sm-12">
 		<tabset justified="true"> <tab heading="data">
 		<div class="row">
@@ -29,7 +29,7 @@ div.custom .panel-default>.panel-heading {
 				<menu></menu>
 			</div>
 			<div class="col-lg-6 col-md-6 col-sm-6">
-			<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "showSlider" show-slider = "showLegend"></sp-show-selected-data>
+			<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "true" show-slider = "false"></sp-show-selected-data>
 			</div>
 		</div>
 		</tab> <tab heading="time-window"> <tabset class="tabs-left"> <tab heading="date">
@@ -125,7 +125,7 @@ div.custom .panel-default>.panel-heading {
 					<div class = "row" collapse = "!showClusterMenu.show" >
 					<div class= "col-md-12">
 					<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" 
-											show-slider="showSlider" show-legend = "showLegend" number-of-instances-map = "numberOfInstancesMap"
+											show-slider="true" show-legend = "false" number-of-instances-map = "numberOfInstancesMap"
 											time = chosenOptions.time ></sp-show-selected-data>
 					<button class="btn btn-default" ng-click="showClusterMenu.show=!showClusterMenu.show">back to menu</button>
 					</div>
@@ -229,11 +229,16 @@ div.custom .panel-default>.panel-heading {
  </tabset>
 	</div>
 </div>
+<div class="row" collapse = "!legendView" >
+	<div class="col-lg-10 col-md-10 col-sm-10">
+		<sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "true" show-slider = "false"></sp-show-selected-data>
+	</div>
+</div>
 <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 <br>
 <br>
 <div>
-	<button
-		class="btn btn-primary"
-		ng-click="applyChanges()">Apply changes</button>
+	<button class="btn btn-primary" ng-click="applyChanges()">Apply changes</button>
+	<button ng-if = "!legendView" class="btn btn-primary" ng-click="changeView()">show Legend</button>
+	<button ng-if = "legendView" class="btn btn-primary" ng-click="changeView()">Menu</button>
 </div>
