@@ -28,10 +28,18 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						return {format: "%Y-%m-%dT%H", parser: d3.time.format("%Y-%m-%dT%H:%M:%S").parse };
 						else console.debug("Error: no known time frame was chosen")
 		};
+		var timeFormatAndParser = {
+				daily: {format : "%H:%M", parser: Format.breakDateDownTo24h},
+				weekly: {format : "%a %H:%M", parser: Format.breakDateDownToWeek },
+				noFrame: {format: "%Y-%m-%dT%H", parser: d3.time.format("%Y-%m-%dT%H:%M:%S").parse },
+				dailyFormat: "%H:%M",
+				weeklyFormat: "%a %H:%M",
+				noFrameFormat: "%Y-%m-%dT%H"
+		}
 
 		TimingFactory.data = [];
 		TimingFactory.options = [];
-		
+
 		var filterFormatedData = function(formatedData, attribute) {
 			var filteredData = [];
 			angular.forEach(formatedData, function(keyObject) {
@@ -60,20 +68,18 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				TimingFactory.parseX = parseDate;
 				TimingFactory.parseY = function(d) { return d/1000/60;};
 				TimingFactory.dataForPlot = formatedData;
-			}
-			else if(options.propertyToPlot == "startEndTime") {
+			} else if(options.propertyToPlot == "startEndTime") {
 				var formatAndParser = getTimeFormatAndParser(options.timeFrame);
 				var filteredData = filterFormatedData(formatedData, options.time);
 				console.log(filteredData);
 				if(options.cluster.algo == "kmeans") {
 					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData, formatAndParser, options.time, numberOfInstancesMap);
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : "%H:%M", "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
+					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : timeFormatAndParser[options.timeFrame + "Format"], "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
 				} else {
 					TimingFactory.dataForPlot = filteredData;
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(formatAndParser, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
+					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(timeFormatAndParser[options.timeFrame], options.cluster.algo == "kmeans", 1000, options.time, colorScale);
 				}
-			}
-			else {
+			} else {
 				var dataAndBins = Format.bringDataIntoBarPlotFormat(formatedData, "durationInMillis", options.numberOfBins);
 				TimingFactory.dataForPlot = dataAndBins.data;
 				TimingFactory.options = GraphFactory.getOptionsForTimeDistributionGraph(options.numberOfBins, dataAndBins.thresholds, function(d){return d/1000/60;}, colorScale);
@@ -110,8 +116,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					//this attribute is for the legend in our view
 					processObject.color = {"background-color" : color };
 					colorDictionary.push({"key" : processObject.process, "color": color});
-				}
-				else
+				} else
 					delete processObject.color;	//in case its still there from previous calls
 				angular.forEach(processObject.activityTypes, function(activityTypeObject){
 					angular.forEach(activityTypeObject.activities, function(activityObject){

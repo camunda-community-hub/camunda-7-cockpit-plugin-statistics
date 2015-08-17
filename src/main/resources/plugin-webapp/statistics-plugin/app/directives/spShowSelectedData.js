@@ -9,6 +9,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 			//with a rule of thumb
 			$scope.init = function(numberOfInstancesMap, time) {
 				$scope.numberOfInstancesMap = kMeansFactory.ruleOfThumb(numberOfInstancesMap, time);
+				$scope.instances = kMeansFactory.getAccessor(time);
 			}
 		};
 		
