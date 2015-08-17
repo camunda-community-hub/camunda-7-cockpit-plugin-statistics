@@ -235,7 +235,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				//bring x values in the format used by cluster algo
 				console.log(formatedData);
 				for(var j=0; j<formatedData[i].values.length; j++){
-					console.log(formatedData[i].values[j]);
 					dataArray[j] =[formatAndParser.parser(formatedData[i].values[j][x]).getTime()];
 				};
 				console.log( numberOfInstancesMap[formatedData[i].key].numberOfClusters);

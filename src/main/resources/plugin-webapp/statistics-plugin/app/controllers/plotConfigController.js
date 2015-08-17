@@ -145,9 +145,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.options = update.options;
 				$scope.parseX = TimingFactory.parseX;
 				$scope.parseY = TimingFactory.parseY;
+				//sometimes only functions change in options, those are not watched, so we need to trigger
+				//the update mechanism 
+				$scope.api.updateWithOptions($scope.options);
 			} else {
 				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions, true)
 				.then(function(){
+					console.log("in .then funciton");
 					$scope.data = TimingFactory.dataForPlot;
 					$scope.options = TimingFactory.options;
 					$scope.parseX = TimingFactory.parseX;
@@ -158,10 +162,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			//reset requestToDataBank since new data just arrived
 			requestToDataBank = false;
 			//get into legend view
-			console.log("legendview");
-			console.log($scope.legendView);
 			$scope.legendView = true;
-			console.log($scope.legendView);
 		}
 
 		//data to fill the accordion
