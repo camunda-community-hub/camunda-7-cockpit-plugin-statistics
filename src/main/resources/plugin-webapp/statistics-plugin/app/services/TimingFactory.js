@@ -1,5 +1,5 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
-	module.factory('TimingFactory',['DataFactory','Format','GraphFactory', 'kMeansFactory', '$rootScope', function(DataFactory, Format, GraphFactory, kMeansFactory, $rootScope) {
+	module.factory('TimingFactory',['DataFactory','Format','GraphFactory', 'kMeansFactory', function(DataFactory, Format, GraphFactory, kMeansFactory) {
 		var TimingFactory = {};
 
 		TimingFactory.menuData = [];
@@ -19,15 +19,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		};
 
 
-		var getTimeFormatAndParser = function(timeFrame){
-			if(timeFrame==="daily")
-				return {format : "%H:%M", parser: Format.breakDateDownTo24h };
-				else if(timeFrame==="weekly")
-					return {format : "%a %H:%M", parser: Format.breakDateDownToWeek };
-					else if(timeFrame === "noFrame")
-						return {format: "%Y-%m-%dT%H", parser: d3.time.format("%Y-%m-%dT%H:%M:%S").parse };
-						else console.debug("Error: no known time frame was chosen")
-		};
 		var timeFormatAndParser = {
 				daily: {format : "%H:%M", parser: Format.breakDateDownTo24h},
 				weekly: {format : "%a %H:%M", parser: Format.breakDateDownToWeek },
@@ -69,11 +60,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				TimingFactory.parseY = function(d) { return d/1000/60;};
 				TimingFactory.dataForPlot = formatedData;
 			} else if(options.propertyToPlot == "startEndTime") {
-				var formatAndParser = getTimeFormatAndParser(options.timeFrame);
 				var filteredData = filterFormatedData(formatedData, options.time);
 				console.log(filteredData);
 				if(options.cluster.algo == "kmeans") {
-					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData, formatAndParser, options.time, numberOfInstancesMap);
+					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData,timeFormatAndParser[options.timeFrame], options.time, numberOfInstancesMap);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : timeFormatAndParser[options.timeFrame + "Format"], "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
 				} else {
 					TimingFactory.dataForPlot = filteredData;

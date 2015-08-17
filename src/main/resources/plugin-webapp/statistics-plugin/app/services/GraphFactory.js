@@ -10,7 +10,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						height: 400,
 						width: width,
 						color: colorScale,
-						x: function(d) { return formatAndParser.parser(d[x]); },
+						x: function(d) { if(d[x] == null) console.debug(d); return formatAndParser.parser(d[x]); },
 						y: function(d) { return d.series +1; },
 						//color function is set in the Controller for the plot
 						//if nothing is specified nvd3 will choose d3 color20 as default
