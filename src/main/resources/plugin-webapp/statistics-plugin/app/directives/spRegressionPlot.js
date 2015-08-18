@@ -293,7 +293,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 	};
 
 	//in html regression-plot!!!
-	module.directive('regressionPlot', function(){
+	module.directive('spRegressionPlot', function(){
 
 		function link(scope,element,attrs){
 			scope.$watch('data', function() {

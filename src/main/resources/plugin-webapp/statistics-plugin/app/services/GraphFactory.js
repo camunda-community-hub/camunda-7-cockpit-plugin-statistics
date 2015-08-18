@@ -57,9 +57,22 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					'<p>instances started/ended around that time: <b>' + d.clusterSize;
 				};
 			}
-//			if(formatAndParser.format == "%a %H:%M")
-//			options.chart.height = 401;
-//			else if ()
+			//Case daily
+			if(formatAndParser.format == "%H:%M") {
+				//force axis to start at 00:00 and end at 00:00, the date has to be the date used in Format service
+				//see @Format.breakDownDateTo... for more info
+				options.chart.forceX = [new Date(1991,4,5), new Date(1991,4,6)];
+				//set ticks in equal distance of 2 hours
+				options.chart.xAxis.tickValues = d3.time.hour.range(new Date(1991,4,5), new Date(1991,4,6), 2);
+			}
+			//Case weekly
+			if(formatAndParser.format == "%a %H:%M") {
+				//force axis to start at monday 00:00 and end at monday 00:00, the date has to be the date used in Format service
+				//see @Format.breakDownDateTo... for more info
+				options.chart.forceX = [new Date(2014,10,3), new Date(2014,10,10)];
+				//set ticks in equal distance of one day
+				options.chart.xAxis.tickValues = d3.time.day.range(new Date(2014,10,3), new Date(2014,10,10), 1);
+			}
 			return options;
 
 		};
