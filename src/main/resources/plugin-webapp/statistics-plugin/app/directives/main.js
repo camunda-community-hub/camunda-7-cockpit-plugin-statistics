@@ -1,8 +1,8 @@
 ngDefine('cockpit.plugin.statistics-plugin.directives', [
     //declare dependencies to your own directives here                                                     
-    './regressionPlot',
+  './spRegressionPlot',
   './spInput',
-  './menu',
+  './spMenu',
   './spPlotInfo',
   './spShowSelectedData',
     '../process-diagram-overlay/directives/durationChart',
