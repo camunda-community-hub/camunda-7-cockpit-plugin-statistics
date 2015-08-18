@@ -37,7 +37,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 	function getYDirect (height){
 		return d3.scale.linear().range([getHeight(height), 0]);
 	};
-	
+
 	function setUpScales(options, data, parseX, parseY){
 		var x = getXDirect(options.width);
 		var y = getYDirect(options.height);
@@ -55,29 +55,29 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		});
 		x.domain(d3.extent(xMinsMaxs));
 		y.domain(d3.extent(yMinsMaxs));
-		
+
 //		x.domain(d3.extent(d3.merge(data)));
 //		y.domain(d3.extent(yMinsMaxs));
 		return [x,y];
 	};
-	
-	function initGraph(options,data,svg,colorScale, parseX, parseY){
+
+	function initGraph(options, data, svg, colorScale, parseX, parseY, legend){
 		var Scales = setUpScales(options, data, parseX, parseY);
 		var x = Scales[0];
 		var y = Scales[1];
-		
+
 		function make_x_axis() {        
-		    return d3.svg.axis()
-		        .scale(x)
-		         .orient("bottom")
+			return d3.svg.axis()
+			.scale(x)
+			.orient("bottom")
 		};
 
 		function make_y_axis() {        
-		    return d3.svg.axis()
-		        .scale(y)
-		        .orient("left")
+			return d3.svg.axis()
+			.scale(y)
+			.orient("left")
 		};
-		
+
 		var width = getWidth(options.width);
 		var height = getHeight(options.height);
 
@@ -108,62 +108,64 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		.attr("dy", ".71em")
 		.style("text-anchor", "end")
 		.text("duration in min");
-		
-		svg.append("g")         
-        .attr("class", "grid")
-        .attr("transform", "translate(0," + height + ")")
-        .call(make_x_axis()
-            .tickSize(-height, 0, 0)
-            .tickFormat("")
-        );
 
-    svg.append("g")         
-        .attr("class", "grid")
-        .call(make_y_axis()
-            .tickSize(-width, 0, 0)
-            .tickFormat("")
-        );
-		
-		// add legend   
-		var legend = svg.append("g")
-		  .attr("class", "legend")
-	        //.attr("x", w - 65)
-	        //.attr("y", 50)
-		  .attr("height", 100)
-		  .attr("width", 100)
-	    .attr('transform', 'translate(-20,50)')    
-	      
-		
-		 legend.selectAll('circle')
-	      .data(data)
-	      .enter()
-	      .append("circle")
-	      .attr("class", "dot")
-		  .attr("cx", width - 150)//65
-	      .attr("cy", function(d, i){ return i *  20 + 5;})
-//		  .attr("width", 10)
-//		  .attr("height", 10)
-	      .attr("r", 5)
-	      .style("stroke-width", "2px")
-//	      .style("stroke",function(d) { 
-//		        var color = colorScale(d.key);
-//		        return color;
-//		      })
-	      .style("stroke",colorScale)
-		  .style("fill", colorScale)
-	      
-	    legend.selectAll('text')
-	      .data(data)
-	      .enter()
-	      .append("text")
-		  .attr("x", width - 137)//52
-	      .attr("y", function(d, i){ return i *  20 + 9;})
-		  .text(function(d,i) {
-	        var text = d.key;
-	        return text;
-	      });
+		svg.append("g")         
+		.attr("class", "grid")
+		.attr("transform", "translate(0," + height + ")")
+		.call(make_x_axis()
+				.tickSize(-height, 0, 0)
+				.tickFormat("")
+		);
+
+		svg.append("g")         
+		.attr("class", "grid")
+		.call(make_y_axis()
+				.tickSize(-width, 0, 0)
+				.tickFormat("")
+		);
+		if (legend) {
+			console.log("legend:", legend);
+			// add legend   
+			var legend = svg.append("g")
+			.attr("class", "legend")
+			//.attr("x", w - 65)
+			//.attr("y", 50)
+			.attr("height", 100)
+			.attr("width", 100)
+			.attr('transform', 'translate(-20,50)')    
+
+
+			legend.selectAll('circle')
+			.data(data)
+			.enter()
+			.append("circle")
+			.attr("class", "dot")
+			.attr("cx", width - 150)//65
+			.attr("cy", function(d, i){ return i *  20 + 5;})
+//			.attr("width", 10)
+//			.attr("height", 10)
+			.attr("r", 5)
+			.style("stroke-width", "2px")
+//			.style("stroke",function(d) { 
+//			var color = colorScale(d.key);
+//			return color;
+//			})
+			.style("stroke",colorScale)
+			.style("fill", colorScale)
+
+			legend.selectAll('text')
+			.data(data)
+			.enter()
+			.append("text")
+			.attr("x", width - 137)//52
+			.attr("y", function(d, i){ return i *  20 + 9;})
+			.text(function(d,i) {
+				var text = d.key;
+				return text;
+			});
+		}
 	};
-	
+
 	function dotManager(options,data,svg,colorScale, parseX, parseY){
 		if(typeof options == "undefined")
 			return;
@@ -183,8 +185,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("r", 3.5)
 				.attr("cx", function(d) { return x(parseX({x:d[options.x]})); })
 				.attr("cy", function(d) { 
-				return y(parseY({y:d[options.y]})); })
-				.style("fill", colorScale(processSet));
+					return y(parseY({y:d[options.y]})); })
+					.style("fill", colorScale(processSet));
 			});
 		}
 
@@ -314,8 +316,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("height", height + margin.top + margin.bottom)
 				.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-				
-				initGraph(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
+
+				initGraph(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY, scope.legend);
 				dotManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
 				splineManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
 				regressionManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
@@ -342,6 +344,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			scope: { 
 				data: '=' ,
 				options: '=' ,
+				legend: '=' ,
 				parseX: '&' ,
 				parseY: '&'
 			},

@@ -1,7 +1,7 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
-		
+
 		$scope.changeView = function() {
 			$scope.legendView = !$scope.legendView;
 		}
@@ -11,7 +11,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 
 		//initialize the setting for the configuration menu
-		
+
 		//regulates which property should be plotted and at the same time
 		//which property-window is open, since those two tings go hand in hand
 		$scope.propertiesBoolean ={
@@ -19,7 +19,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				regression: false,
 				distribution: true
 		};
-		
+
 		/**
 		 * determines from $scope.propertiesBoolean which property is to be plotted
 		 */
@@ -31,14 +31,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 			return "";
 		}
-		
+
 		//regulates which info panels should be shown. Default is none
 		$scope.info = {
 				startEndTimeInfo:false,
 				regressionInfo: false,
 				distributionInfo: false
 		};
-		
+
 		//the data of the menu which is important for database requests and graph options
 		$scope.chosenOptions = {
 				propertyToPlot : "distribution",	//the plot 
@@ -61,20 +61,20 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 		//init which option is shown in start time of data properts
 		$scope.showClustering = false;
-		
+
 		//each time applyChanges is called requestToDataBank is set back to false
 		//and each time a change occurs which needs other data then what we got it is set to true
 		//those changes would be either other activities/processes or another time window for the other changes in the menu
 		//we only have to reformat the data. This is done for performance
 		var requestToDataBank = false;
-		
+
 		/**
 		 * is called each time a change happens that makes a new request to the database necessary
 		 */
 		$scope.changeRequestToDataBase = function() {
 			requestToDataBank = true;
 		}
-		
+
 		$scope.alerts=[];
 		var addAlert = function(reason) {
 			if (reason == "missingData")
@@ -87,12 +87,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.alerts.push({type: 'danger', msg: 'Please specify an end date!'});
 		}
 		$scope.closeAlert = function(index) {
-		    $scope.alerts.splice(index, 1);
+			$scope.alerts.splice(index, 1);
 		}
-		
-		
-		
-		
+
+
+
+
 		/**checks weather we need to request data from the data base to display the slider menu,
 		 * since we need to know how many instances of each selected data group we have, to be able to show the 
 		 * adequate range for the clustering. If a request has to be made, nothing will be shown in the plot
@@ -103,22 +103,22 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if (!checkValidity()) return false;
 			//if the data is already in memory do not call database, just display sliders
 			if(!requestToDataBank) return true;
-			
+
 			TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions, false)
 			.then(function(){
 				$scope.numberOfInstancesMap = TimingFactory.numberOfInstancesMap
 			});
-			
+
 			//reset requestToDataBank since new data just arrived
 			requestToDataBank = false;
 			//show sliders
 			return true;
 		};
-		
-		
-		
-		
-		
+
+
+
+
+
 		/**
 		 * checks weather a request to database can be made or not
 		 * i.e. if some data to plot was selected and if a plot type is selected
@@ -142,7 +142,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				addAlert("missingEndDate");
 				return false;
 			}
-			
+
 			return true;
 		}
 		/**
@@ -159,10 +159,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.parseX = TimingFactory.parseX;
 				$scope.parseY = TimingFactory.parseY;
 				//sometimes only functions change in options, those are not watched, so we need to trigger
-				//the update mechanism 
-				$scope.api.updateWithOptions($scope.options);
+				//the update mechanism if we plot with NVD3
+				if ($scope.chosenOptions.propertyToPlot=='startEndTime'||$scope.chosenOptions.propertyToPlot=='distribution')
+					$scope.api.updateWithOptions($scope.options);
 			} else {
-				TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions, true)
+				TimingFactory.getModelMenuData($scope.selected, $scope.chosenOptions, true)
 				.then(function(){
 					console.log("in .then funciton");
 					$scope.data = TimingFactory.dataForPlot;
