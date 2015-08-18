@@ -50,6 +50,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			};
 			if(clustered) {
 				options.chart.size = function(d){ return d.size; };
+				options.chart.sizeDomain = [0,1]; //https://github.com/krispo/angular-nvd3/issues/49
 				options.chart.tooltipContent = function(key, x, y, e, graph) {
 					var d = e.series.values[e.pointIndex];
 					return '<h3>' + key + '</h3>' +
@@ -90,6 +91,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						yAxis: {
 							tickFormat: function(d){return d.toPrecision()}
 						},
+						showLegend: false,
 						noData:"sorry data not yet available",
 					}
 			};

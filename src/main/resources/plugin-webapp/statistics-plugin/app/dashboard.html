@@ -23,7 +23,7 @@
 						<nvd3 options="options" data="data" api = "$parent.api"></nvd3>
 					</div>
 					<div id="regPlotDiv" ng-if="chosenOptions.propertyToPlot=='regression'">
-        				<regression-plot data="data" options="options" parse-x = "parseX(x)" parse-y = "parseY(y)"> </regression-plot>
+        				<regression-plot data="data" options="options" parse-x = "parseX(x)" parse-y = "parseY(y)" legend = "false"> </regression-plot>
      				</div>
 				</div>
 				<div class="col-lg-5 col-md-5 col-sm-5 well">

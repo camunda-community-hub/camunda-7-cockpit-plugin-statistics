@@ -1,5 +1,5 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
-	module.factory('Format', function() {
+	module.factory('Format', function(kMeansFactory) {
 		var Format = {};
 
 		/**
@@ -61,6 +61,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		Format.breakDateDownTo24h = function(date){
 			var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
+			console.log(date);
 			var changedDate = date.substr(10);
 			changedDate = "1991-05-05" + changedDate;
 
@@ -233,51 +234,24 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				clusterArray[i] = {"key":formatedData[i].key, "values":[]};
 				var dataArray =[];
 				//bring x values in the format used by cluster algo
-				console.log(formatedData);
 				for(var j=0; j<formatedData[i].values.length; j++){
 					dataArray[j] =[formatAndParser.parser(formatedData[i].values[j][x]).getTime()];
 				};
-				console.log( numberOfInstancesMap[formatedData[i].key].numberOfClusters);
 				var cluster = clusterfck.kmeans(dataArray, numberOfInstancesMap[formatedData[i].key].numberOfClusters);
-				console.log(cluster);
 
-				//canonical vlaues as new values, old y
 				for(var k=0; k<cluster.length; k++){
+					//this filters the empty clusters that can be produced by k means
 					if(cluster[k].cluster) {
 						var clusterSize = cluster[k].cluster.length;
-						var size = clusterSize/ numberOfInstancesMap[formatedData[i].key].startedInst;
+						var size = clusterSize/ numberOfInstancesMap[formatedData[i].key][kMeansFactory.getAccessor(x)];
 						var value = {"size": size, "clusterSize": clusterSize};
 						value[x] = cluster[k].centroid[0];
 						clusterArray[i].values.push(value);
 					}
-				}; 
+				};
 			};
-			var output =0;
-			for ( var i = 0; i < clusterArray[0].values.length; i++) {
-				output = output + clusterArray[0].values[i].clusterSize;
-			}
-			console.log("output");
-			console.log(output);
-			var indicesToRemove = [];
-
-			for(i in clusterArray) {
-				if(!clusterArray[i].values) {
-					indicesToRemove.push(i);
-				}
-			}
-
-			for(i in indicesToRemove) {
-				clusterArray.splice(indicesToRemove[i], 1);
-			}
-
-			var output2 =0;
-			for ( var i = 0; i < clusterArray[0].values.length; i++) {
-				output2 = output2 + clusterArray[0].values[i].clusterSize;
-			}
-			console.log("output2");
-			console.log(output2);
 			console.debug("returning cluster array...");
-			console.log(clusterArray);
+			console.debug(clusterArray);
 			return clusterArray;
 		}
 
