@@ -52,7 +52,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					start: "",
 					startDate : null,
 					end: "",
-					endDate: null
+					endDate: null,
+					endTime: null
 				},
 				showScatter: true,					//belongs to time-series plot
 				showSplines: false,					//belongs to time-series plot
@@ -71,16 +72,19 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		 * is called each time a change happens that makes a new request to the database necessary
 		 */
 		$scope.changeRequestToDataBase = function() {
-			console.log("triggered");
 			requestToDataBank = true;
 		}
 		
 		$scope.alerts=[];
 		var addAlert = function(reason) {
-			if (reason=="missingData")
+			if (reason == "missingData")
 				$scope.alerts.push({type: 'danger', msg: 'Please choose some data to plot!'});
-			else if (reason=="missingProperty")
+			else if (reason == "missingProperty")
 				$scope.alerts.push({type: 'danger', msg: 'Please choose some propery to plot!'});
+			else if (reason == "missingStartDate")
+				$scope.alerts.push({type: 'danger', msg: 'Please specify a start date!'});
+			else if (reason == "missingEndDate")
+				$scope.alerts.push({type: 'danger', msg: 'Please specify an end date!'});
 		}
 		$scope.closeAlert = function(index) {
 		    $scope.alerts.splice(index, 1);
@@ -130,6 +134,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				addAlert("missingProperty");
 				return false;
 			}
+			if($scope.chosenOptions.timeWindow.start != "" && $scope.chosenOptions.timeWindow.startDate == null) {
+				addAlert("missingStartDate");
+				return false;
+			}
+			if($scope.chosenOptions.timeWindow.end != "" && $scope.chosenOptions.timeWindow.endDate == null) {
+				addAlert("missingEndDate");
+				return false;
+			}
+			
 			return true;
 		}
 		/**

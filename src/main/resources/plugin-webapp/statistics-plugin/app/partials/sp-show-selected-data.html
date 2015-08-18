@@ -29,6 +29,7 @@
 							min="0"
 							max="{{numberOfInstancesMap[item.process][instances]}}"
 							step="1" />
+						<span ng-if= numberOfInstancesMap[item.process]==undefined&&item.wholeProcess>no data available</span>
 					</div>
 				</div>
 				<div
