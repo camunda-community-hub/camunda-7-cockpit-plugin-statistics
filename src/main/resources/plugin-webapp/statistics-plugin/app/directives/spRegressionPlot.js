@@ -203,7 +203,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var x = Scales[0];
 			var y = Scales[1];
 
-			angular.forEach(data,function(processSet){
+			angular.forEach(data, function(processSet){
 				var line = d3.svg.line()
 				.x(function(d) { return x(parseX({x:d[options.x]})); })
 				.y(function(d) { return y(parseY({y:d[options.y]})); });
@@ -229,10 +229,10 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var x = Scales[0];
 			var y = Scales[1];
 			angular.forEach(data, function(processSet){
-				console.log(data);
+				//d.x and d.y are used as accessors here because what they actually access is defined in var lindata
 				var line = d3.svg.line()
-				.x(function(d) { console.log(d); return x(parseX({x:d[options.x]})); })
-				.y(function(d) { return y(parseY({y:d[options.y]})); });
+                .x(function(d) { return x(d.x); })
+				.y(function(d) { return y(d.y); });
 
 
 				/*##################  statistic happens here #################*/
