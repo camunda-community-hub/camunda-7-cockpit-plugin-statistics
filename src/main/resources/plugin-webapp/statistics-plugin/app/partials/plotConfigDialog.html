@@ -40,7 +40,7 @@ div.custom .panel-default>.panel-heading {
        
          <div class="col-lg-6 col-md-6 col-sm-6">
            <accordion>
-             <accordion-group heading = "specify start date" is-open = "'true'">
+             <accordion-group heading = "specify start date" ng-init="isOpen = true" is-open="isOpen">
                <div class = "col-md-12">
                  <sp-input type = "radio" value = "" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">no start date</sp-input>
                  <sp-input type = "radio" value = "startedBefore" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">started before</sp-input>
@@ -61,7 +61,7 @@ div.custom .panel-default>.panel-heading {
          
          <div class="col-lg-6 col-md-6 col-sm-6">
            <accordion>
-             <accordion-group heading = "specify end date" is-open = "'true'">
+             <accordion-group heading = "specify end date" ng-init="isOpen = true" is-open="isOpen">
                <div class = "col-md-12">
                  <sp-input type = "radio" value = "" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">no end date</sp-input>
                  <sp-input type = "radio" value = "finishedBefore" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">finished before</sp-input>
@@ -107,6 +107,9 @@ div.custom .panel-default>.panel-heading {
                    <accordion-group heading = "timeframe">
                      <div class = "col-md-12">
                        <sp-input type="radio" value ="noFrame" sp-model = "chosenOptions.timeFrame">no time frame</sp-input>
+                         <div collapse = "chosenOptions.timeFrame!='noFrame'">
+                           <label>Format:</label> <select class="form-control" ng-model="chosenOptions.noFrameFormat" ng-options="f for f in noFrameFormats"><option></option></select>
+                         </div>
                        <sp-input type="radio" value ="daily" sp-model = "chosenOptions.timeFrame">daily</sp-input>
                        <sp-input type="radio" value ="weekly" sp-model = "chosenOptions.timeFrame">weekly</sp-input>
                      </div>

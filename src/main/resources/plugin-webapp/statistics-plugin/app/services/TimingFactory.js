@@ -69,7 +69,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					TimingFactory.dataForPlot = filteredData;
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(timeFormatAndParser[options.timeFrame], options.cluster.algo == "kmeans", 1000, options.time, colorScale);
 				}
-			} else {
+			} else {	//case: distribution
 				var dataAndBins = Format.bringDataIntoBarPlotFormat(formatedData, "durationInMillis", options.numberOfBins);
 				TimingFactory.dataForPlot = dataAndBins.data;
 				TimingFactory.options = GraphFactory.getOptionsForTimeDistributionGraph(options.numberOfBins, dataAndBins.thresholds, function(d){return d/1000/60;}, colorScale);
