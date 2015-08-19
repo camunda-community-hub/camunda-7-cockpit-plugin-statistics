@@ -1,40 +1,49 @@
 <accordion> <!-- it is important to use ng-repeat outside the accordion-group. The reason is a scope issue -->
-<div
+  <div
 	ng-repeat="(processItemIndex,processItem) in menuData"
 	ng-controller="processItemController">
 	<accordion-group is-open = "process.open">
-		<accordion-heading> <a
-		class="pull-left glyphicon"
-		ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
-		ng-style="{color : 'black'}"
-		ng-click="toggleSelection($event,processItemIndex)"> </a>&nbsp {{processItem.key}} <i
-		class="pull-right glyphicon"
-		ng-class="{'glyphicon-chevron-down': process.open, 'glyphicon-chevron-right': !process.open}"> </i>
-		</accordion-heading> 
+	  <accordion-heading>
+	    <a
+	      class="pull-left glyphicon"
+	      ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
+	      ng-style="{color : 'black'}"
+	      ng-click="toggleSelection($event,processItemIndex)">
+	    </a>&nbsp {{processItem.key}}
+	    <i
+	      class="pull-right glyphicon"
+	      ng-class="{'glyphicon-chevron-down': process.open, 'glyphicon-chevron-right': !process.open}">
+	    </i>
+	  </accordion-heading> 
 	<accordion>
 	<div
-		ng-repeat="(activityTypeIndex,activityType) in processItem.values"
-		ng-controller="activityTypeController as aTC">
-		<accordion-group is-open="status.open"> <accordion-heading>
-		<a
-			class="pull-left glyphicon"
-			ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
+	  ng-repeat="(activityTypeIndex,activityType) in processItem.values"
+	  ng-controller="activityTypeController as aTC">
+	  <accordion-group is-open="status.open">
+	    <accordion-heading>
+	      <a
+	        class="pull-left glyphicon"
+	        ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
 			ng-style="{color : 'black'}"
-			ng-click="toggleSelection($event)"> </a>&nbsp {{activityType.key}} <i
+			ng-click="toggleSelection($event)">
+          </a>&nbsp {{activityType.key}}
+          <i
 			class="pull-right glyphicon"
 			ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}">
-		</i> </accordion-heading>
-		<div
-			ng-repeat="(activityIndex, activity) in activityType.values"
+          </i>
+        </accordion-heading>
+          <div
+            ng-repeat="(activityIndex, activity) in activityType.values"
 			ng-controller="activityController">
 			<input
-				type="checkbox"
-				ng-model="isSelected"
-				ng-change="toggleSelection(processItemIndex,activityTypeIndex,activityIndex)">
-			{{activity.x}}
-		</div>
-		</accordion-group>
-	</div>
-	</accordion> </accordion-group>
+			  type="checkbox"
+			  ng-model="isSelected"
+			  ng-change="toggleSelection(processItemIndex,activityTypeIndex,activityIndex)">
+			  {{activity.x}}
+          </div>
+        </accordion-group>
+      </div>
+    </accordion>
+  </accordion-group>
 </div>
 </accordion>
