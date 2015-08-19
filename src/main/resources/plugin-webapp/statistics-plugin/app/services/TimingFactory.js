@@ -1,8 +1,16 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('TimingFactory',['DataFactory','Format','GraphFactory', 'kMeansFactory', function(DataFactory, Format, GraphFactory, kMeansFactory) {
 		var TimingFactory = {};
-
+		
+		//options for the graph
+		TimingFactory.options = [];
+		//names of processes, activity types, activities to build the menu
 		TimingFactory.menuData = [];
+		
+		/**
+		 * is called when the menu is initialized. Triggers a query which gets names of processes, activity types, activities to build the menu
+		 * and brings them into a format used by the menu directive
+		 */
 		TimingFactory.getMenuData = function(){
 			return DataFactory.getActivityNamesTypesProcDefinition()
 			.then(function () {
@@ -28,9 +36,11 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				noFrameFormat: "%Y-%m-%dT%H"
 		}
 
-		TimingFactory.data = [];
-		TimingFactory.options = [];
-
+		/**
+		 *@formatedData{Object} the formated data which will be accessed by the plots
+		 *@attribute{String} the attribute of formatedData which should be used for the filtering
+		 *@return{Object} data in plot format not containing elements with null values for @attribute anymore
+		 */
 		var filterFormatedData = function(formatedData, attribute) {
 			var filteredData = [];
 			angular.forEach(formatedData, function(keyObject) {
@@ -41,6 +51,17 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return filteredData;
 		}
 
+		/**
+		 * translates the user input into plot options
+		 * @formatedData{Object} the formated data which will be accessed by the plots
+		 * @options{Object} the options for the plot chosen by the user
+		 * @colorScale{function} a function that returns for each key the color belonging to it
+		 * gets initialized in @TimingFactory.getModelMenuData
+		 * @numberOfInstancesMap{Object} contains the number of started and ended instances for each act/process and also the number of chosen clusters
+		 * see for more info @getNumberOfInstances where the map is created. And @kMeansFactory.ruleOfThumb where the number of Clusters gets initialized
+		 * @return{Object} containing a data and an options attribute. Where data is the for the plot formated data and options the options for the graph
+		 * Not the chosen options from the user!
+		 */
 		TimingFactory.prepareData = function(formatedData, options, colorScale, numberOfInstancesMap) {
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
@@ -79,10 +100,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		/**
 		 * updates data without a call to the database
+		 * @options{Object} the options for the plot chosen by the user
+		 * @numberOfInstancesMap{Object} contains the number of started and ended instances for each act/process and also the number of chosen clusters
+		 * see for more info @getNumberOfInstances where the map is created. And @kMeansFactory.ruleOfThumb where the number of Clusters gets initialized
+		 * @return{Object} containing a data and an options attribute. Where data is the for the plot formated data and options the options for the graph
+		 * Not the chosen options from the user! See for more info @TimingFactory.prepareData
 		 */
 		TimingFactory.updateCharts = function(options, numberOfInstancesMap){
 			return TimingFactory.prepareData(TimingFactory.formatedData, options, TimingFactory.colorScale, numberOfInstancesMap);
 		};
+		
 		/**
 		 * @selectedFromMenu: processes, and activities chosen by the user to plot
 		 * @processData{boolean} in case we only request the data to get more information about the cluster range it 
@@ -124,11 +151,11 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			};
 			return DataFactory.getDataFromModelMenu(selectedFromMenu,options.timeWindow)
 			.then(function(promiseData){
-				TimingFactory.data  =[];
+				var data  =[];
 				angular.forEach(promiseData, function(singleCallbackReturn,promiseIndex){
-					TimingFactory.data = TimingFactory.data.concat(singleCallbackReturn.data);
+					data = data.concat(singleCallbackReturn.data);
 				});
-				TimingFactory.formatedData = Format.bringSortedDataInKeyFormat(TimingFactory.data, ["activityName","processDefinitionKey"], 
+				TimingFactory.formatedData = Format.bringSortedDataInKeyFormat(data, ["activityName","processDefinitionKey"], 
 						["processDefinitionId", "processDefinitionKey", "activityId", "activityName", "startTime", "endTime", "durationInMillis"]);
 				var numberOfInstancesMap = getNumberOfInstances(TimingFactory.formatedData);
 				//init numberOfInstancesMap with some reasonable default values
@@ -139,7 +166,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		};
 
-
+		/**
+		 * @formatedData{Object} the formated data which will be accessed by the plots
+		 * @return{Object} an object which has as attributes the names of the acts/processes (later it should be changed to IDs)
+		 * Each attribute contains the number of started and ended instances of this act/process
+		 * The map is used for the slider ranges of the kmeans slider. Since there can be at most as many clusters as data points
+		 */
 		var getNumberOfInstances = function(formatedData) {
 			var numberOfInstancesMap = {};
 			for (var i = 0; i < formatedData.length; i++) {
@@ -154,7 +186,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		/**
 		 * @return: an iterator over an array. When the end is reached it starts all over again
 		 * it is used to iterate over one of d3´s standard color arrays and make our own legend
-		 * in getModelData
+		 * in getModelData. Meaning if more then 20 acts/processes are plotted the colors will
+		 * be repeated
 		 */
 		function makeIterator(array){
 			var nextIndex = 0;
