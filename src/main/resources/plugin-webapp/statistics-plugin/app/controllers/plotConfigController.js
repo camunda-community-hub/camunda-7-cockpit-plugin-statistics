@@ -2,7 +2,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
 
-		$scope.noFrameFormats = [ '%m/%d/%Y', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+//		$scope.noFrameFormats = [ '%m/%d/%Y', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 		
 		
 		$scope.changeView = function() {
@@ -48,7 +48,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				numberOfBins : 10,					//belongs to distribution plot 
 				time: "startTime",					//belongs to start-end plot
 				timeFrame: "daily",					//belongs to start-end plot, specifies the time focus
-				noFrameFormat: $scope.noFrameFormats[0],
+//				noFrameFormat: $scope.noFrameFormats[0],
 				cluster : {							//belongs to start-end plot
 					algo: "kmeans"
 				},
@@ -197,8 +197,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//TODO: think if input parameters are really necessary
 		//each time something is added it also gets a color
 		//if it is deleted it gets deleted from the color dictionary and the iterator is set one step back
-		$scope.change = function(chosenItem,add,processIndexMenu,activityTypeIndexMenu,activityIndexMenu) {
-			//selected data has been changed so next time apply mehtod is called we have to request new data from 
+		$scope.change = function(chosenItem, add, processIndexMenu, activityTypeIndexMenu, activityIndexMenu) {
+			//selected data has been changed so next time apply method is called we have to request new data from 
 			//the data base
 			requestToDataBank = true;
 			//find out if the process has been inserted before
@@ -208,7 +208,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				//whole process selected or deleted
 				if (chosenItem.wholeProcess) {
 					$scope.selected[indexProcess].wholeProcess = add;
-					//case: delete whole process and no other activitytype selected
+					//case: delete whole process and no other activity type selected
 					if(!add && $scope.selected[indexProcess].activityTypes.length ==0) {
 						$scope.selected.splice(indexProcess,1);
 					}
