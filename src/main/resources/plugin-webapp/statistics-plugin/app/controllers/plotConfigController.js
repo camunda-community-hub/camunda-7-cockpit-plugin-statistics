@@ -2,6 +2,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
 
+		$scope.noFrameFormats = [ '%m/%d/%Y', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+		
+		
 		$scope.changeView = function() {
 			$scope.legendView = !$scope.legendView;
 		}
@@ -45,6 +48,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				numberOfBins : 10,					//belongs to distribution plot 
 				time: "startTime",					//belongs to start-end plot
 				timeFrame: "daily",					//belongs to start-end plot, specifies the time focus
+				noFrameFormat: $scope.noFrameFormats[0],
 				cluster : {							//belongs to start-end plot
 					algo: "kmeans"
 				},
