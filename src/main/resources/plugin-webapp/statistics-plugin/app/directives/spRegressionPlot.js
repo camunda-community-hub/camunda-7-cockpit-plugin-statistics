@@ -297,9 +297,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 		function link(scope,element,attrs){
 			scope.$watch('data', function() {
-				if (typeof scope.data=="undefined")
+				if (typeof scope.data=="undefined" || scope.data.length == 0)
 					return;
-
 				//delete all values where y is null, theoretically we could also do that 
 				//for x values but so far there is no use case where this could happen
 				for(var i=0; i < scope.data.length; i++) {
