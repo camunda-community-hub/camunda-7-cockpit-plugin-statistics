@@ -177,6 +177,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * and the "thresholds" property  containing the thresholds of the bins in the unit of the data.
 		 */
 		Format.bringDataIntoBarPlotFormat = function(formatedData, x ,numberOfBins){
+			//if the formatedData array is empty we return it, later the apply method in the controller 
+			//will check if an empty data array was returned and will inform the user
+			if(formatedData.length == 0 ) return {"data":formatedData, "thresholds": null};
 			//get global min and max to calculate range and bins
 			var minMax = getGlobalMinMax(formatedData, x);
 			var range = minMax["max"] - minMax["min"];

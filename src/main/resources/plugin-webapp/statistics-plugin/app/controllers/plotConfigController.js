@@ -89,6 +89,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.alerts.push({type: 'danger', msg: 'Please specify a start date!'});
 			else if (reason == "missingEndDate")
 				$scope.alerts.push({type: 'danger', msg: 'Please specify an end date!'});
+			else if(reason == "noSuchData")
+				$scope.alerts.push({type: 'danger', msg: 'There is no such data!'});
 		}
 		$scope.closeAlert = function(index) {
 			$scope.alerts.splice(index, 1);
@@ -146,7 +148,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				addAlert("missingEndDate");
 				return false;
 			}
-
+			
 			return true;
 		}
 		/**
@@ -158,6 +160,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			console.debug(requestToDataBank);
 			if (!requestToDataBank) {
 				var update = TimingFactory.updateCharts($scope.chosenOptions, $scope.numberOfInstancesMap);
+				if(update.data.length == 0) {
+					addAlert("noSuchData");
+					return;
+				}
 				$scope.data = update.data;
 				$scope.options = update.options;
 				$scope.parseX = TimingFactory.parseX;
@@ -169,7 +175,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			} else {
 				TimingFactory.getModelMenuData($scope.selected, $scope.chosenOptions, true)
 				.then(function(){
-					console.log("in .then funciton");
+					if(TimingFactory.dataForPlot.length == 0) {
+						addAlert("noSuchData");
+						return;
+					}
 					$scope.data = TimingFactory.dataForPlot;
 					$scope.options = TimingFactory.options;
 					$scope.parseX = TimingFactory.parseX;
