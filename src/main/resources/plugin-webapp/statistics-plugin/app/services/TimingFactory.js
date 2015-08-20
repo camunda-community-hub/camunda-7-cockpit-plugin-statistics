@@ -146,6 +146,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			})
 			//the colorfunction used in the plots
 			TimingFactory.colorScale = function(d, i) {
+				console.log("colordictionary:",colorDictionary);
 				keyIndex = colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
 				return colorDictionary[keyIndex].color;
 			};

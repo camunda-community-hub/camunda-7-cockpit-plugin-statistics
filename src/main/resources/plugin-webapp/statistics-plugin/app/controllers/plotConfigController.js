@@ -16,7 +16,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//initialize the setting for the configuration menu
 
 		//regulates which property should be plotted and at the same time
-		//which property-window is open, since those two tings go hand in hand
+		//which property-window is open, since those two things go hand in hand
 		$scope.propertiesBoolean ={
 				startEndTime : false,
 				regression: false,
@@ -25,6 +25,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		/**
 		 * determines from $scope.propertiesBoolean which property is to be plotted
+		 * @return if one of the properties of the booleans object is true, it returns this attribute
+		 * otherwise null
 		 */
 		var getPropertyToPlot = function(booleans) {
 			for (var property in booleans) {
@@ -32,7 +34,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					if(booleans[property]) return property;
 				}
 			}
-			return "";
+			return null;
 		}
 
 		//regulates which info panels should be shown. Default is none
@@ -109,7 +111,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if (!checkValidity()) return false;
 			//if the data is already in memory do not call database, just display sliders
 			if(!requestToDataBank) return true;
-
 			TimingFactory.getModelMenuData($scope.selected,$scope.chosenOptions, false)
 			.then(function(){
 				$scope.numberOfInstancesMap = TimingFactory.numberOfInstancesMap
@@ -123,7 +124,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 
 
-
+		var isAPlotSelected = function(booleans) {
+			for (var property in booleans) {
+				if (booleans.hasOwnProperty(property)) {	//check if its not a prototype property
+					if(booleans[property]) return true;
+				}
+			}
+			return false;
+		}
 
 		/**
 		 * checks weather a request to database can be made or not
@@ -135,8 +143,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				addAlert("missingData"); 
 				return false;
 			}
-			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
-			if ($scope.chosenOptions.propertyToPlot=="") {
+			if (!isAPlotSelected($scope.propertiesBoolean)) {
 				addAlert("missingProperty");
 				return false;
 			}
@@ -158,6 +165,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if (!checkValidity()) return;
 			console.debug("new request to database necessary:");
 			console.debug(requestToDataBank);
+			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
 			if (!requestToDataBank) {
 				var update = TimingFactory.updateCharts($scope.chosenOptions, $scope.numberOfInstancesMap);
 				if(update.data.length == 0) {
@@ -165,13 +173,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					return;
 				}
 				$scope.data = update.data;
+				console.log("data:", $scope.data);
 				$scope.options = update.options;
 				$scope.parseX = TimingFactory.parseX;
 				$scope.parseY = TimingFactory.parseY;
 				//sometimes only functions change in options, those are not watched, so we need to trigger
 				//the update mechanism if we plot with NVD3
-				if ($scope.chosenOptions.propertyToPlot=='startEndTime'||$scope.chosenOptions.propertyToPlot=='distribution')
-					$scope.api.updateWithOptions($scope.options);
+//				if ($scope.chosenOptions.propertyToPlot=='startEndTime'||$scope.chosenOptions.propertyToPlot=='distribution')
+//					$scope.api.updateWithOptions($scope.options);
 			} else {
 				TimingFactory.getModelMenuData($scope.selected, $scope.chosenOptions, true)
 				.then(function(){
