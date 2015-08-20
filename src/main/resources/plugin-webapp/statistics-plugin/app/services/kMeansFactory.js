@@ -8,8 +8,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				instances = "startedInst";
 			else if (time == "endTime")
 				instances = "endedInst";
-			else
-				console.error("error in cluster");
+//			else
+//				console.error("error in cluster");
 			return instances;
 		}
 		

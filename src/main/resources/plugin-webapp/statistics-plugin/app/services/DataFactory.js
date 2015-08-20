@@ -648,7 +648,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				timeRequest = timeRequest + "&" + timeWindow.end + "=" + formatDate(timeWindow.endDate);
 			angular.forEach(selectedFromModelMenu, function(processObject){
 				var procDefId = processObject.procDefId;
-				console.log(procDefId);
 				//this could also be done outside the loop, might be faster, but order of pushed objects in promises is destroyed
 				//if performance becomes an issue we have to change this
 				if(processObject.wholeProcess){
@@ -659,11 +658,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					angular.forEach(activityTypeObject.activities, function(activityObject, indexAct){
 						var activityType = activityTypeObject.activityType;
 						var actName = activityObject.activity;
-						console.log(activityType);
-						console.log(actName);
 						keyList.push(actName);
 //						we need to sort the results by start time for the splines in regressionplot directive
-						console.log("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName + timeRequest+"&sortBy=startTime&sortOrder=asc");
 						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
 					})
 				})

@@ -63,7 +63,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		Format.breakDateDownTo24h = function(date){
 			var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-			console.log(date);
 			var changedDate = date.substr(10);
 			changedDate = "1991-05-05" + changedDate;
 
@@ -72,12 +71,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		Format.breakDateDownToWeek = function(date){
 			var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
-//			console.log(date);
 			var changedDate = date.substr(10);
 			var add = parseDate(date).getDay();
 			if (add == 0) add = 7;
 			changedDate = "2014-11-0" +(2+add) + changedDate;
-			console.log(changedDate);
 
 			return parseDate(changedDate);
 		};
