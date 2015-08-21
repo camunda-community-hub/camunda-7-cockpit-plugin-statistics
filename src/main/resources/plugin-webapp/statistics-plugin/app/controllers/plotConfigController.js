@@ -179,6 +179,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.parseY = TimingFactory.parseY;
 				//sometimes only functions change in options, those are not watched, so we need to trigger
 				//the update mechanism if we plot with NVD3
+				//using this produces an error since it seems to only use the option in the input and not the newly set data
 //				if ($scope.chosenOptions.propertyToPlot=='startEndTime'||$scope.chosenOptions.propertyToPlot=='distribution')
 //					$scope.api.updateWithOptions($scope.options);
 			} else {
