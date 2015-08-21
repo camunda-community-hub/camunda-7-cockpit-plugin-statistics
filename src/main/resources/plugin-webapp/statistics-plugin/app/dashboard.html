@@ -18,7 +18,7 @@
   <tab heading="Timing" select="handleTabClick('startEnd')"
        ng-controller="timingCtrl">
     <div class="row" ng-controller = "plotConfigController">
-      <div class="col-lg-7 col-md-7 col-sm-7">
+      <div class="col-xs-12 col-lg-7">
         <div id="timingChartDiv" ng-if = "chosenOptions.propertyToPlot=='startEndTime'||chosenOptions.propertyToPlot=='distribution'">
           <nvd3 options="options" data="data" api = "$parent.api"></nvd3>
         </div>
@@ -26,7 +26,7 @@
           <sp-regression-plot data="data" options="options" parse-x = "parseX(x)" parse-y = "parseY(y)" legend = "false"></sp-regression-plot>
         </div>
       </div>
-      <div class="col-lg-5 col-md-5 col-sm-5 well">
+      <div class="col-xs-12 col-lg-5 well">
         <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/partials/plotConfigDialog.html'"></div>
       </div>
     </div>

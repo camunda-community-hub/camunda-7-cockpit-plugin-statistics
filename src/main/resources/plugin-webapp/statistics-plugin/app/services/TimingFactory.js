@@ -85,10 +85,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.log(filteredData);
 				if(options.cluster.algo == "kmeans") {
 					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData,timeFormatAndParser[options.timeFrame], options.time, numberOfInstancesMap);
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : timeFormatAndParser[options.timeFrame + "Format"], "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", 1000, options.time, colorScale);
+					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : timeFormatAndParser[options.timeFrame + "Format"], "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", options.time, colorScale);
 				} else {
 					TimingFactory.dataForPlot = filteredData;
-					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(timeFormatAndParser[options.timeFrame], options.cluster.algo == "kmeans", 1000, options.time, colorScale);
+					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph(timeFormatAndParser[options.timeFrame], options.cluster.algo == "kmeans", options.time, colorScale);
 				}
 			} else {	//case: distribution
 				var dataAndBins = Format.bringDataIntoBarPlotFormat(formatedData, "durationInMillis", options.numberOfBins);

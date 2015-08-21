@@ -3,12 +3,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		var GraphFactory = [];
 
 		//if clustered we add a size function displaying the cluster sizes
-		GraphFactory.getOptionsForStartEndTimeGraph = function(formatAndParser, clustered, width, x, colorScale){
+		GraphFactory.getOptionsForStartEndTimeGraph = function(formatAndParser, clustered, x, colorScale){
 			var options = {
 					chart: {
 						type: 'scatterChart',
 						height: 400,
-						width: width,
+//						width: width,
 						color: colorScale,
 						x: function(d) { if(d[x] == null) console.debug(d); return formatAndParser.parser(d[x]); },
 						y: function(d) { return d.series +1; },
@@ -82,7 +82,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					chart: {
 						type: 'multiBarChart',
 						height: 400,
-						width: 1000,
 						color: colorScale,
 						showLabels: true,
 						transitionDuration: 500,
