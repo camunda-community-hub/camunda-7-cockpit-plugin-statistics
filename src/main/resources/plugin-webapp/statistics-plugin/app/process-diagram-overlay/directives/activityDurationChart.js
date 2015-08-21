@@ -9,7 +9,9 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var milliseconds = parseInt((input%1000));
 			var seconds = parseInt((input/1000)%60);
 			var minutes = parseInt((input/(1000*60))%60);
-			var hours = parseInt((input/(1000*60*60)));
+			var hours = parseInt((input/(1000*60*60))%24);
+			var days = parseInt((input/(1000*60*60*24)));
+
 
 			if(hours < 0) hours = "00";
 			else hours = (hours < 10) ? "0" + hours : hours;
@@ -19,7 +21,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			else seconds = (seconds < 10) ? "0" + seconds : seconds;
 			if(milliseconds < 0) milliseconds = "000";
 
-			return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+			return days + ":" + hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 		}
 		
 		function getY(data, height, y) {
@@ -80,18 +82,75 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 		}
 		
-		function updateNavigator(viewport, start, end, height) {
+		function updateNavigator(start, end, data, navYScale, navHeight, navWidth) {
+			
 			var minDate = new Date(start);
 			var maxDate = new Date(end);
 			
-			d3.selectAll("#navigator svg .viewport").remove();
-			var svg = d3.select("#navigator svg");
-			viewport.extent([minDate, maxDate]);
-			svg.append('g')
-			.attr('class', 'viewport')
-			.call(viewport)
-			.selectAll('rect')
-			.attr('height', height);
+			var navXScale = d3.time.scale()
+				.domain([minDate, maxDate])
+				.nice(d3.time.hour)
+				.range([0, navWidth]);
+
+			
+			var navXAxis = d3.svg.axis()
+				.scale(navXScale)
+				.orient('bottom')
+//				.ticks(9);
+				//.tickValues(d3.time.month.range(minDate, maxDate))
+				//.tickFormat(d3.time.format("%b '%y"));
+			
+			var viewport = d3.svg.brush()
+				.x(navXScale)
+				.on("brushend", function() {
+					// update data for main chart -> send notification to controller
+					$rootScope.$broadcast('datetimeRangeChanged', viewport.extent()[0], viewport.extent()[1]);
+				});
+			
+			nv.addGraph(function() {
+				
+				// default: complete datetime range
+				viewport.extent([minDate, maxDate]);
+				
+				var svg = d3.select("#navigator svg")
+					.attr('transform', 'translate(20,5)');
+				
+				svg.selectAll('*').remove();
+				
+				svg.append('g')
+					.attr('class', 'x axis')
+					.attr('transform', 'translate(0,' + navHeight + ')')
+					.call(navXAxis);
+				
+				svg.selectAll("scatter-dots")
+			      .data(data)
+			      .enter().append("svg:circle")
+			          .attr("cx", function (d,i) { return navXScale(d.datetime); } )
+			          .attr("cy", function (d) { return navYScale(d.y); } )
+			          .attr("r", 4);
+				
+				svg.append('g')
+					.attr('class', 'viewport')
+					.call(viewport)
+					.selectAll('rect')
+						.attr('height', navHeight);
+				
+				// draw left and right border of brush (styling with border-left/right is not possible for rect)
+				d3.select('.resize.e rect').remove();
+				d3.select('.resize.e')
+					.append('rect')
+					.attr('x', 0)
+					.attr('y', 0)
+					.attr('width', 3)
+					.attr('height', 80);				
+				d3.select('.resize.w rect').remove();
+				d3.select('.resize.w')
+					.append('rect')
+					.attr('x', 0)
+					.attr('y', 0)
+					.attr('width', 3)
+					.attr('height', 80);
+			});
 		}
 		
 		
@@ -104,86 +163,45 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		    }); 
 		};
 		
+		function updateData(origData, start, end) {
+			var endTime;
+			var data = [];
+			for(var i=0; i<origData.length; i++) {
+				endTime = Date.parse(origData[i].end);
+				if(endTime >= start && endTime <= end)
+					data.push(origData[i]);
+			}
+			return data;
+		}
+		
 		function link(scope,element,attrs){
 			
 			// draw navigation chart
 			
 			var navWidth = 550;
-			var navHeight = 80;
+			var navHeight = 75;
 			
 			var minmaxY = getMinMaxY(scope.data);
 			var yMin = minmaxY[0];
 			var yMax = minmaxY[1];
+			var navYScale = d3.scale.linear()
+			.domain([yMin, yMax])
+			.range([navHeight, 0]);
 			
 			var minmaxDate = getMinMaxDate(scope.data);
-			var minDate = new Date(minmaxDate[0]);
-			var maxDate = new Date(minmaxDate[1]);
 			
-			var navXScale = d3.time.scale()
-				.domain([minDate, maxDate])
-				.range([0, navWidth]);
-			var navYScale = d3.scale.linear()
-				.domain([yMin, yMax])
-				.range([navHeight, 0]);
-			
-			var navXAxis = d3.svg.axis()
-				.scale(navXScale)
-				.orient('bottom')
-				.ticks(8)
-				//.tickValues(d3.time.month.range(minDate, maxDate))
-				.tickFormat(d3.time.format("%b '%y"));
-			
-			var line = d3.svg.line()
-				.x(function(d) {
-					return navXScale(d.datetime) })
-				.y(function(d) {
-					return navYScale(d.y) });
-			
-			var viewport = d3.svg.brush()
-			.x(navXScale)
-			.on("brushend", function() {
-				// update data for main chart -> send notification to controller
-				$rootScope.$broadcast('datetimeRangeChanged', viewport.extent()[0], viewport.extent()[1]);
-			});
+			updateNavigator(minmaxDate[0], minmaxDate[1], scope.data, navYScale, navHeight, navWidth);
 			
 			scope.$on('datetimeChanged', function(event, start, end) {
-				updateNavigator(viewport, start, end, navHeight);
-			});
-			
-			nv.addGraph(function() {
-				
-				// default: complete datetime range
-				viewport.extent([minDate, maxDate]);
-				
-				var svg = d3.select("#navigator svg");
-				
-				svg.append('g')
-					.attr('class', 'x axis')
-					.attr('transform', 'translate(0,' + navHeight + ')')
-					.call(navXAxis);
-//					.selectAll("text")  
-//			            .style("text-anchor", "end")
-//			            .attr("dx", "-.9em")
-//			            .attr("dy", ".15em")
-//			            .attr("transform", "rotate(-70)" );
-				
-				svg.append('path')
-					.attr('class', 'line')
-					.attr('d', line(scope.data));
-				
-				svg.append('g')
-					.attr('class', 'viewport')
-					.call(viewport)
-					.selectAll('rect')
-						.attr('height', navHeight);
-				
+				var data = updateData(scope.data, start, end);
+				updateNavigator(start, end, data, navYScale, navHeight, navWidth);
 			});
 			
 			// draw main chart
 			scope.$watch('data', function() {
 				nv.addGraph(function() {
 					// clear svg
-					d3.selectAll("#chart svg > *").remove();
+					d3.selectAll("#plot svg > *").remove();
 					
 					var margin = { top: 20, right: 80, bottom: 10, left: 110 };
 	
@@ -197,18 +215,13 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 						return formatTime(d);
 					})
 					.width(800)
+					.height(300)
 					.noData("No data available for the chosen time span");
 
-					var svg = d3.select('#chart svg')
+					var svg = d3.select('#plot svg')
 					.data([scope.data])
-					.attr("height", 450)
-//					.on("mouseover", function(d, i) {
-//						alert(d.x);
-//					})
+					.attr('height', 300)
 					.call(chart);
-					
-					var hover = d3.select('.nv-hoverArea')
-					.on("mou")
 	
 					if(scope.data.length > 0) {
 						/*START draggable duration limits*/
@@ -287,7 +300,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 							text_high.style("fill", color);
 						});
 		
-						var svg = d3.select("#chart svg");
+						var svg = d3.select("#plot svg");
 		
 						// draw duration limit area (between both limit lines)
 						updateArea(svg, yScale, margin);
@@ -352,7 +365,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			link: link,
 			restrict: 'E',
 			scope: { data: '=' },
-			template: '<div id="chart"><svg/></div>' 	// NOTE: div for navigator is in activityHistoryModal
+			template: '<div id="plot"><svg/></div>' 	// NOTE: div for navigator is in activityHistoryModal
 		}
 	}])
 });

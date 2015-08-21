@@ -16,7 +16,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.durations = [];
 		DataFactory.historicActivityCountsDurationByProcDefKey = [];
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
-		DataFactory.allHistoricActivitiesInformationByProcDefKey = [];
+		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
 		DataFactory.processDefWithFinishedInstances = [];
 		DataFactory.aggregatedUsertasksByProcDef = [];
 		DataFactory.processDefinitions = [];
@@ -104,13 +104,14 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		}
 
-		DataFactory.getAllHistoricActivitiesInformationByProcDefKey = function(procDefKey, activityId, activityType) {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?procDefKey="+procDefKey+"&activityId="+activityId+"&activityType="+activityType))
+		// call to REST API (see: http://docs.camunda.org/latest/api-references/rest/#history-get-activity-instances-historic)
+		DataFactory.getAllHistoricActivitiesInformationByProcDefId = function(procDefId, activityId, activityType) {
+			return $http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityId="+activityId+"&activityType="+activityType))
 			.success(function(data) {
-				if(procDefKey!=undefined) {
-					DataFactory.allHistoricActivitiesInformationByProcDefKey[procDefKey] = data;
+				if(procDefId!=undefined) {
+					DataFactory.allHistoricActivitiesInformationByProcDefId[procDefId] = data;
 				} else {
-					DataFactory.allHistoricActivitiesInformationByProcDefKey["data"] = data;
+					DataFactory.allHistoricActivitiesInformationByProcDefId["data"] = data;
 				}
 			})
 			.error(function(){

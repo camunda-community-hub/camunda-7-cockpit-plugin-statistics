@@ -4,21 +4,21 @@
 </div>
 <div class="modal-body" ng-init="init()">
 	<table style="position: relative; z-index: 1000000 !important;">
-		<colgroup><col width="200"><col width="800"></colgroup>
+		<colgroup><col width="250"><col width="800">
 		<tr>
 			<td>
-				<label class="control-label">Start: </label>
+				<label class="control-label">Minimum: </label>
     		 	  <p class="input-group" style="width: 250px; position: relative; z-index: 1000000 !important;">
-    				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="start.datetime" ng-change="showPlot()" is-open="start.isOpen" datepicker-options="start.dateOptions"/>
+    				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="viewportStart" ng-change="updatePlot()" is-open="start.isOpen" datepicker-options="start.dateOptions"/>
     				<span class="input-group-btn">
        					<button type="button" class="btn btn-default" ng-click="openStart($event)">
 							<i class="glyphicon glyphicon-calendar"></i>
 						</button>
     				</span>
 				</p>
-				<label class="control-label">End: </label>
+				<label class="control-label">Maximum: </label>
 				<p class="input-group" style="width: 250px; position: relative; z-index: 100000 !important;">
- 	   				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="end.datetime" ng-change="showPlot()" is-open="end.isOpen" datepicker-options="end.dateOptions"/>
+ 	   				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="viewportEnd" ng-change="updatePlot()" is-open="end.isOpen" datepicker-options="end.dateOptions"/>
  	   				<span class="input-group-btn">
        					<button type="button" class="btn btn-default" ng-click="openEnd($event)">
 						<i class="glyphicon glyphicon-calendar"></i>
@@ -27,7 +27,7 @@
 				</p>
 			</td>
 			<td>
-				<div id="navigator"><svg/></div>
+				<div id="navigator" style="position: relative; z-index: -100000 !important;"><svg/></div>
 			</td>
 		</tr>
 		<tr>
@@ -61,7 +61,7 @@
 			</td>
 			<td class="center">
 				<table>
-					<colgroup><col width="250"><col width="150"></colgroup>
+					<colgroup><col width="220"><col width="200"></colgroup>
 					<tr>
 						<th colspan="2">Information about selected activity instance:</th>
 					</tr>
@@ -74,7 +74,7 @@
 						<td>{{ currentValueData.end | transformDatetime }}</td>
 					</tr>
 					<tr>
-						<td>Duration (HH:MM:SS.mmm): </td>
+						<td>Duration (DD:HH:MM:SS.mmm): </td>
 						<td>{{ currentValueData.y  | formatTime }}</td>
 					</tr>
 					<tr>
@@ -86,20 +86,8 @@
 						<td>{{ currentValueData.processKey }}</td>
 					</tr>
 					<tr>
-						<td>Process Definition ID:</td>
-						<td>{{ currentValueData.processDefId }}</td>
-					</tr>
-					<tr>
 						<td>Process Instance ID:</td>
 						<td>{{ currentValueData.processId }}</td>
-					</tr>
-					<tr>
-						<td>Activity Definiction ID:</td>
-						<td>{{ currentValueData.activityDefId }}</td>
-					</tr>
-					<tr>
-						<td>Activity Instance ID:</td>
-						<td>{{ currentValueData.activityId }}</td>
 					</tr>
 				</table>
 			</td>
