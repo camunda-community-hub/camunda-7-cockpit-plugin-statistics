@@ -71,12 +71,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		function countInstancesRegardingDurationLimit(task, limit) {
 			var type = getTaskType(task.$type);
-			DataFactory.getAllHistoricActivitiesInformationByProcDefKey(DataFactory.processDefinitionKey, task.id, type).
+			DataFactory.getAllHistoricActivitiesInformationByProcDefId(DataFactory.processDefinitionId, task.id, type).
 			then(function() {
 				var exceeded = 0;
 				var met = 0;
 				var id = task.id;
-				var data = DataFactory.allHistoricActivitiesInformationByProcDefKey[DataFactory.processDefinitionKey];
+				var data = DataFactory.allHistoricActivitiesInformationByProcDefId[DataFactory.processDefinitionId];
 				angular.forEach(data, function(activity, index, list) {
 					if(activity.durationInMillis==null || activity.endTime==null || activity.durationInMillis <= 0) return;
 					else {

@@ -17,7 +17,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				var milliseconds = parseInt((input%1000));
 				var seconds = parseInt((input/1000)%60);
 				var minutes = parseInt((input/(1000*60))%60);
-				var hours = parseInt((input/(1000*60*60)));
+				var hours = parseInt((input/(1000*60*60))%24);
+				var days = parseInt((input/(1000*60*60*24)));
 	
 				if(hours < 0) hours = "00";
 				else hours = (hours < 10) ? "0" + hours : hours;
@@ -27,7 +28,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				else seconds = (seconds < 10) ? "0" + seconds : seconds;
 				if(milliseconds < 0) milliseconds = "000";
 	
-				return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+				return days + ":" + hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 			}
 			return "";
 		}
@@ -66,8 +67,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if(times.indexOf(data[i].endTime)==-1) times.push(data[i].endTime);
 		}
 		times.sort();
-		$scope.timeOptions = times;
-
+		$scope.timeOptions = times; 
+		
 		$scope.start = {
 				datetime: stringToDate($scope.timeOptions[0]),
 				dateOptions: {
@@ -86,7 +87,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				isOpen: false
 		};
 		
-		
+		$scope.viewportStart = $scope.start.datetime;
+		$scope.viewportEnd = $scope.end.datetime;
 
 		$scope.openStart = function($event) {
 			$event.preventDefault();
@@ -111,6 +113,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		$scope.closeModal = function() {
 			$modalInstance.close();
+		}
+		
+		$scope.updatePlot = function() {
+			$rootScope.$broadcast('datetimeChanged', datetimeToMs($scope.viewportStart), datetimeToMs($scope.viewportEnd));
+			$scope.showPlot();
 		}
 
 		$scope.showPlot = function() {
@@ -155,8 +162,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			}
 			SettingsFactory.lowerDurationLimitInMs = min;
 			SettingsFactory.upperDurationLimitInMs = max;
-			
-			$rootScope.$broadcast('datetimeChanged', datetimeToMs($scope.start.datetime), datetimeToMs($scope.end.datetime));
 			
 			$scope.historicActivityPlotData = filteredData;
 

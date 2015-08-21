@@ -11,7 +11,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	module.controller('processDiagramCtrl', ['$scope', 'DataFactory', 'SettingsFactory', '$modal', '$filter', function($scope, DataFactory, SettingsFactory, $modal, $filter){
 
 		DataFactory.bpmnElements = $scope.$parent.processDiagram.bpmnElements;
-		DataFactory.processDefinitionKey = $scope.$parent.$parent.$parent.$parent.processDefinition.key;
+		DataFactory.processDefinitionId = $scope.$parent.$parent.$parent.$parent.processDefinition.id;
 
 		$scope.showOnlyBad = function() {
 			return SettingsFactory.showOnlyBadInformation;
@@ -60,10 +60,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.showActivityHistoryInformation = function() {
 			DataFactory.activityDurations = {};
-			DataFactory.getAllHistoricActivitiesInformationByProcDefKey(DataFactory.processDefinitionKey, $scope.bpmnElement.id, getShortType($scope.bpmnElement.$type)).
+			DataFactory.getAllHistoricActivitiesInformationByProcDefId(DataFactory.processDefinitionId, $scope.bpmnElement.id, getShortType($scope.bpmnElement.$type)).
 			then(function() {
 				var id = $scope.bpmnElement.id;
-				var data = DataFactory.allHistoricActivitiesInformationByProcDefKey[DataFactory.processDefinitionKey];
+				var data = DataFactory.allHistoricActivitiesInformationByProcDefId[DataFactory.processDefinitionId];
 				angular.forEach(data, function(activity, index, list) {
 					if(activity.durationInMillis==null || activity.endTime==null || activity.durationInMillis <= 0) return;
 					else {
