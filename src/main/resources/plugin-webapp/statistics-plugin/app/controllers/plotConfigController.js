@@ -1,8 +1,18 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('plotConfigController', ['$scope', 'TimingFactory', function($scope, TimingFactory) {
+	module.controller('plotConfigController', ['$scope', 'TimingFactory', 'UserInteractionFactory', function($scope, TimingFactory, UserInteractionFactory) {
 
 //		$scope.noFrameFormats = [ '%m/%d/%Y', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
+		$scope.widthDependingClass = "col-sm-6";
+		
+		
+		$scope.$on('widthChanged', function() {
+			console.log(UserInteractionFactory.currentWidth);
+			if(1200 < UserInteractionFactory.currentWidth && UserInteractionFactory.currentWidth < 1620) 
+				$scope.widthDependingClass = "col-sm-12";
+			else $scope.widthDependingClass = "col-sm-6";
+		});
+		
 		
 		
 		$scope.changeView = function() {

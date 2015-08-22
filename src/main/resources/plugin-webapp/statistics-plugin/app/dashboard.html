@@ -15,8 +15,7 @@
    </tab-heading>
    <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/casesTab.html'"></div>
   </tab> -->
-  <tab heading="Timing" select="handleTabClick('startEnd')"
-       ng-controller="timingCtrl">
+  <tab heading="Timing" select="handleTabClick('startEnd')">
     <div class="row" ng-controller = "plotConfigController">
       <div class="col-xs-12 col-lg-7">
         <div id="timingChartDiv" ng-if = "chosenOptions.propertyToPlot=='startEndTime'||chosenOptions.propertyToPlot=='distribution'">

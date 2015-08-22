@@ -26,10 +26,10 @@ div.custom .panel-default>.panel-heading {
     <tabset justified="true">
       <tab heading="data">
         <div class="row">
-          <div class="col-lg-6 col-md-12 col-sm-12">
+          <div ng-class="widthDependingClass">
             <sp-menu></sp-menu>
           </div>
-          <div class="col-lg-6 col-md-12 col-sm-12">
+          <div ng-class="widthDependingClass">
             <sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "true" show-slider = "false"></sp-show-selected-data>
           </div>
         </div>
@@ -38,7 +38,7 @@ div.custom .panel-default>.panel-heading {
      <tab heading="time-window">
        <div class="row">
        
-         <div class="col-lg-6 col-md-6 col-sm-6">
+         <div ng-class="widthDependingClass">
            <accordion>
              <accordion-group heading = "specify start date" ng-init="isOpen = true" is-open="isOpen">
                <div class = "col-md-12">
@@ -59,7 +59,7 @@ div.custom .panel-default>.panel-heading {
            </accordion>
          </div>
          
-         <div class="col-lg-6 col-md-6 col-sm-6">
+         <div ng-class="widthDependingClass">
            <accordion>
              <accordion-group heading = "specify end date" ng-init="isOpen = true" is-open="isOpen">
                <div class = "col-md-12">

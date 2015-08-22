@@ -4,7 +4,9 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 	function getWidth(width) {
 		if(typeof width == "undefined"){
+//			return element[0].offsetParent.clientWidth - margin.left - margin.right;
 			return 960 - margin.left - margin.right;
+			
 		}
 		else 
 			return width -margin.left - margin.right;
@@ -61,7 +63,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		return [x,y];
 	};
 
-	function initGraph(options, data, svg, colorScale, parseX, parseY, legend){
+	function initGraph(options, data, svg, parseX, parseY, legend){
 		var Scales = setUpScales(options, data, parseX, parseY);
 		var x = Scales[0];
 		var y = Scales[1];
@@ -147,11 +149,11 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			.attr("r", 5)
 			.style("stroke-width", "2px")
 //			.style("stroke",function(d) { 
-//			var color = colorScale(d.key);
+//			var color = options.chart.colorScale(d.key);
 //			return color;
 //			})
-			.style("stroke",colorScale)
-			.style("fill", colorScale)
+			.style("stroke",options.chart.colorScale)
+			.style("fill", options.chart.colorScale)
 
 			legend.selectAll('text')
 			.data(data)
@@ -166,7 +168,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		}
 	};
 
-	function dotManager(options,data,svg,colorScale, parseX, parseY){
+	function dotManager(options, data, svg, parseX, parseY){
 		if(typeof options == "undefined")
 			return;
 		if(!options.scatter)
@@ -186,14 +188,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("cx", function(d) { return x(parseX({x:d[options.x]})); })
 				.attr("cy", function(d) { 
 					return y(parseY({y:d[options.y]})); })
-					.style("fill", colorScale(processSet));
+					.style("fill", options.chart.colorScale(processSet));
 			});
 		}
 
 	};
 
 
-	function splineManager(options,data,svg,colorScale, parseX, parseY){
+	function splineManager(options, data, svg, parseX, parseY){
 		if(typeof options == "undefined")
 			return;
 		if(!options.spline)
@@ -213,12 +215,12 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("id", "spline")
 				.attr("class", "line")
 				.attr("d", line)
-				.attr("stroke",colorScale(processSet));
+				.attr("stroke",options.chart.colorScale(processSet));
 			});
 		}
 	};
 
-	function regressionManager(options, data ,svg, colorScale, parseX, parseY){
+	function regressionManager(options, data ,svg, parseX, parseY){
 		if(typeof options == "undefined")
 			return;
 		if(!options.regression)
@@ -263,7 +265,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("id","regText")
 				.text("slope: "+ (slope*100).toFixed(2) + "%")		//this may produce some weird behavior when it comes to certain numbers
 				.attr("opacity","0.0")
-				.attr("fill",colorScale(processSet))
+				.attr("fill",options.chart.colorScale(processSet))
 				.style("text-anchor", "end");
 
 				path = g.append("path")
@@ -272,14 +274,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("class", "reg")
 				.attr("d", line)
 //				.attr("stroke",regColor(slope))//the color of the line depends on abs(slope) the increase in slope leads to increase in "redness"
-				.attr("stroke",colorScale(processSet))
+				.attr("stroke",options.chart.colorScale(processSet))
 				.on('mouseover', function(d){				//show slope information when mouse hovers over regression line
 					d3.select(this).style({opacity:'0.6'});
 					d3.select("#regText")
 					.attr("x",d3.mouse(this)[0])
 					.attr("y",d3.mouse(this)[1])
 //					.attr("stroke",regColor(slope))
-					.attr("stroke",colorScale(processSet))
+					.attr("stroke",options.chart.colorScale(processSet))
 					.attr("opacity","1.0");
 
 				})
@@ -291,50 +293,63 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			});
 		}
 	};
+	
+	function drawGraph(element, options, data, parseX, parseY, legend) {
+		if (typeof data=="undefined" || data.length == 0)
+			return;
+		//delete all values where y is null, theoretically we could also do that 
+		//for x values but so far there is no use case where this could happen
+		for(var i=0; i < data.length; i++) {
+			data[i].values = data[i].values.map(function(d) { return d[options.y] == null? null : d}).filter(function(d) { return d != null });
+		}
 
-	//in html regression-plot!!!
+		element[0].innerHTML = '';
+		console.log(element[0].offsetParent.clientWidth);
+		var width = getWidth(element[0].offsetParent.clientWidth);
+		console.log(width);
+		var height = getHeight(options.heigth);
+
+		var svg = d3.select(element[0]).append('svg')
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		initGraph(options, data, svg, parseX, parseY, legend);
+		dotManager(options, data, svg, parseX, parseY);
+		splineManager(options, data, svg, parseX, parseY);
+		regressionManager(options, data, svg, parseX, parseY);
+		 
+		return svg;
+	}
+
+	//in html sp-regression-plot!!!
 	module.directive('spRegressionPlot', function(){
 
 		function link(scope,element,attrs){
+			
+//			scope.$watch(function() { return element[0].offsetParent.clientWidth}, function() {
+//				console.log("draw graph again");
+//				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend);
+//			});
+			
 			scope.$watch('data', function() {
-				if (typeof scope.data=="undefined" || scope.data.length == 0)
-					return;
-				//delete all values where y is null, theoretically we could also do that 
-				//for x values but so far there is no use case where this could happen
-				for(var i=0; i < scope.data.length; i++) {
-					scope.data[i].values = scope.data[i].values.map(function(d) { return d[scope.options.y] == null? null : d}).filter(function(d) { return d != null });
-				}
-				scope.colorScale = scope.options.chart.color;
-
-				element[0].innerHTML = '';
-				var width = getWidth(scope.options.width);
-				var height = getHeight(scope.options.heigth);
-
-				scope.svg = d3.select(element[0]).append('svg')
-				.attr("width", width + margin.left + margin.right)
-				.attr("height", height + margin.top + margin.bottom)
-				.append("g")
-				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-				initGraph(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY, scope.legend);
-				dotManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
-				splineManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
-				regressionManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
+				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend);
 			},true);
 
 			scope.$watch('options.spline',function(){
-				splineManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
+				splineManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY);
 			});
 
 
 			scope.$watch('options.scatter',function(){
-				dotManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
+				dotManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY);
 			});
 
 
 
 			scope.$watch('options.regression',function(){
-				regressionManager(scope.options, scope.data, scope.svg, scope.colorScale, scope.parseX, scope.parseY);
+				regressionManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY);
 			});
 
 		}
