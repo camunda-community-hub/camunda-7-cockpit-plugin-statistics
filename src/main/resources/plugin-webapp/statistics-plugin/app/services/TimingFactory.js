@@ -66,7 +66,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 				TimingFactory.options  = {
-						outerRegion:[5, 95],
+//						outerRegion:[5, 95],
 						scatter  : options.showScatter,
 						regression : options.showRegression,
 						spline : options.showSplines,
@@ -74,7 +74,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						y: "durationInMillis",
 						//TODO If it works put it all in chart
 						chart : {
-							color: colorScale
+							colorScale: colorScale
 						}
 				};
 				TimingFactory.parseX = parseDate;
