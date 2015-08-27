@@ -173,8 +173,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		 */
 		$scope.applyChanges = function() {
 			if (!checkValidity()) return;
-			console.debug("new request to database necessary:");
-			console.debug(requestToDataBank);
+//			console.debug("new request to database necessary:");
+//			console.debug(requestToDataBank);
 			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
 			if (!requestToDataBank) {
 				var update = TimingFactory.updateCharts($scope.chosenOptions, $scope.numberOfInstancesMap);

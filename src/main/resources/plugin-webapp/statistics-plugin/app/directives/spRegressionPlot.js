@@ -1,6 +1,6 @@
 ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
-	var margin = {top: 20, right: 20, bottom: 30, left: 100};
+	var margin = {top: 20, right: 0, bottom: 50, left: 100};
 
 	function getWidth(width) {
 		if(typeof width == "undefined"){
@@ -15,7 +15,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 	function getHeight(heigth) {
 		if(typeof heigth == "undefined"){
-			return 500 - margin.top - margin.bottom;
+			return 450 - margin.top - margin.bottom;
 		}
 		else 
 			return heigth -margin.top - margin.bottom;
@@ -40,8 +40,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		return d3.scale.linear().range([getHeight(height), 0]);
 	};
 
-	function setUpScales(options, data, parseX, parseY){
-		var x = getXDirect(options.width);
+	function setUpScales(options, data, parseX, parseY, width){
+		var x = getXDirect(width);
 		var y = getYDirect(options.height);
 
 		var xMinsMaxs = [];
@@ -63,8 +63,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		return [x,y];
 	};
 
-	function initGraph(options, data, svg, parseX, parseY, legend){
-		var Scales = setUpScales(options, data, parseX, parseY);
+	function initGraph(options, data, svg, parseX, parseY, legend, width){
+		var Scales = setUpScales(options, data, parseX, parseY, width);
 		var x = Scales[0];
 		var y = Scales[1];
 
@@ -80,7 +80,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			.orient("left")
 		};
 
-		var width = getWidth(options.width);
+		var width = getWidth(width);
 		var height = getHeight(options.height);
 
 
@@ -126,7 +126,6 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.tickFormat("")
 		);
 		if (legend) {
-			console.log("legend:", legend);
 			// add legend   
 			var legend = svg.append("g")
 			.attr("class", "legend")
@@ -168,13 +167,13 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		}
 	};
 
-	function dotManager(options, data, svg, parseX, parseY){
+	function dotManager(options, data, svg, parseX, parseY, width){
 		if(typeof options == "undefined")
 			return;
 		if(!options.scatter)
 			svg.selectAll(".dot").remove();
 		else{
-			var Scales = setUpScales(options, data, parseX, parseY);
+			var Scales = setUpScales(options, data, parseX, parseY, width);
 			var x = Scales[0];
 			var y = Scales[1];
 
@@ -195,13 +194,13 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 	};
 
 
-	function splineManager(options, data, svg, parseX, parseY){
+	function splineManager(options, data, svg, parseX, parseY, width){
 		if(typeof options == "undefined")
 			return;
 		if(!options.spline)
 			svg.selectAll("#spline").remove();
 		else{
-			var Scales = setUpScales(options, data, parseX, parseY);
+			var Scales = setUpScales(options, data, parseX, parseY, width);
 			var x = Scales[0];
 			var y = Scales[1];
 
@@ -220,14 +219,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		}
 	};
 
-	function regressionManager(options, data ,svg, parseX, parseY){
+	function regressionManager(options, data ,svg, parseX, parseY, width){
 		if(typeof options == "undefined")
 			return;
 		if(!options.regression)
 			svg.selectAll('#regressionGroup').remove();
 		else {
 
-			var Scales = setUpScales(options, data, parseX, parseY);
+			var Scales = setUpScales(options, data, parseX, parseY, width);
 			var x = Scales[0];
 			var y = Scales[1];
 			angular.forEach(data, function(processSet){
@@ -294,7 +293,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		}
 	};
 	
-	function drawGraph(element, options, data, parseX, parseY, legend) {
+	function drawGraph(element, options, data, parseX, parseY, legend, width) {
 		if (typeof data=="undefined" || data.length == 0)
 			return;
 		//delete all values where y is null, theoretically we could also do that 
@@ -304,9 +303,6 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		}
 
 		element[0].innerHTML = '';
-		console.log(element[0].offsetParent.clientWidth);
-		var width = getWidth(element[0].offsetParent.clientWidth);
-		console.log(width);
 		var height = getHeight(options.heigth);
 
 		var svg = d3.select(element[0]).append('svg')
@@ -315,41 +311,42 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		initGraph(options, data, svg, parseX, parseY, legend);
-		dotManager(options, data, svg, parseX, parseY);
-		splineManager(options, data, svg, parseX, parseY);
-		regressionManager(options, data, svg, parseX, parseY);
+		initGraph(options, data, svg, parseX, parseY, legend, width);
+		dotManager(options, data, svg, parseX, parseY, width);
+		splineManager(options, data, svg, parseX, parseY, width);
+		regressionManager(options, data, svg, parseX, parseY, width);
 		 
 		return svg;
 	}
 
 	//in html sp-regression-plot!!!
 	module.directive('spRegressionPlot', function(){
-
 		function link(scope,element,attrs){
 			
-//			scope.$watch(function() { return element[0].offsetParent.clientWidth}, function() {
-//				console.log("draw graph again");
-//				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend);
-//			});
+			scope.width = getWidth(element[0].offsetParent.clientWidth);
+			
+			scope.$watch(function() { return element[0].offsetParent.clientWidth}, function() {
+				scope.width = getWidth(element[0].offsetParent.clientWidth);
+				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
+			});
 			
 			scope.$watch('data', function() {
-				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend);
+				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
 			},true);
 
 			scope.$watch('options.spline',function(){
-				splineManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY);
+				splineManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY, scope.width);
 			});
 
 
 			scope.$watch('options.scatter',function(){
-				dotManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY);
+				dotManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY, scope.width);
 			});
 
 
 
 			scope.$watch('options.regression',function(){
-				regressionManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY);
+				regressionManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY, scope.width);
 			});
 
 		}

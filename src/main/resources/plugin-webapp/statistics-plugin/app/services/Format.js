@@ -32,7 +32,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				}
 				formatedData[i].values.push(newDataElement);
 			});
-			console.log(formatedData);
 			return formatedData;
 		};
 

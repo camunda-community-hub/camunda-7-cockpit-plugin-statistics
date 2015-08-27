@@ -119,8 +119,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * formating is now happening inside the loop, if performance becomes an issue we have to think of sth new
 		 */
 		TimingFactory.getModelMenuData = function(selectedFromMenu, options, evaluateData){
-			console.log(options);
-			//make an iterator over the 10 d3 default colors
+			//make an iterator over the 20 d3 default colors
 			//colorDictionary is a map which assigns each key a color. This map is used to make 
 			//a color function for the plots. It is calculated here and then reused in each update call
 			//".color" properties of the legend are also set here. since changing something in selectedFromMenu also affects
@@ -146,7 +145,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			})
 			//the colorfunction used in the plots
 			TimingFactory.colorScale = function(d, i) {
-				console.log("colordictionary:",colorDictionary);
 				keyIndex = colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
 				return colorDictionary[keyIndex].color;
 			};
@@ -177,11 +175,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var numberOfInstancesMap = {};
 			for (var i = 0; i < formatedData.length; i++) {
 				var numberOfEndedInst = formatedData[i].values.map(function(d) { return d["endTime"] == null? null : d}).filter(function(d) { return d != null }).length;
-				console.log(formatedData[i].values);
 				numberOfInstancesMap[formatedData[i].key] = {"startedInst": formatedData[i].values.length , 
 						"endedInst": numberOfEndedInst };
 			}
-			console.log(numberOfInstancesMap);
 			return numberOfInstancesMap;
 		}
 		/**
