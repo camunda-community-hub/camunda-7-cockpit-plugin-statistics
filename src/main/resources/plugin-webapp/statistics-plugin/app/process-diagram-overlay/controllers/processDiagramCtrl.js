@@ -18,29 +18,28 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 
 		$scope.isHighlightedAsWarning = function() {
-			if(isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id))
-				return true;
-			else
-				return false;
-		}
-		
-		$scope.getType = function() {
-			return $scope.type;
+			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id);
+			$scope.type = type;
+			if(type != null) return true;
+			return false;
 		}
 
-		$scope.highlight = function() {
-			if(isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id)!=null) {
-				return true;
-			} else if(isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id)!=null) {
+		$scope.highlight = function() {				
+			if(isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id)!=null
+					|| isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id)!=null) {
+				if($scope.onlyHighlight() && $scope.type!=null) colorElements($scope.type);
+				else if($scope.isHighlightedAsWarning() && $scope.type!=null) colorElements("bad");
+				else if((!$scope.onlyHighlight() || !$scope.showOnlyBad() || !$scope.isHighlightedAsWarning()) && $scope.type!=null) colorElements("good");
 				return true;
 			}
+			if($scope.type!=null) colorElements("white");
 			return false;
 		}
 		
 		$scope.onlyHighlight = function() {
 			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id);
+			$scope.type = type;
 			if(SettingsFactory.onlyHighlight && type!=null) {
-				$scope.type = type;
 				return true;
 			}
 			return false;
@@ -72,6 +71,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 							DataFactory.activityDurations[id] = [];
 						DataFactory.activityDurations[id].push({
 							id: activity.id,
+							name: activity.activityName,
 							duration: activity.durationInMillis,
 							startTime: activity.startTime,
 							endTime: activity.endTime,
@@ -105,6 +105,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					});
 				}
 			});
+		}
+		
+		function colorElements(className) {
+			var element;
+			if(~$scope.type.indexOf('Task') || ~$scope.type.indexOf('transaction') || ~$scope.type.indexOf('Activity') || ~$scope.type.indexOf('subProcess')) element = '[data-element-id="' + $scope.bpmnElement.id + '"] .djs-visual rect';
+			else if(~$scope.type.indexOf('Gateway')) element = '[data-element-id="' + $scope.bpmnElement.id + '"] .djs-visual polygon';
+			else if(~$scope.type.indexOf('event')) element = '[data-element-id="' + $scope.bpmnElement.id + '"] .djs-visual circle';
+			angular.element(element).attr('class', className);
 		}
 
 		function getShortType(type_long) {

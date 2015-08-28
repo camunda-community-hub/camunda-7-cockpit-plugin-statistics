@@ -116,6 +116,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 		
 		$scope.updatePlot = function() {
+			$scope.start.datetime = $scope.viewportStart;
+			$scope.end.datetime = $scope.viewportEnd;
 			$rootScope.$broadcast('datetimeChanged', datetimeToMs($scope.viewportStart), datetimeToMs($scope.viewportEnd));
 			$scope.showPlot();
 		}
@@ -149,6 +151,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					"processDefId": data[i].procDefId,
 					"processKey": data[i].procDefKey,
 					"activityId": data[i].id,
+					"activityName": data[i].name,
 					"activityDefId": data[i].defId,
 					"start": stringToDate(data[i].startTime),
 					"end": stringToDate(data[i].endTime),

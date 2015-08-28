@@ -89,7 +89,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			
 			var navXScale = d3.time.scale()
 				.domain([minDate, maxDate])
-				.nice(d3.time.hour)
+				.nice(d3.time.minute)
 				.range([0, navWidth]);
 
 			
@@ -242,8 +242,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 						// define drag and drop behavior for both limits
 						var drag_low = d3.behavior.drag()
 						.on("dragstart", function(){
-							line_low.style("stroke", dragColor);
-							text_low.style("fill", dragColor);
+//							line_low.style("stroke", dragColor);
+//							text_low.style("fill", dragColor);
 						})
 						.on("drag", function(d, i){
 							if(yScale.invert(d3.event.y-margin.top) > SettingsFactory.upperDurationLimitInMs) {
@@ -266,14 +266,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 							}
 						})
 						.on("dragend", function(){
-							line_low.style("stroke", color);
-							text_low.style("fill", color);
+//							line_low.style("stroke", color);
+//							text_low.style("fill", color);
 						});
 		
 						var drag_high = d3.behavior.drag()
 						.on("dragstart", function(){
-							line_high.style("stroke", dragColor);
-							text_high.style("fill", dragColor);
+//							line_high.style("stroke", dragColor);
+//							text_high.style("fill", dragColor);
 						})
 						.on("drag", function(d, i){
 							if(yScale.invert(d3.event.y-margin.top) < SettingsFactory.lowerDurationLimitInMs) {
@@ -296,8 +296,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 							}
 						})
 						.on("dragend", function(){
-							line_high.style("stroke", color);
-							text_high.style("fill", color);
+//							line_high.style("stroke", color);
+//							text_high.style("fill", color);
 						});
 		
 						var svg = d3.select("#plot svg");
@@ -313,7 +313,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 						.attr("y1", yScale(SettingsFactory.upperDurationLimitInMs)+margin.top+2)
 						.attr("x2", 730)
 						.attr("y2", yScale(SettingsFactory.upperDurationLimitInMs)+margin.top+2)
-						.attr("class", "draggable_high");
+						.attr("class", "draggable draggable_high");
 		
 						// draw lower duration limit
 						svg.append("line")
@@ -323,12 +323,18 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 						.attr("y1", yScale(SettingsFactory.lowerDurationLimitInMs)+margin.top+2)
 						.attr("x2", 730)
 						.attr("y2", yScale(SettingsFactory.lowerDurationLimitInMs)+margin.top+2)
-						.attr("class", "draggable_low");
+						.attr("class", "draggable draggable_low");
 		
 						var line_high = d3.select(".draggable_high")
+//						.on("mouseover", function() {
+//							d3.select("body").style("cursor", "w-resize");
+//						})
 						.call(drag_high);
 		
 						var line_low = d3.select(".draggable_low")
+//						.on("mouseover", function() {
+//							d3.select("body").style("cursor", "w-resize");
+//						})
 						.call(drag_low);
 		
 						// draw label for lower duration limit

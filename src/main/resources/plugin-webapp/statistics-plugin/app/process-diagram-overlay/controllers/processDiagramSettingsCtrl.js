@@ -10,23 +10,24 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('processDiagramSettingsCtrl', ['$scope', '$location', '$http', 'Uri', '$modalInstance', 'DataFactory', 'SettingsFactory', '$filter', function($scope, $location, $http, Uri, $modalInstance, DataFactory, SettingsFactory, $filter){
 
-		var bpmnTasks = [];
-		$scope.taskTypes = [];
+		var bpmnElements = [];
+		$scope.types = [];
 
 		var element, type;
 		Object.keys(DataFactory.bpmnElements).forEach(function(key, index, array) {
 			element = DataFactory.bpmnElements[key];
 			type = element.$type;
-			if(~type.indexOf("Task")) {
-				bpmnTasks.push(element);
-				if(!~$scope.taskTypes.indexOf(type)) $scope.taskTypes.push(type);
+			if(~type.indexOf("Task") || ~type.indexOf("Gateway") || ~type.indexOf("Event") || ~type.indexOf("subProcess") || ~type.indexOf("callActivity") || ~type.indexOf("Transaction")) {
+				bpmnElements.push(element);
+				// TODO: handle event types
+				if(!~$scope.types.indexOf(type) && !~type.indexOf("Event")) $scope.types.push(type);
 			}
 		});
 
 		$scope.timeUnitOptions = ['s', 'm', 'h'];
 
 		$scope.selectedTimeUnit = $scope.timeUnitOptions[1];
-		$scope.selectedTaskType = "all";
+		$scope.selectedType = "all";
 		$scope.durationLimit = 3;
 
 		$scope.cancel = function() {
@@ -36,19 +37,29 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			$modalInstance.dismiss('cancel');
 		};
 
-		$scope.highlightTasks = function() {
+		$scope.highlightElements = function() {
 			DataFactory.bpmnElementsToHighlight = {};
 			DataFactory.bpmnElementsToHighlightAsWarning = {};
 			DataFactory.activityDurations = {};
-			angular.forEach(bpmnTasks, function(task, index, array) {
-				if($scope.selectedTaskType == "all" || task.$type == $scope.selectedTaskType) {
+			var type;
+			angular.forEach(bpmnElements, function(element, index, array) {
+				if($scope.selectedType=="all"
+						|| ($scope.selectedType=="all tasks" && ~element.$type.indexOf("Task"))
+						|| ($scope.selectedType=="all gateways" && ~element.$type.indexOf("Gateway"))
+						|| ($scope.selectedType=="all events" && ~element.$type.indexOf("Event"))
+						|| element.$type == $scope.selectedType){
+					// duration calculation for tasks only
 					if($scope.selectDurationLimit) {
-						countInstancesRegardingDurationLimit(task, getMilliseconds($scope.durationLimit, $scope.selectedTimeUnit));
+						
+						countInstancesRegardingDurationLimit(element, getMilliseconds($scope.durationLimit, $scope.selectedTimeUnit));
 					} else {
-						DataFactory.bpmnElementsToHighlight[task.id] = {
+						// TODO: handle event types
+						if(~element.$type.indexOf("Event")) type = "event";
+						else type = getTaskType(element.$type);
+						DataFactory.bpmnElementsToHighlight[element.id] = {
 								instancesExceededLimit: null,
 								instancesMetLimit: null,
-								type: getTaskType(task.$type)
+								type: type
 							};
 					}
 				}
@@ -70,45 +81,48 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 
 		function countInstancesRegardingDurationLimit(task, limit) {
-			var type = getTaskType(task.$type);
-			DataFactory.getAllHistoricActivitiesInformationByProcDefId(DataFactory.processDefinitionId, task.id, type).
-			then(function() {
-				var exceeded = 0;
-				var met = 0;
-				var id = task.id;
-				var data = DataFactory.allHistoricActivitiesInformationByProcDefId[DataFactory.processDefinitionId];
-				angular.forEach(data, function(activity, index, list) {
-					if(activity.durationInMillis==null || activity.endTime==null || activity.durationInMillis <= 0) return;
-					else {
-						if(activity.durationInMillis > limit) exceeded++;
-						else met++;
-						// store durations for "Activity History" modal (to avoid requesting data again)
-						if(angular.isUndefined(DataFactory.activityDurations[id]))
-							DataFactory.activityDurations[id] = [];
-						DataFactory.activityDurations[id].push({
-							id: activity.id,
-							duration: activity.durationInMillis,
-							startTime: activity.startTime,
-							endTime: activity.endTime
-						});
+			// limit for tasks only
+			if(~task.$type.indexOf("Task")) {
+				var type = getTaskType(task.$type);
+				DataFactory.getAllHistoricActivitiesInformationByProcDefId(DataFactory.processDefinitionId, task.id, type).
+				then(function() {
+					var exceeded = 0;
+					var met = 0;
+					var id = task.id;
+					var data = DataFactory.allHistoricActivitiesInformationByProcDefId[DataFactory.processDefinitionId];
+					angular.forEach(data, function(activity, index, list) {
+						if(activity.durationInMillis==null || activity.endTime==null || activity.durationInMillis <= 0) return;
+						else {
+							if(activity.durationInMillis > limit) exceeded++;
+							else met++;
+							// store durations for "Activity History" modal (to avoid requesting data again)
+							if(angular.isUndefined(DataFactory.activityDurations[id]))
+								DataFactory.activityDurations[id] = [];
+							DataFactory.activityDurations[id].push({
+								id: activity.id,
+								duration: activity.durationInMillis,
+								startTime: activity.startTime,
+								endTime: activity.endTime
+							});
+						}
+					});
+					if(exceeded == 0 && met == 0) return;	// no history information available
+					if(exceeded >= met) {
+						DataFactory.bpmnElementsToHighlightAsWarning[id] = {
+								instancesExceededLimit: exceeded,
+								instancesMetLimit: met,
+								type: type
+						};
+					} else {
+						DataFactory.bpmnElementsToHighlight[id] = {
+								instancesExceededLimit: exceeded,
+								instancesMetLimit: met,
+								type: type
+						};
 					}
+					DataFactory.activityDurations[id].sort(compare);
 				});
-				if(exceeded == 0 && met == 0) return;	// no history information available
-				if(exceeded >= met) {
-					DataFactory.bpmnElementsToHighlightAsWarning[id] = {
-							instancesExceededLimit: exceeded,
-							instancesMetLimit: met,
-							type: type
-					};
-				} else {
-					DataFactory.bpmnElementsToHighlight[id] = {
-							instancesExceededLimit: exceeded,
-							instancesMetLimit: met,
-							type: type
-					};
-				}
-				DataFactory.activityDurations[id].sort(compare);
-			});
+			}
 		}
 
 		function getTaskType(type_long) {
