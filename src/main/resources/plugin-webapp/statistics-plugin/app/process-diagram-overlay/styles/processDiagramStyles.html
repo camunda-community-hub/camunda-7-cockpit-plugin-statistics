@@ -4,6 +4,11 @@
     stroke-width: 0;
 }
 
+ul {
+    list-style:none;
+    padding-left:0;
+}​
+
 #navigator {
 	margin-left: 30px;
 	height: 100px;
@@ -19,6 +24,10 @@
 #navigator .viewport .extent{
 	fill: #E5E5E5;
 	fill-opacity: 0.5;
+}
+
+.draggable {
+	cursor: n-resize;
 }
 
 .resize rect { 
@@ -55,57 +64,76 @@ hr {
 }
 
 
-
-.bpmn-element-overlay {
-	width: 100px;
-	/* TODO: set size of overlay dynamically depending on size of bpmn element*/
-	height: 80px;
-	border-radius: 10px;
-	border-width: 1px;
-	border-style: solid;
-	border-color: rgb(0, 0, 0);
-	background-color: rgb(255, 255, 255));
-	border-width: 1px;
-}
-
 .userTask {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(51, 102, 255, 0.4);
+	fill: rgba(129,248,76, 0.4);
 }
 
 .serviceTask {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(102, 102, 51, 0.4);
+	fill: rgba(109,0,82, 0.4);
 }
 
 .scriptTask {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(0, 255, 204, 0.4);
+	fill: rgba(13,193,220, 0.4);
 }
 
 .humanTask {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(255, 102, 0, 0.4);
+	fill: rgba(255,154,47, 0.4);
 }
 
 .receiveTask {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(204, 51, 255, 0.4);
+	fill: rgba(26,68,0, 0.4);
 }
 
 .sendTask {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(255, 255, 0, 0.4);
+	fill: rgba(244,184,178, 0.4);
+}
+
+.manualTask {
+	fill: rgba(216,174,249, 0.4);
+}
+
+.exclusiveGateway {
+	fill: rgba(231,248,42, 0.4);
+}
+
+.inclusiveGateway {
+	fill: rgba(194,235,211, 0.4);
+}
+
+.parallelGateway {
+	fill: rgba(195,34,85, 0.4);
+}
+
+.eventBasedGateway {
+	fill: rgba(68,141,226, 0.4);
+}
+
+.subProcess {
+	fill: rgba(31,115,128, 0.4);
+}
+
+.callActivity {
+	fill: rgba(160,125,24, 0.4);
+}
+
+.transaction {
+	fill: rgba(28,35,13, 0.4);
+}
+
+.event {
+	fill: rgba(36,199,78, 0.4);
 }
 
 .good {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(70, 136, 71, 0.4);
+	fill: rgba(70, 136, 71, 0.4);
 }
 
 .bad {
-	border-color: rgb(0, 0, 0);
-	background-color: rgba(181, 21, 43, 0.4);
+	fill: rgba(181, 21, 43, 0.4);
+}
+
+.white {
+	fill: rgb(255,255,255);
 }
 
 [process-diagram] .badge-top {

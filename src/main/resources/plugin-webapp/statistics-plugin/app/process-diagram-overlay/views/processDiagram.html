@@ -9,12 +9,6 @@
 <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/noHistoryModal.html'"></div>
 <div>
 	<div ng-show="highlight()" ng-click="showActivityHistoryInformation()">
-		<div class="bpmn-element-overlay" ng-class="getType()"
-			ng-hide="!onlyHighlight()"></div>
-		<div class="bpmn-element-overlay bad"
-			ng-hide="!isHighlightedAsWarning()"></div>
-		<div class="bpmn-element-overlay good"
-			ng-hide="onlyHighlight() || showOnlyBad() || isHighlightedAsWarning()"></div>
 		<div class="badge badge-bottom badge-bad"
 			ng-hide="instancesExceededLimit == null">{{
 			instancesExceededLimit }}</div>

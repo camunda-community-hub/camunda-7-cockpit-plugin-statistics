@@ -7,10 +7,13 @@
 		<tab heading="Highlight" active="$parent.onlyHighlight">
 		<div style="margin-top: 5px; margin-bottom: 10px;">Highlight specific process elements.</div>
 			<form class="form-horizontal form-group">
-				<label class="control-label">Task Type: </label>
-				<select ng-model="$parent.selectedTaskType">
+				<label class="control-label">Element Type: </label>
+				<select ng-model="$parent.selectedType">
 					<option>all</option>
-					<option ng-repeat="option in taskTypes" value="{{ option }}">{{ option | split:':':1 }}</option>
+					<option>all tasks</option>
+					<option>all gateways</option>
+					<option>all events</option>
+					<option ng-repeat="option in types" value="{{ option }}">{{ option | split:':':1 }}</option>
 				</select>
 			</form>
 		</tab>
@@ -34,7 +37,7 @@
 	</tabset>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-primary" ng-click="highlightTasks()">Apply Settings</button>
+	<button class="btn btn-primary" ng-click="highlightElements()">Apply Settings</button>
 	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>
 </script>
