@@ -299,7 +299,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		//delete all values where y is null, theoretically we could also do that 
 		//for x values but so far there is no use case where this could happen
 		for(var i=0; i < data.length; i++) {
-			data[i].values = data[i].values.map(function(d) { return d[options.y] == null? null : d}).filter(function(d) { return d != null });
+			data[i].values = data[i].values.map(function(d) { return (d[options.y] == null|| d[options.y]<=0)? null : d}).filter(function(d) { return d != null });
 		}
 
 		element[0].innerHTML = '';
