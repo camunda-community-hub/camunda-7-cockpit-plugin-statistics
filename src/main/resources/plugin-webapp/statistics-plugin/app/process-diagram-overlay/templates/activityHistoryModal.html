@@ -31,7 +31,7 @@
 		</tr>
 		<tr>
 			<td>
-				<label class="control-label">Minimum: </label>
+				<label class="control-label">Start of considerated time period:</label>
     		 	  <p class="input-group" style="width: 250px; position: relative; z-index: 1000000 !important;">
     				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="viewportStart" ng-change="updatePlot()" is-open="start.isOpen" datepicker-options="start.dateOptions"/>
     				<span class="input-group-btn">
@@ -40,7 +40,7 @@
 						</button>
     				</span>
 				</p>
-				<label class="control-label">Maximum: </label>
+				<label class="control-label">End of considerated time period:</label>
 				<p class="input-group" style="width: 250px; position: relative; z-index: 100000 !important;">
  	   				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="viewportEnd" ng-change="updatePlot()" is-open="end.isOpen" datepicker-options="end.dateOptions"/>
  	   				<span class="input-group-btn">
