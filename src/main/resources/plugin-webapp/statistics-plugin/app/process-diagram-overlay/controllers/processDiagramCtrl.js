@@ -13,10 +13,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		DataFactory.bpmnElements = $scope.$parent.processDiagram.bpmnElements;
 		DataFactory.processDefinitionId = $scope.$parent.$parent.$parent.$parent.processDefinition.id;
 
-		$scope.showOnlyBad = function() {
-			return SettingsFactory.showOnlyBadInformation;
-		}
-
 		$scope.isHighlightedAsWarning = function() {
 			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id);
 			$scope.type = type;
@@ -29,7 +25,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					|| isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id)!=null) {
 				if($scope.onlyHighlight() && $scope.type!=null) colorElements($scope.type);
 				else if($scope.isHighlightedAsWarning() && $scope.type!=null) colorElements("bad");
-				else if((!$scope.onlyHighlight() || !$scope.showOnlyBad() || !$scope.isHighlightedAsWarning()) && $scope.type!=null) colorElements("good");
+				else if((!$scope.onlyHighlight() || !$scope.isHighlightedAsWarning()) && $scope.type!=null) colorElements("good");
 				return true;
 			}
 			if($scope.type!=null) colorElements("white");
@@ -39,7 +35,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.onlyHighlight = function() {
 			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id);
 			$scope.type = type;
-			if(SettingsFactory.onlyHighlight && type!=null) {
+			if(Object.keys(DataFactory.activityDurations).length == 0 && type!=null) {
 				return true;
 			}
 			return false;

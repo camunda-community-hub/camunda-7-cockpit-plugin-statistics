@@ -142,14 +142,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 					.attr('x', 0)
 					.attr('y', 0)
 					.attr('width', 3)
-					.attr('height', 80);				
+					.attr('height', 105);				
 				d3.select('.resize.w rect').remove();
 				d3.select('.resize.w')
 					.append('rect')
 					.attr('x', 0)
 					.attr('y', 0)
 					.attr('width', 3)
-					.attr('height', 80);
+					.attr('height', 105);
 			});
 		}
 		
@@ -179,7 +179,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			// draw navigation chart
 			
 			var navWidth = 550;
-			var navHeight = 75;
+			var navHeight = 100;
 			
 			var minmaxY = getMinMaxY(scope.data);
 			var yMin = minmaxY[0];
