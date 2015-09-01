@@ -70,6 +70,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 							return moment.duration(d, 'milliseconds')
 							.humanize();
 						},
+//						yTickExact : function (d) {
+//							return moment.duration(d, 'milliseconds').format('mm:ss', { trim: false });
+//						},
 //						outerRegion:[5, 95],
 						scatter  : options.showScatter,
 						regression : options.showRegression,
