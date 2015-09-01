@@ -173,6 +173,10 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 	};
 
 	function dotManager(options, data, svg, parseX, parseY, width){
+		var tooltip = d3.select("body").append("div")
+	    .attr("class", "tooltip")
+	    .style("opacity", 0);
+		
 		if(typeof options == "undefined")
 			return;
 		if(!options.scatter)
@@ -192,7 +196,22 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("cx", function(d) { return x(parseX({x:d[options.x]})); })
 				.attr("cy", function(d) { 
 					return y(parseY({y:d[options.y]})); })
-					.style("fill", options.chart.colorScale(processSet));
+					.style("fill", options.chart.colorScale(processSet))
+					.on("mouseover", function(d) {
+						tooltip.transition()
+						.duration(200)
+						.style("opacity", .9);
+						tooltip.html("started at: " + d[options.x] +
+						"<br/> duration: " + options.yTick(d[options.y]))
+//						"<br/> exact duration: " + options.yTickExact(d[options.y])
+								.style("left", (d3.event.pageX + 5) + "px")
+								.style("top", (d3.event.pageY - 28) + "px");
+					})
+					.on("mouseout", function(d) {
+				          tooltip.transition()
+				               .duration(500)
+				               .style("opacity", 0);
+				      });
 			});
 		}
 
@@ -278,22 +297,22 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				.attr("class", "reg")
 				.attr("d", line)
 //				.attr("stroke",regColor(slope))//the color of the line depends on abs(slope) the increase in slope leads to increase in "redness"
-				.attr("stroke",options.chart.colorScale(processSet))
-				.on('mouseover', function(d){				//show slope information when mouse hovers over regression line
-					d3.select(this).style({opacity:'0.6'});
-					d3.select("#regText")
-					.attr("x",d3.mouse(this)[0])
-					.attr("y",d3.mouse(this)[1])
-//					.attr("stroke",regColor(slope))
-					.attr("stroke",options.chart.colorScale(processSet))
-					.attr("opacity","1.0");
+				.attr("stroke",options.chart.colorScale(processSet));
+//				.on('mouseover', function(d){				//show slope information when mouse hovers over regression line
+//				d3.select(this).style({opacity:'0.6'});
+//				d3.select("#regText")
+//				.attr("x",d3.mouse(this)[0])
+//				.attr("y",d3.mouse(this)[1])
+////				.attr("stroke",regColor(slope))
+//				.attr("stroke",options.chart.colorScale(processSet))
+//				.attr("opacity","1.0");
 
-				})
-				.on('mouseout', function(d){
-					d3.select(this).style({opacity:'1.0'});
-					d3.select("#regText")
-					.attr("opacity","0.0");
-				});
+//				})
+//				.on('mouseout', function(d){
+//				d3.select(this).style({opacity:'1.0'});
+//				d3.select("#regText")
+//				.attr("opacity","0.0");
+//				});
 			});
 		}
 	};
