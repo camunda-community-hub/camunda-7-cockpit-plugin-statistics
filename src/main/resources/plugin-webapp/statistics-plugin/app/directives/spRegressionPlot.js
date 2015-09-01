@@ -1,12 +1,15 @@
 ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
+	var formatHours = d3.time.format("%H:%M")
+	var parseTime = function(d) { return formatHours(new Date(0,0,1,0,0,0,d));};
+
 	var margin = {top: 20, right: 0, bottom: 50, left: 100};
 
 	function getWidth(width) {
 		if(typeof width == "undefined"){
 //			return element[0].offsetParent.clientWidth - margin.left - margin.right;
 			return 960 - margin.left - margin.right;
-			
+
 		}
 		else 
 			return width -margin.left - margin.right;
@@ -90,7 +93,9 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 		var yAxis = d3.svg.axis()
 		.scale(y)
-		.orient("left");
+		.orient("left")
+		.tickSize(-width, 0, 0)
+		.tickFormat(options.yTick)
 
 		var line = d3.svg.line()
 		.x(function(d) { return x(parseX({x:d[options.x]})); })
@@ -109,7 +114,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		.attr("y", 6)
 		.attr("dy", ".71em")
 		.style("text-anchor", "end")
-		.text("duration in min");
+		.text("duration");
 
 		svg.append("g")         
 		.attr("class", "grid")
@@ -232,7 +237,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			angular.forEach(data, function(processSet){
 				//d.x and d.y are used as accessors here because what they actually access is defined in var lindata
 				var line = d3.svg.line()
-                .x(function(d) { return x(d.x); })
+				.x(function(d) { return x(d.x); })
 				.y(function(d) { return y(d.y); });
 
 
@@ -260,12 +265,12 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 				var g = svg.append("g")
 				.attr("id","regressionGroup");
-				text = g.append("text")				//info about the slope of the regression line, will be displyed when mouse hovers over regline
-				.attr("id","regText")
-				.text("slope: "+ (slope*100).toFixed(2) + "%")		//this may produce some weird behavior when it comes to certain numbers
-				.attr("opacity","0.0")
-				.attr("fill",options.chart.colorScale(processSet))
-				.style("text-anchor", "end");
+//				text = g.append("text")				//info about the slope of the regression line, will be displyed when mouse hovers over regline
+//				.attr("id","regText")
+//				.text("slope: "+ (slope*100).toFixed(2) + "%")		//this may produce some weird behavior when it comes to certain numbers
+//				.attr("opacity","0.0")
+//				.attr("fill",options.chart.colorScale(processSet))
+//				.style("text-anchor", "end");
 
 				path = g.append("path")
 				.attr("id","regression")
@@ -292,7 +297,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			});
 		}
 	};
-	
+
 	function drawGraph(element, options, data, parseX, parseY, legend, width) {
 		if (typeof data=="undefined" || data.length == 0)
 			return;
@@ -315,21 +320,21 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		dotManager(options, data, svg, parseX, parseY, width);
 		splineManager(options, data, svg, parseX, parseY, width);
 		regressionManager(options, data, svg, parseX, parseY, width);
-		 
+
 		return svg;
 	}
 
 	//in html sp-regression-plot!!!
 	module.directive('spRegressionPlot', function(){
 		function link(scope,element,attrs){
-			
+
 			scope.width = getWidth(element[0].offsetParent.clientWidth);
-			
+
 			scope.$watch(function() { return element[0].offsetParent.clientWidth}, function() {
 				scope.width = getWidth(element[0].offsetParent.clientWidth);
 				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
 			});
-			
+
 			scope.$watch('data', function() {
 				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
 			},true);
@@ -353,10 +358,10 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		return {
 			restrict: 'E',
 			scope: { 
-				data: '=' ,
-				options: '=' ,
-				legend: '=' ,
-				parseX: '&' ,
+				data: '=',
+				options: '=',
+				legend: '=',
+				parseX: '&',
 				parseY: '&'
 			},
 			link: link

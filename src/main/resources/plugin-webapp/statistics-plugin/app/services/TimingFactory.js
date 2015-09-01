@@ -66,6 +66,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 				TimingFactory.options  = {
+						yTick : function (d) {
+							return moment.duration(d, 'milliseconds')
+							.humanize();
+						},
 //						outerRegion:[5, 95],
 						scatter  : options.showScatter,
 						regression : options.showRegression,
@@ -78,13 +82,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						}
 				};
 				TimingFactory.parseX = parseDate;
-				TimingFactory.parseY = function(d) { return d/1000/60;};
+				TimingFactory.parseY = function(d) { return d;};
 				TimingFactory.dataForPlot = formatedData;
 			} else if(options.propertyToPlot == "startEndTime") {
 				var filteredData = filterFormatedData(formatedData, options.time);
 				console.log(filteredData);
 				if(options.cluster.algo == "kmeans") {
-					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData,timeFormatAndParser[options.timeFrame], options.time, numberOfInstancesMap);
+					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData, timeFormatAndParser[options.timeFrame], options.time, numberOfInstancesMap);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : timeFormatAndParser[options.timeFrame + "Format"], "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", options.time, colorScale);
 				} else {
 					TimingFactory.dataForPlot = filteredData;
