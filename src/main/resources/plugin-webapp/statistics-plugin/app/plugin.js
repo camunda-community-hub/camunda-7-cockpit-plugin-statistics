@@ -1,6 +1,8 @@
 ngDefine('cockpit.plugin.statistics-plugin', ['./lib/d3',
                                               './lib/nv.d3.own',
                                               './lib/clusterfck-0.1',
+                                              '.lib/moment.min',
+//                                              '.lib/moment-duration-format',
                                               'module:nvd3:./lib/angular-nvd3',
                                               'module:ui.bootstrap.datetimepicker:./lib/datetime-picker',
                                               'module:cockpit.plugin.statistics-plugin.controllers:./controllers/main',
