@@ -6,11 +6,11 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 	module.directive('activityDurationChart', ['SettingsFactory', '$rootScope', function(SettingsFactory, $rootScope){
 
 		function formatTime(input) {
-			var milliseconds = parseInt((input%1000));
-			var seconds = parseInt((input/1000)%60);
-			var minutes = parseInt((input/(1000*60))%60);
-			var hours = parseInt((input/(1000*60*60))%24);
-			var days = parseInt((input/(1000*60*60*24)));
+			var milliseconds = parseInt((Math.floor(input)%1000));
+			var seconds = parseInt(Math.floor(input/1000)%60);
+			var minutes = parseInt(Math.floor(input/(1000*60))%60);
+			var hours = parseInt(Math.floor(input/(1000*60*60))%24);
+			var days = parseInt(Math.floor(input/(1000*60*60*24)));
 
 
 			if(hours < 0) hours = "00";
@@ -96,7 +96,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var navXAxis = d3.svg.axis()
 				.scale(navXScale)
 				.orient('bottom')
-//				.ticks(9);
+				.ticks(5);
 				//.tickValues(d3.time.month.range(minDate, maxDate))
 				//.tickFormat(d3.time.format("%b '%y"));
 			
