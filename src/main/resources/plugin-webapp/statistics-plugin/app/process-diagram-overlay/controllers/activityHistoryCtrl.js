@@ -14,11 +14,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	module.filter('formatTime', function() {
 		return function(input) {
 			if(angular.isDefined(input)) {
-				var milliseconds = parseInt((input%1000));
-				var seconds = parseInt((input/1000)%60);
-				var minutes = parseInt((input/(1000*60))%60);
-				var hours = parseInt((input/(1000*60*60))%24);
-				var days = parseInt((input/(1000*60*60*24)));
+				var milliseconds = parseInt(Math.floor(input%1000));
+				var seconds = parseInt(Math.floor(input/1000)%60);
+				var minutes = parseInt(Math.floor(input/(1000*60))%60);
+				var hours = parseInt(Math.floor(input/(1000*60*60))%24);
+				var days = parseInt(Math.floor(input/(1000*60*60*24)));
 	
 				if(hours < 0) hours = "00";
 				else hours = (hours < 10) ? "0" + hours : hours;
