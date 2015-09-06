@@ -30,34 +30,14 @@
 			</td>
 		</tr>
 		<tr>
-			<td>
-				<label class="control-label">Start of considerated time period:</label>
-    		 	  <p class="input-group" style="width: 250px; position: relative; z-index: 1000000 !important;">
-    				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="viewportStart" ng-change="updatePlot()" is-open="start.isOpen" datepicker-options="start.dateOptions"/>
-    				<span class="input-group-btn">
-       					<button type="button" class="btn btn-default" ng-click="openStart($event)">
-							<i class="glyphicon glyphicon-calendar"></i>
-						</button>
-    				</span>
-				</p>
-				<label class="control-label">End of considerated time period:</label>
-				<p class="input-group" style="width: 250px; position: relative; z-index: 100000 !important;">
- 	   				<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="viewportEnd" ng-change="updatePlot()" is-open="end.isOpen" datepicker-options="end.dateOptions"/>
- 	   				<span class="input-group-btn">
-       					<button type="button" class="btn btn-default" ng-click="openEnd($event)">
-						<i class="glyphicon glyphicon-calendar"></i>
-						</button>
-    				</span>
-				</p>
-			</td>
-			<td>
-				<div id="navigator" style="position: relative; z-index: -100000 !important;"><svg/></div>
+			<td colspan="2">
+				<navigator-chart data="historicActivityPlotData"></navigator-chart>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<hr>
-				<activity-duration-chart data="historicActivityPlotData"></activity-duration-chart>
+				<duration-chart data="historicActivityPlotData"></duration-chart>
 				<hr>
 			</td>
 		</tr>
