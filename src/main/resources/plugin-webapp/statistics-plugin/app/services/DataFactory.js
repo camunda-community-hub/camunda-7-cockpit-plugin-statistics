@@ -654,7 +654,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+procDefId+timeRequest+"&sortBy=startTime&sortOrder=asc")));
 					keyList.push(processObject.process);
 				}
-				angular.forEach(processObject.activityTypes, function(activityTypeObject,indexActType){
+				angular.forEach(processObject.activityTypes, function(activityTypeObject, indexActType){
 					angular.forEach(activityTypeObject.activities, function(activityObject, indexAct){
 						var activityType = activityTypeObject.activityType;
 						var actName = activityObject.activity;

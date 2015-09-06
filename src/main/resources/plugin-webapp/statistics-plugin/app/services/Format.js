@@ -2,6 +2,43 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('Format', function(kMeansFactory) {
 		var Format = {};
 
+		var addNewProcess = function(formatedData, act) {
+			formatedData.push({"key": act.procDefKey, "name": act.procName, "minV": act.procVersion, "maxV": act.procVersion, "actTypes": []});
+			return formatedData;
+		}
+		
+		var updateVersionMinMax = function(processObject, version) {
+			if (version < processObject.minV) processObject.minV = version;
+			if (version > processObject.maxV) processObject.maxV = version;
+		}
+		
+		Format.formatMenuData = function(menuData) {
+			var formatedData = [];
+			angular.forEach(menuData, function(activity) {
+				//if process has not been added yet
+				if(!formatedData.some(function(e) e.key == activity.procDefKey)) formatedData = addNewProcess(formatedData, activity);
+				//get index of process
+				var procIndex = formatedData.map(function(e) { return e.key; }).indexOf(activity.procDefKey);
+				updateVersionMinMax(formatedData[procIndex], activity.procVersion);
+				//if activityType has not been added yet
+				if(!formatedData[procIndex].actTypes.some(function(e) e.type == activity.type))
+					formatedData[procIndex].actTypes.push({"type": activity.type, "acts": []});
+				//get type index
+				var typeIndex = formatedData[procIndex].actTypes.map(function(e) { return e.type; }).indexOf(activity.type);
+				//check weather activity has been added before with different version
+				if(!formatedData[procIndex].actTypes[typeIndex].acts.some(function(e) e.actName == activity.activityName))
+					formatedData[procIndex].actTypes[typeIndex].acts.push({"actName": activity.activityName, "versions": [activity.procVersion]});
+				else {
+					//find Index
+					var actIndex = formatedData[procIndex].actTypes[typeIndex].acts.map(function(e) { return e.actName; }).indexOf(activity.activityName);
+					//add version to existing activity
+					formatedData[procIndex].actTypes[typeIndex].acts[actIndex].versions.push(activity.procVersion);
+				}
+					
+
+			})
+			return formatedData;
+		}
 		/**
 		 * puts the whole data elements in the proper key box
 		 * THE ORDER IN KEY ARRAY MATTERS
@@ -15,7 +52,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		Format.bringSortedDataInKeyFormat = function(data, keyArray, attributesArray){
 			var formatedData = [];
 			var i = -1;
-			angular.forEach(data ,function(element){
+			angular.forEach(data, function(element){
 				if (typeof keyArray == "string") var key = keyArray;
 				else {
 					var key = !element.hasOwnProperty(keyArray[0]) ? keyArray[1] : keyArray[0];

@@ -217,6 +217,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		TimingFactory.getMenuData()
 		.then(function(){
 			$scope.menuData = TimingFactory.menuData;
+			console.log($scope.menuData);
 		});
 
 		//data chosen from the user in the accordion
