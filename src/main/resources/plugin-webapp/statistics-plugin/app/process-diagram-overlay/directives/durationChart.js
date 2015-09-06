@@ -2,8 +2,8 @@
 
 ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
-	//in html activity-duration-chart!!!
-	module.directive('activityDurationChart', ['SettingsFactory', '$rootScope', function(SettingsFactory, $rootScope){
+	//in html duration-chart!!!
+	module.directive('durationChart', ['SettingsFactory', '$rootScope', function(SettingsFactory, $rootScope){
 
 		function formatTime(input) {
 			var milliseconds = parseInt((Math.floor(input)%1000));
@@ -82,87 +82,6 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 		}
 		
-		function updateNavigator(start, end, data, navYScale, navHeight, navWidth) {
-			
-			var minDate = new Date(start);
-			var maxDate = new Date(end);
-			
-			var navXScale = d3.time.scale()
-				.domain([minDate, maxDate])
-				.nice(d3.time.minute)
-				.range([0, navWidth]);
-
-			
-			var navXAxis = d3.svg.axis()
-				.scale(navXScale)
-				.orient('bottom')
-				.ticks(5);
-				//.tickValues(d3.time.month.range(minDate, maxDate))
-				//.tickFormat(d3.time.format("%b '%y"));
-			
-			var viewport = d3.svg.brush()
-				.x(navXScale)
-				.on("brushend", function() {
-					// update data for main chart -> send notification to controller
-					$rootScope.$broadcast('datetimeRangeChanged', viewport.extent()[0], viewport.extent()[1]);
-				});
-			
-			nv.addGraph(function() {
-				
-				// default: complete datetime range
-				viewport.extent([minDate, maxDate]);
-				
-				var svg = d3.select("#navigator svg")
-					.attr('transform', 'translate(20,5)');
-				
-				svg.selectAll('*').remove();
-				
-				svg.append('g')
-					.attr('class', 'x axis')
-					.attr('transform', 'translate(0,' + navHeight + ')')
-					.call(navXAxis);
-				
-				svg.selectAll("scatter-dots")
-			      .data(data)
-			      .enter().append("svg:circle")
-			          .attr("cx", function (d,i) { return navXScale(d.datetime); } )
-			          .attr("cy", function (d) { return navYScale(d.y); } )
-			          .attr("r", 4);
-				
-				svg.append('g')
-					.attr('class', 'viewport')
-					.call(viewport)
-					.selectAll('rect')
-						.attr('height', navHeight);
-				
-				// draw left and right border of brush (styling with border-left/right is not possible for rect)
-				d3.select('.resize.e rect').remove();
-				d3.select('.resize.e')
-					.append('rect')
-					.attr('x', 0)
-					.attr('y', 0)
-					.attr('width', 3)
-					.attr('height', 105);				
-				d3.select('.resize.w rect').remove();
-				d3.select('.resize.w')
-					.append('rect')
-					.attr('x', 0)
-					.attr('y', 0)
-					.attr('width', 3)
-					.attr('height', 105);
-			});
-		}
-		
-		
-		d3.selection.prototype.moveToBack = function() { 
-		    return this.each(function() { 
-		        var firstChild = this.parentNode.firstChild; 
-		        if (firstChild) { 
-		            this.parentNode.insertBefore(this, firstChild); 
-		        } 
-		    }); 
-		};
-		
 		function updateData(origData, start, end) {
 			var endTime;
 			var data = [];
@@ -176,28 +95,6 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		
 		function link(scope,element,attrs){
 			
-			// draw navigation chart
-			
-			var navWidth = 550;
-			var navHeight = 100;
-			
-			var minmaxY = getMinMaxY(scope.data);
-			var yMin = minmaxY[0];
-			var yMax = minmaxY[1];
-			var navYScale = d3.scale.linear()
-			.domain([yMin, yMax])
-			.range([navHeight, 0]);
-			
-			var minmaxDate = getMinMaxDate(scope.data);
-			
-			updateNavigator(minmaxDate[0], minmaxDate[1], scope.data, navYScale, navHeight, navWidth);
-			
-			scope.$on('datetimeChanged', function(event, start, end) {
-				var data = updateData(scope.data, start, end);
-				updateNavigator(start, end, data, navYScale, navHeight, navWidth);
-			});
-			
-			// draw main chart
 			scope.$watch('data', function() {
 				nv.addGraph(function() {
 					// clear svg
@@ -371,7 +268,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			link: link,
 			restrict: 'E',
 			scope: { data: '=' },
-			template: '<div id="plot"><svg/></div>' 	// NOTE: div for navigator is in activityHistoryModal
+			template: '<div id="plot"><svg/></div>'
 		}
 	}])
 });

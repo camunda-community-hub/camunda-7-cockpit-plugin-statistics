@@ -14893,7 +14893,7 @@ nv.models.sparklinePlus = function($rootScope) {
         g.select('.nv-hoverValue .nv-yValue')
             .text(yTickFormat(sparkline.y()(data[index[0]], index[0])));
         
-        if(index.length > 0) $rootScope.$broadcast('showSparklineValue', index[0]);
+        if(index.length > 0) $rootScope.$broadcast('showSparklineValue', index[0]); // <--- ADDED 
       }
 
 
