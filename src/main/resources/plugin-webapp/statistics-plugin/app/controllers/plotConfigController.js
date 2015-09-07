@@ -251,7 +251,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					if (add) {
 						$scope.selected[indexProcess].activityTypes[indexActivityType].activities.push({"activity": chosenItem.activity});
 						//controls weather now all activities of this type are checked and then also checks the type
-						if ($scope.selected[indexProcess].activityTypes[indexActivityType].activities.length==$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length) {
+						if ($scope.selected[indexProcess].activityTypes[indexActivityType].activities.length==$scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].acts.length) {
 							$scope.$broadcast('checkActivityType',{"val":$scope.selected[indexProcess].activityTypes[indexActivityType].activityType});
 						}
 					}
@@ -276,8 +276,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				else {
 					$scope.selected[indexProcess].activityTypes.push({"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
-					if ($scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length==1)
-						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});
+					if ($scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].acts.length==1)
+						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].type});
 				}
 			}
 			//process has not been added yet
@@ -288,8 +288,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				else if (add) {//need this for the case: all activities unchecked, type still checked
 					$scope.selected.push({"process":chosenItem.process,"procDefId": $scope.menuData[processIndexMenu].Id, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
-					if ($scope.menuData[processIndexMenu].values[activityTypeIndexMenu].values.length==1)
-						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].values[activityTypeIndexMenu].key});
+					if ($scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].acts.length==1)
+						$scope.$broadcast('checkActivityType',{"val":$scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].type});
 				}
 			}
 		};
@@ -331,26 +331,26 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//and if the activityType is unchecked it fires an event that
 		//the activity controllers listen to
 		$scope.$on('uncheckActivityType', function(event, args) {
-			if($scope.activityType.key == args.val) {
+			if($scope.activityType.type == args.val) {
 				$scope.isSelected = false;
 			}
 		});
 
 		$scope.$on('checkActivityType', function(event, args) {
-			if($scope.activityType.key == args.val){
+			if($scope.activityType.type == args.val){
 				$scope.isSelected = true;
 			}
 		});
 
 		$scope.$on('deleteActivityType', function(event, args) {
-			if($scope.activityType.key == args.val){
+			if($scope.activityType.type == args.val){
 				$scope.isSelected = false;
 				$scope.$broadcast('isSelectedChange',{"val":$scope.isSelected});
 			}
 		});
 
 		$scope.isSelected = false;
-		this.isSelected = $scope.isSelected;
+//		this.isSelected = $scope.isSelected;
 		$scope.toggleSelection = function(e) {
 			$scope.isSelected= !$scope.isSelected;
 			$scope.$broadcast('isSelectedChange',{"val":$scope.isSelected});
@@ -371,16 +371,31 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//listens for the event when an item is removed from the list with the remove icon
 		//and unchecks the box, so the list and boxes stay in sync
 		$scope.$on('activityDeleted', function(event, args) {
-			if($scope.activity.x == args.val) {
+			if($scope.activity.actName == args.val) {
 				$scope.isSelected = false;
 			}
 		});
 
 		$scope.isSelected = false;
 		$scope.toggleSelection = function(processIndex, activityTypeIndex, activityIndex) {
-			var insert = {"process": $scope.processItem.key, "wholeProcess": false, "activityType": $scope.activityType.key, "activity": $scope.activity.x};
+			var insert = {"process": $scope.processItem.key, "wholeProcess": false, "activityType": $scope.activityType.type, "activity": $scope.activity.actName};
 			$scope.change(insert, $scope.isSelected, processIndex, activityTypeIndex, activityIndex);
 		}; 
+		$scope.disabled = true;
+		$scope.$watchCollection('selectedVersions',function(){
+			$scope.disabled = true;
+			angular.forEach($scope.activity.versions, function(version) {
+				angular.forEach($scope.selectedVersions, function(id) {
+					var index = $scope.versions.map(function(e) {return e.id}).indexOf(id);
+					if(version == $scope.versions[index].value) $scope.disabled = false;
+				})
+			})
+//			for (var i = 0; i < $scope.activity.versions) {
+//				for(var j = 0; j < $scope.selectedVersions.length; j++) {
+//					if ()
+//				}
+//			}
+		});
 	}]);
 });
 

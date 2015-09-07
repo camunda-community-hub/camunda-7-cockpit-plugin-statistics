@@ -15,14 +15,14 @@
 		</a>
 	   </li>
 	   <li>
-	     <a data-ng-click='deselectAll();'>
+	     <a data-ng-click='deselectAll($event);'>
 	       <span class='glyphicon glyphicon-remove'
 				aria-hidden='true'>
 			</span> Uncheck All
 		</a>
 	   </li>
 		<li class='divider'></li>
-		<li data-ng-repeat='option in options'><a data-ng-click='toggleSelectItem(option)'>
+		<li data-ng-repeat='option in options'><a data-ng-click='toggleSelectItem($event, option)'>
 		  <span data-ng-class='getClassName(option)' aria-hidden='true'>
 		  </span> {{option.value}}
 		</a>
