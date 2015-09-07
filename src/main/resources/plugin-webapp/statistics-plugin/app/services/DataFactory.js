@@ -651,16 +651,22 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				//this could also be done outside the loop, might be faster, but order of pushed objects in promises is destroyed
 				//if performance becomes an issue we have to change this
 				if(processObject.wholeProcess){
-					promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+procDefId+timeRequest+"&sortBy=startTime&sortOrder=asc")));
-					keyList.push(processObject.process);
+					angular.forEach(processObject.procDefIds, function(id) {
+						console.log("process-instance?processDefinitionId="+id+timeRequest);
+						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+id+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+						keyList.push(processObject.process);
+					})
 				}
 				angular.forEach(processObject.activityTypes, function(activityTypeObject, indexActType){
 					angular.forEach(activityTypeObject.activities, function(activityObject, indexAct){
 						var activityType = activityTypeObject.activityType;
 						var actName = activityObject.activity;
 						keyList.push(actName);
-//						we need to sort the results by start time for the splines in regressionplot directive
-						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+						angular.forEach(processObject.procDefIds, function(id){
+							console.log("activity-instance?processDefinitionId="+id);
+//							we need to sort the results by start time for the splines in regressionplot directive
+							promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+id+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+						})
 					})
 				})
 			})

@@ -284,9 +284,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			else {
 				//add whole process
 				if (chosenItem.wholeProcess)
-					$scope.selected.push({"process":chosenItem.process, "procDefId": $scope.menuData[processIndexMenu].Id,"wholeProcess": true, "activityTypes":[]});
+					$scope.selected.push({"process":chosenItem.process, "procDefIds":chosenItem.procDefIds ,"wholeProcess": true, "activityTypes":[]});
 				else if (add) {//need this for the case: all activities unchecked, type still checked
-					$scope.selected.push({"process":chosenItem.process,"procDefId": $scope.menuData[processIndexMenu].Id, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
+					$scope.selected.push({"process":chosenItem.process,"procDefIds": chosenItem.procDefIds, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
 					if ($scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].acts.length==1)
 						$scope.$broadcast('checkActivityType',{"key": $scope.menuData[processIndexMenu].procName, "type":$scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].type});
@@ -310,6 +310,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.$broadcast('activityDeleted', {"val": activity})
 			}
 		}
+		
+		
+		$scope.changeVersions = function(key, procDefIds) {
+			var indexProcess = $scope.selected.map(function(e) { return e.process; }).indexOf(key);
+			if(indexProcess != -1) $scope.selected[indexProcess].procDefIds = procDefIds;
+		}
 	}]);
 
 	module.controller('processItemController',['$scope', function($scope){
@@ -317,12 +323,30 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.versions =  $scope.processItem.vIds;
 		var a=[],b=$scope.versions.length;while(b--)a[b]=b+1;
 		$scope.selectedVersions = a;
+		$scope.$watchCollection('selectedVersions',function(){
+			$scope.changeVersions($scope.processItem.key, $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions));
+		});
 		$scope.toggleSelection = function(e, processIndex) {
 			$scope.isSelected= !$scope.isSelected;
 			e.stopPropagation();
 			e.preventDefault();
-			$scope.change( {"process":$scope.processItem.key, "wholeProcess": true }, $scope.isSelected, processIndex, undefined, undefined);
+			var procDefIds = $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions);
+			console.log(procDefIds);
+			$scope.change( {"process":$scope.processItem.key, "procDefIds": procDefIds, "wholeProcess": true }, $scope.isSelected, processIndex, undefined, undefined);
 		}; 
+		
+		$scope.getProcDefIdsFromIds = function(ids, versions) {
+			procDefIds = [];
+			console.log(ids);
+			for(var i = 0; i < ids.length; i++) {
+				console.log(versions);
+				angular.forEach(versions, function(ver){
+					console.log(ver);
+					if (ver.id == ids[i]) procDefIds.push(ver.procDefId);
+				})
+			}
+			return procDefIds;
+		}
 	}]);
 
 	module.controller('activityTypeController', ['$scope', function($scope) {
@@ -378,10 +402,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		$scope.isSelected = false;
 		$scope.toggleSelection = function(processIndex, activityTypeIndex, activityIndex) {
-			var insert = {"process": $scope.processItem.key, "wholeProcess": false, "activityType": $scope.activityType.type, "activity": $scope.activity.actName};
+			var procDefIds = $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions);
+			console.log(procDefIds);
+			var insert = {"process": $scope.processItem.key, "procDefIds": procDefIds, "wholeProcess": false, "activityType": $scope.activityType.type, "activity": $scope.activity.actName};
 			$scope.change(insert, $scope.isSelected, processIndex, activityTypeIndex, activityIndex);
 		}; 
 		$scope.disabled = true;
+		//depending on what versions are chosen, only certain activities are choosable
 		$scope.$watchCollection('selectedVersions',function(){
 			$scope.disabled = true;
 			angular.forEach($scope.activity.versions, function(version) {
