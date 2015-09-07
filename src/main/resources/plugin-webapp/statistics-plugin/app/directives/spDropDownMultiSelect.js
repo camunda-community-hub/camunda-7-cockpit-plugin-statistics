@@ -1,7 +1,9 @@
 ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 	
 	var controller = function ($scope) {
-		$scope.openDropdown = function () {
+		$scope.openDropdown = function (e) {
+			e.stopPropagation();
+			e.preventDefault();
 			$scope.open = !$scope.open;
 		};
 
@@ -56,6 +58,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 			scope: {
 				model: '=',
 				options: '=',
+				title: '@'
 			},
 			templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/partials/sp-drop-down-multi-select.html')),
 			controller: controller
