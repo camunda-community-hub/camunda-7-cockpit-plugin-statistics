@@ -1,0 +1,31 @@
+<div class='btn-group' data-ng-class='{open: open}'>
+	<a>Version</a>
+	<a
+		class='dropdown-toggle'
+		data-ng-click='openDropdown()'>
+		<span class='caret'></span>
+	</a>
+	<ul
+		class='dropdown-menu'
+		aria-labelledby='dropdownMenu'>
+		<li>
+		  <a data-ng-click='selectAll($event)'>
+		  <span class='glyphicon glyphicon-ok' aria-hidden='true'>
+		  </span> Check All
+		</a>
+	   </li>
+	   <li>
+	     <a data-ng-click='deselectAll();'>
+	       <span class='glyphicon glyphicon-remove'
+				aria-hidden='true'>
+			</span> Uncheck All
+		</a>
+	   </li>
+		<li class='divider'></li>
+		<li data-ng-repeat='option in options'><a data-ng-click='toggleSelectItem(option)'>
+		  <span data-ng-class='getClassName(option)' aria-hidden='true'>
+		  </span> {{option.value}}
+		</a>
+		</li>
+	</ul>
+</div>

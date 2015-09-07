@@ -314,6 +314,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 	module.controller('processItemController',['$scope', function($scope){
 		$scope.isSelected = false;
+		$scope.versions =  [
+		                { "id": 1, "value": "Ali" },
+		                { "id": 2, "value": "Sara" },
+		                { "id": 3, "value": "Babak" },
+		                { "id": 4, "value": "Sanaz" },
+		                { "id": 5, "value": "Dariush" },
+		            ];
+		$scope.selectedVersions = [3, 5];
 		$scope.toggleSelection = function(e, processIndex) {
 			$scope.isSelected= !$scope.isSelected;
 			e.stopPropagation();

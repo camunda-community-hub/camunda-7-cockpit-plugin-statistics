@@ -3,7 +3,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		var Format = {};
 
 		var addNewProcess = function(formatedData, act) {
-			formatedData.push({"key": act.procDefKey, "name": act.procName, "minV": act.procVersion, "maxV": act.procVersion, "actTypes": []});
+			formatedData.push({"key": act.procDefKey, "name": act.procName, "vIds": [], "actTypes": []});
 			return formatedData;
 		}
 		
