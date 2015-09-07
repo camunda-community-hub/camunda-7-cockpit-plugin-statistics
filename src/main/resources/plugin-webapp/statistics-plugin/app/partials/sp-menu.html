@@ -40,6 +40,7 @@
 			<input
 			  type="checkbox"
 			  ng-model="isSelected"
+			  ng-disabled="disabled"
 			  ng-change="toggleSelection(processItemIndex,activityTypeIndex,activityIndex)">
 			  {{activity.actName}}
           </div>

@@ -6,6 +6,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		};
 
 		$scope.selectAll = function (e) {
+			//if this is not done the accordion will open when the dropdown is clicked
 			e.stopPropagation();
 			e.preventDefault();
 			$scope.model = [];
@@ -14,11 +15,15 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 			});
 		};
 
-		$scope.deselectAll = function () {
+		$scope.deselectAll = function (e) {
+			e.stopPropagation();
+			e.preventDefault();
 			$scope.model = [];
 		};
 
-		$scope.toggleSelectItem = function (option) {
+		$scope.toggleSelectItem = function (e, option) {
+			e.stopPropagation();
+			e.preventDefault();
 			var intIndex = -1;
 			angular.forEach($scope.model, function (item, index) {
 				if (item == option.id) {

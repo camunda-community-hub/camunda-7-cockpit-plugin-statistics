@@ -128,6 +128,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * formating is now happening inside the loop, if performance becomes an issue we have to think of sth new
 		 */
 		TimingFactory.getModelMenuData = function(selectedFromMenu, options, evaluateData){
+			console.log(selectedFromMenu);
 			//make an iterator over the 20 d3 default colors
 			//colorDictionary is a map which assigns each key a color. This map is used to make 
 			//a color function for the plots. It is calculated here and then reused in each update call
@@ -157,7 +158,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				keyIndex = colorDictionary.map(function(e) { return e.key; }).indexOf(d.key);
 				return colorDictionary[keyIndex].color;
 			};
-			return DataFactory.getDataFromModelMenu(selectedFromMenu,options.timeWindow)
+			return DataFactory.getDataFromModelMenu(selectedFromMenu, options.timeWindow)
 			.then(function(promiseData){
 				var data  =[];
 				angular.forEach(promiseData, function(singleCallbackReturn,promiseIndex){
