@@ -10,12 +10,14 @@
 	      ng-style="{color : 'black'}"
 	      ng-click="toggleSelection($event,processItemIndex)">
 	    </a>&nbsp {{processItem.name}}
-	    <i
-	      class="pull-right glyphicon"
-	      ng-class="{'glyphicon-chevron-down': process.open, 'glyphicon-chevron-right': !process.open}">
-	    </i>
-	    <sp-drop-down-multi-select class="pull-right" model="selectedVersions" options="versions">
-        </sp-drop-down-multi-select>
+	    <div class="pull-right">
+	      <sp-drop-down-multi-select model="selectedVersions" options="versions" title="Vers"></sp-drop-down-multi-select>
+          &nbsp
+	      <i
+	        class="glyphicon"
+	        ng-class="{'glyphicon-chevron-down': process.open, 'glyphicon-chevron-right': !process.open}">
+	      </i>
+        </div>
 	  </accordion-heading> 
 	<accordion>
 	<div
