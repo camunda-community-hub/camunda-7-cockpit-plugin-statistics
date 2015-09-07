@@ -9,11 +9,13 @@
 	      ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
 	      ng-style="{color : 'black'}"
 	      ng-click="toggleSelection($event,processItemIndex)">
-	    </a>&nbsp {{processItem.key}}
+	    </a>&nbsp {{processItem.name}}
 	    <i
 	      class="pull-right glyphicon"
 	      ng-class="{'glyphicon-chevron-down': process.open, 'glyphicon-chevron-right': !process.open}">
 	    </i>
+	    <sp-drop-down-multi-select class="pull-right" model="selectedVersions" options="versions">
+        </sp-drop-down-multi-select>
 	  </accordion-heading> 
 	<accordion>
 	<div
