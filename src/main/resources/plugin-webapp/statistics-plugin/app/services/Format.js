@@ -3,15 +3,17 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		var Format = {};
 
 		var addNewProcess = function(formatedData, act) {
-			formatedData.push({"key": act.procDefKey, "name": act.procName, "vIds": [], "actTypes": []});
+			formatedData.push({"key": act.procDefKey, "name": act.procName, "vIds": [{"id": 1, "value": act.procVersion, "procDefId": act.procDefId}], "actTypes": []});
 			return formatedData;
 		}
 		
-		var updateVersionMinMax = function(processObject, version) {
-			if (version < processObject.minV) processObject.minV = version;
-			if (version > processObject.maxV) processObject.maxV = version;
+		var addNewVersion = function(processObject, act) {
+			var vIndex = processObject.vIds.map(function(e) { return e.procDefId }).indexOf(act.procDefId);
+			if(vIndex == -1) {
+				var newId = processObject.vIds.length + 1;
+				processObject.vIds.push({"id": newId, "value": act.procVersion, "procDefId": act.procDefId})
+			}
 		}
-		
 		Format.formatMenuData = function(menuData) {
 			var formatedData = [];
 			angular.forEach(menuData, function(activity) {
@@ -19,7 +21,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				if(!formatedData.some(function(e) e.key == activity.procDefKey)) formatedData = addNewProcess(formatedData, activity);
 				//get index of process
 				var procIndex = formatedData.map(function(e) { return e.key; }).indexOf(activity.procDefKey);
-				updateVersionMinMax(formatedData[procIndex], activity.procVersion);
+				addNewVersion(formatedData[procIndex], activity);
 				//if activityType has not been added yet
 				if(!formatedData[procIndex].actTypes.some(function(e) e.type == activity.type))
 					formatedData[procIndex].actTypes.push({"type": activity.type, "acts": []});

@@ -19,7 +19,7 @@
 	  </accordion-heading> 
 	<accordion>
 	<div
-	  ng-repeat="(activityTypeIndex,activityType) in processItem.values"
+	  ng-repeat="(activityTypeIndex,activityType) in processItem.actTypes"
 	  ng-controller="activityTypeController as aTC">
 	  <accordion-group is-open="status.open">
 	    <accordion-heading>
@@ -28,20 +28,20 @@
 	        ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
 			ng-style="{color : 'black'}"
 			ng-click="toggleSelection($event)">
-          </a>&nbsp {{activityType.key}}
+          </a>&nbsp {{activityType.type}}
           <i
 			class="pull-right glyphicon"
 			ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}">
           </i>
         </accordion-heading>
           <div
-            ng-repeat="(activityIndex, activity) in activityType.values"
+            ng-repeat="(activityIndex, activity) in activityType.acts"
 			ng-controller="activityController">
 			<input
 			  type="checkbox"
 			  ng-model="isSelected"
 			  ng-change="toggleSelection(processItemIndex,activityTypeIndex,activityIndex)">
-			  {{activity.x}}
+			  {{activity.actName}}
           </div>
         </accordion-group>
       </div>
