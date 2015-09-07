@@ -284,9 +284,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			else {
 				//add whole process
 				if (chosenItem.wholeProcess)
-					$scope.selected.push({"process":chosenItem.process, "procDefIds":chosenItem.procDefIds ,"wholeProcess": true, "activityTypes":[]});
+					$scope.selected.push({"process":chosenItem.process, "procName": chosenItem.procName, "procDefIds":chosenItem.procDefIds ,"wholeProcess": true, "activityTypes":[]});
 				else if (add) {//need this for the case: all activities unchecked, type still checked
-					$scope.selected.push({"process":chosenItem.process,"procDefIds": chosenItem.procDefIds, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
+					$scope.selected.push({"process":chosenItem.process, "procName": chosenItem.procName, "procDefIds": chosenItem.procDefIds, "wholeProcess": false, "activityTypes":[{"activityType":chosenItem.activityType, "activities":[{"activity":chosenItem.activity}]}]});
 					//if this type only has one activity then check it! since all activities of this type have just been checked
 					if ($scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].acts.length==1)
 						$scope.$broadcast('checkActivityType',{"key": $scope.menuData[processIndexMenu].procName, "type":$scope.menuData[processIndexMenu].actTypes[activityTypeIndexMenu].type});
@@ -332,7 +332,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			e.preventDefault();
 			var procDefIds = $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions);
 			console.log(procDefIds);
-			$scope.change( {"process":$scope.processItem.key, "procDefIds": procDefIds, "wholeProcess": true }, $scope.isSelected, processIndex, undefined, undefined);
+			$scope.change( {"process":$scope.processItem.key, "procName": $scope.processItem.name, "procDefIds": procDefIds, "wholeProcess": true }, $scope.isSelected, processIndex, undefined, undefined);
 		}; 
 		
 		$scope.getProcDefIdsFromIds = function(ids, versions) {
@@ -389,7 +389,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if ($scope.isSelected != args.val) {
 				$scope.isSelected = args.val;
 				//these are inherited from parent scopes
-				$scope.toggleSelection($scope.processItemIndex,$scope.activityTypeIndex,$scope.activityIndex);
+				$scope.toggleSelection($scope.processItemIndex, $scope.activityTypeIndex, $scope.activityIndex);
 			}
 		});
 		//listens for the event when an item is removed from the list with the remove icon
@@ -404,7 +404,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.toggleSelection = function(processIndex, activityTypeIndex, activityIndex) {
 			var procDefIds = $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions);
 			console.log(procDefIds);
-			var insert = {"process": $scope.processItem.key, "procDefIds": procDefIds, "wholeProcess": false, "activityType": $scope.activityType.type, "activity": $scope.activity.actName};
+			var insert = {"process": $scope.processItem.key, "procName": $scope.processItem.name, "procDefIds": procDefIds, "wholeProcess": false, "activityType": $scope.activityType.type, "activity": $scope.activity.actName};
 			$scope.change(insert, $scope.isSelected, processIndex, activityTypeIndex, activityIndex);
 		}; 
 		$scope.disabled = true;
