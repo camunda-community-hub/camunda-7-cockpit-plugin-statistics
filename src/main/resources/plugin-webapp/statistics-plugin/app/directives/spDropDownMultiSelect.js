@@ -11,7 +11,10 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 			//if this is not done the accordion will open when the dropdown is clicked
 			e.stopPropagation();
 			e.preventDefault();
-			$scope.model = [];
+			//before we had 
+//			$scope.model = []
+			//but this changed the array and a watch outside the directive watching the model value didnt work anymore!
+			$scope.model.length = 0;
 			angular.forEach($scope.options, function (item, index) {
 				$scope.model.push(item.id);
 			});
@@ -20,7 +23,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 		$scope.deselectAll = function (e) {
 			e.stopPropagation();
 			e.preventDefault();
-			$scope.model = [];
+			$scope.model.length = 0;
 		};
 
 		$scope.toggleSelectItem = function (e, option) {

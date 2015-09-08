@@ -174,9 +174,9 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 	function dotManager(options, data, svg, parseX, parseY, width){
 		var tooltip = d3.select("body").append("div")
-	    .attr("class", "tooltip")
-	    .style("opacity", 0);
-		
+		.attr("class", "tooltip")
+		.style("opacity", 0);
+
 		if(typeof options == "undefined")
 			return;
 		if(!options.scatter)
@@ -202,16 +202,16 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 						.duration(200)
 						.style("opacity", .9);
 						tooltip.html("started at: " + d[options.x] +
-						"<br/> duration: " + options.yTick(d[options.y]))
-//						"<br/> exact duration: " + options.yTickExact(d[options.y])
+								"<br/> duration: " + options.yTick(d[options.y]))
+//								"<br/> exact duration: " + options.yTickExact(d[options.y])
 								.style("left", (d3.event.pageX + 5) + "px")
 								.style("top", (d3.event.pageY - 28) + "px");
 					})
 					.on("mouseout", function(d) {
-				          tooltip.transition()
-				               .duration(500)
-				               .style("opacity", 0);
-				      });
+						tooltip.transition()
+						.duration(500)
+						.style("opacity", 0);
+					});
 			});
 		}
 
@@ -355,17 +355,22 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			scope.width = getWidth(element[0].offsetParent.clientWidth);
 
 			scope.$watch(function() { return element[0].offsetParent.clientWidth}, function() {
-				scope.width = getWidth(element[0].offsetParent.clientWidth);
-				var result = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
-				console.log(result);
-				scope.svg = result.svg;
-				data = result.data;
+				if(scope.data !== undefined) {
+					scope.width = getWidth(element[0].offsetParent.clientWidth);
+					console.log(scope.data);
+					var result = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
+					console.log(result);
+					scope.svg = result.svg;
+					data = result.data;
+				}
 			});
 
 			scope.$watch('data', function() {
-				var result = drawGraph(element, scope.options,scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
-				scope.svg = result.svg;
-				data = result.data;
+				if(scope.data !== undefined) {
+					var result = drawGraph(element, scope.options,scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
+					scope.svg = result.svg;
+					data = result.data;
+				}
 			},true);
 
 			scope.$watch('options.spline',function(){
