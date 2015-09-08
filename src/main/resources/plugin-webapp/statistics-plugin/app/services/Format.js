@@ -272,7 +272,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 
 		Format.getKMeansClusterFromFormatedData = function(formatedData, formatAndParser, x, numberOfInstancesMap){
-			console.log(fromatedData);
+			console.log(formatedData);
 			var clusterArray = new Array(formatedData.length);
 			for(var i=0; i<formatedData.length; i++){
 				if(formatedData[i].values.length == 0) continue;
