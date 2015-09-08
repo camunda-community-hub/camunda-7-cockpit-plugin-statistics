@@ -320,12 +320,16 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 	function drawGraph(element, options, data, parseX, parseY, legend, width) {
 		if (typeof data=="undefined" || data.length == 0)
 			return;
+		//work on a copy to not change the input data!
+		var dataCopy = [];
 		//delete all values where y is null, theoretically we could also do that 
 		//for x values but so far there is no use case where this could happen
 		for(var i=0; i < data.length; i++) {
-			data[i].values = data[i].values.map(function(d) { return (d[options.y] == null|| d[options.y]<=0)? null : d}).filter(function(d) { return d != null });
+			var values = data[i].values.map(function(d) { return (d[options.y] == null|| d[options.y]<=0)? null : d}).filter(function(d) { return d != null });
+			dataCopy.push({"key": data[i].key, "values": values });
 		}
-
+		console.log(dataCopy);
+		console.log(data);
 		element[0].innerHTML = '';
 		var height = getHeight(options.heigth);
 
@@ -335,42 +339,48 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-		initGraph(options, data, svg, parseX, parseY, legend, width);
-		dotManager(options, data, svg, parseX, parseY, width);
-		splineManager(options, data, svg, parseX, parseY, width);
-		regressionManager(options, data, svg, parseX, parseY, width);
-
-		return svg;
+		initGraph(options, dataCopy, svg, parseX, parseY, legend, width);
+		dotManager(options, dataCopy, svg, parseX, parseY, width);
+		splineManager(options, dataCopy, svg, parseX, parseY, width);
+		regressionManager(options, dataCopy, svg, parseX, parseY, width);
+		var result = {"svg": svg, "data": dataCopy };
+		console.log(result);
+		return result;
 	}
 
 	//in html sp-regression-plot!!!
 	module.directive('spRegressionPlot', function(){
 		function link(scope,element,attrs){
-
+			var data = [];
 			scope.width = getWidth(element[0].offsetParent.clientWidth);
 
 			scope.$watch(function() { return element[0].offsetParent.clientWidth}, function() {
 				scope.width = getWidth(element[0].offsetParent.clientWidth);
-				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
+				var result = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
+				console.log(result);
+				scope.svg = result.svg;
+				data = result.data;
 			});
 
 			scope.$watch('data', function() {
-				scope.svg = drawGraph(element, scope.options, scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
+				var result = drawGraph(element, scope.options,scope.data, scope.parseX, scope.parseY, scope.legend, scope.width);
+				scope.svg = result.svg;
+				data = result.data;
 			},true);
 
 			scope.$watch('options.spline',function(){
-				splineManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY, scope.width);
+				splineManager(scope.options, data, scope.svg, scope.parseX, scope.parseY, scope.width);
 			});
 
 
 			scope.$watch('options.scatter',function(){
-				dotManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY, scope.width);
+				dotManager(scope.options, data, scope.svg, scope.parseX, scope.parseY, scope.width);
 			});
 
 
 
 			scope.$watch('options.regression',function(){
-				regressionManager(scope.options, scope.data, scope.svg, scope.parseX, scope.parseY, scope.width);
+				regressionManager(scope.options, data, scope.svg, scope.parseX, scope.parseY, scope.width);
 			});
 
 		}
