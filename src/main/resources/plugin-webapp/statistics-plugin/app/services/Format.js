@@ -132,59 +132,59 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * @param parsey the name of a function, before the y property is pushed in the new data structure
 		 * it will be parsed by parseY
 		 */
-		Format.bringSortedDataInPlotFormat = function(data, keyArray, x, y, parseX, parseY){
-
-			var identity = function(value){return value};
-			var parseX = (typeof parseX == "undefined" || parseX == "")? identity:parseX;
-			var parseY = (typeof parseY == "undefined" || parseY == "")? identity:parseY;
-
-			var formatedData = [];
-			var i = -1;
-			angular.forEach(data ,function(element){
-				if(typeof keyArray == "string") var key = keyArray;
-				else {
-					var key = !element.hasOwnProperty(keyArray[0]) ? keyArray[1] : keyArray[0];
-				}
-				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
-					formatedData.push({"key": element[key], "values": []});
-					i++;
-				};
-				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
-				//remove this when query doesnt give nullvalues anymore
-				if(element[x] == null);
-				else  {
-					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
-				}
-			});
-			return formatedData;
-		};
-		//when method works combine the two, default will be unsorted, when sorted argument is true, the sorted algo will
-		//be used to improove perfomance
-		Format.bringNotSortedDataInPlotFormat = function(data, key, x, y, parseX, parseY){
-			var identity = function(value){return value};
-			var parseX = (typeof parseX == "undefined" || parseX == "")? identity:parseX;
-			var parseY = (typeof parseY == "undefined" || parseY == "")? identity:parseY;
-
-			var formatedData = [];
-			var i = -1;
-			angular.forEach(data, function(element){
-				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
-					i = formatedData.map(function(e) {return e.key;}).indexOf(element[key]);
-					if(i==-1){
-						formatedData.push({"key": element[key], "values": []});
-						i= formatedData.length-1;
-					};
-				};
-				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
-				//remove this when query doesnt give nullvalues anymore
-				if(element[x] == null) {
-
-				} else {  
-					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
-				}
-			});
-			return formatedData;
-		};
+//		Format.bringSortedDataInPlotFormat = function(data, keyArray, x, y, parseX, parseY){
+//
+//			var identity = function(value){return value};
+//			var parseX = (typeof parseX == "undefined" || parseX == "")? identity:parseX;
+//			var parseY = (typeof parseY == "undefined" || parseY == "")? identity:parseY;
+//
+//			var formatedData = [];
+//			var i = -1;
+//			angular.forEach(data ,function(element){
+//				if(typeof keyArray == "string") var key = keyArray;
+//				else {
+//					var key = !element.hasOwnProperty(keyArray[0]) ? keyArray[1] : keyArray[0];
+//				}
+//				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
+//					formatedData.push({"key": element[key], "values": []});
+//					i++;
+//				};
+//				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
+//				//remove this when query doesnt give nullvalues anymore
+//				if(element[x] == null);
+//				else  {
+//					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
+//				}
+//			});
+//			return formatedData;
+//		};
+//		//when method works combine the two, default will be unsorted, when sorted argument is true, the sorted algo will
+//		//be used to improove perfomance
+//		Format.bringNotSortedDataInPlotFormat = function(data, key, x, y, parseX, parseY){
+//			var identity = function(value){return value};
+//			var parseX = (typeof parseX == "undefined" || parseX == "")? identity:parseX;
+//			var parseY = (typeof parseY == "undefined" || parseY == "")? identity:parseY;
+//
+//			var formatedData = [];
+//			var i = -1;
+//			angular.forEach(data, function(element){
+//				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
+//					i = formatedData.map(function(e) {return e.key;}).indexOf(element[key]);
+//					if(i==-1){
+//						formatedData.push({"key": element[key], "values": []});
+//						i= formatedData.length-1;
+//					};
+//				};
+//				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
+//				//remove this when query doesnt give nullvalues anymore
+//				if(element[x] == null) {
+//
+//				} else {  
+//					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
+//				}
+//			});
+//			return formatedData;
+//		};
 
 
 		var getGlobalMinMax = function (formatedData, attribute) {
@@ -272,6 +272,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 
 		Format.getKMeansClusterFromFormatedData = function(formatedData, formatAndParser, x, numberOfInstancesMap){
+			console.log(fromatedData);
 			var clusterArray = new Array(formatedData.length);
 			for(var i=0; i<formatedData.length; i++){
 				if(formatedData[i].values.length == 0) continue;

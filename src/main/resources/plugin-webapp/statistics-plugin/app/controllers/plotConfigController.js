@@ -314,7 +314,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.changeVersions = function(key, procDefIds) {
 			var indexProcess = $scope.selected.map(function(e) { return e.process; }).indexOf(key);
-			if(indexProcess != -1) $scope.selected[indexProcess].procDefIds = procDefIds;
+			if(indexProcess != -1) {
+				//selected version has been changed so next time apply method is called we have to request new data from 
+				//the data base
+				requestToDataBank = true;
+				$scope.selected[indexProcess].procDefIds = procDefIds;
+			}
 		}
 	}]);
 
