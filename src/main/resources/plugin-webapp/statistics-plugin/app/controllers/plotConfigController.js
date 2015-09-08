@@ -4,17 +4,17 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 //		$scope.noFrameFormats = [ '%m/%d/%Y', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
 		$scope.widthDependingClass = "col-sm-6";
-		
-		
+
+
 		$scope.$on('widthChanged', function() {
 			console.log(UserInteractionFactory.currentWidth);
 			if(1200 < UserInteractionFactory.currentWidth && UserInteractionFactory.currentWidth < 1620) 
 				$scope.widthDependingClass = "col-sm-12";
 			else $scope.widthDependingClass = "col-sm-6";
 		});
-		
-		
-		
+
+
+
 		$scope.changeView = function() {
 			$scope.legendView = !$scope.legendView;
 		}
@@ -165,7 +165,29 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				addAlert("missingEndDate");
 				return false;
 			}
-			
+
+			return true;
+		}
+
+		var checkData = function(data) {
+			console.log(data);
+			console.log(data.length);
+			if(data.length == 0) {
+				addAlert("noSuchData");
+				return false;
+			}
+//			if(data[0].hasOwnProperty("values")){
+//			var zero = true;
+//			console.log("hallo", data.length);
+//			for(var i = 0; i < data.length; i++) {
+//			console.log("valuesLegngth: ",data[i].values.length)
+//			if(data[i].values.length) zero = false;
+//			}
+//			if(zero) {
+//			addAlert("noSuchData");
+//			return false;
+//			}
+//			}
 			return true;
 		}
 		/**
@@ -178,10 +200,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			$scope.chosenOptions.propertyToPlot = getPropertyToPlot($scope.propertiesBoolean);
 			if (!requestToDataBank) {
 				var update = TimingFactory.updateCharts($scope.chosenOptions, $scope.numberOfInstancesMap);
-				if(update.data.length == 0) {
-					addAlert("noSuchData");
-					return;
-				}
+				if(!checkData(update.data)) return;
+				console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				$scope.data = update.data;
 				console.log("data:", $scope.data);
 				$scope.options = update.options;
@@ -191,14 +211,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				//the update mechanism if we plot with NVD3
 				//using this produces an error since it seems to only use the option in the input and not the newly set data
 //				if ($scope.chosenOptions.propertyToPlot=='startEndTime'||$scope.chosenOptions.propertyToPlot=='distribution')
-//					$scope.api.updateWithOptions($scope.options);
+//				$scope.api.updateWithOptions($scope.options);
 			} else {
 				TimingFactory.getModelMenuData($scope.selected, $scope.chosenOptions, true)
 				.then(function(){
-					if(TimingFactory.dataForPlot.length == 0) {
-						addAlert("noSuchData");
-						return;
-					}
+					console.log(TimingFactory.dataForPlot);
+					if(!checkData(TimingFactory.dataForPlot)) return;
 					$scope.data = TimingFactory.dataForPlot;
 					$scope.options = TimingFactory.options;
 					$scope.parseX = TimingFactory.parseX;
@@ -310,8 +328,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				$scope.$broadcast('activityDeleted', {"val": activity})
 			}
 		}
-		
-		
+
+
 		$scope.changeVersions = function(key, procDefIds) {
 			var indexProcess = $scope.selected.map(function(e) { return e.process; }).indexOf(key);
 			if(indexProcess != -1) {
@@ -324,12 +342,26 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	}]);
 
 	module.controller('processItemController',['$scope', function($scope){
+		//this is needed to sort the versions to display them in order
+		var compare = function(v1, v2) {
+			if(v1.value < v2.value)
+				return -1;
+			if(v1.value > v2.value)
+				return 1;
+			return 0;
+		}
+		
 		$scope.isSelected = false;
+		$scope.processItem.vIds.sort(compare);
 		$scope.versions =  $scope.processItem.vIds;
 		var a=[],b=$scope.versions.length;while(b--)a[b]=b+1;
 		$scope.selectedVersions = a;
-		$scope.$watchCollection('selectedVersions',function(){
+		$scope.$watchCollection('selectedVersions', function() {
+			console.log("watch fired, selectedVersions:", $scope.selectedVersions);
 			$scope.changeVersions($scope.processItem.key, $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions));
+		});
+		$scope.$watch('selectedVersions', function() {
+			console.log("other watch");
 		});
 		$scope.toggleSelection = function(e, processIndex) {
 			$scope.isSelected= !$scope.isSelected;
@@ -339,7 +371,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			console.log(procDefIds);
 			$scope.change( {"process":$scope.processItem.key, "procName": $scope.processItem.name, "procDefIds": procDefIds, "wholeProcess": true }, $scope.isSelected, processIndex, undefined, undefined);
 		}; 
-		
+
 		$scope.getProcDefIdsFromIds = function(ids, versions) {
 			procDefIds = [];
 			console.log(ids);
@@ -414,7 +446,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}; 
 		$scope.disabled = true;
 		//depending on what versions are chosen, only certain activities are choosable
-		$scope.$watchCollection('selectedVersions',function(){
+		$scope.$watchCollection('selectedVersions', function() {
 			$scope.disabled = true;
 			angular.forEach($scope.activity.versions, function(version) {
 				angular.forEach($scope.selectedVersions, function(id) {
@@ -422,11 +454,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					if(version == $scope.versions[index].value) $scope.disabled = false;
 				})
 			})
-//			for (var i = 0; i < $scope.activity.versions) {
-//				for(var j = 0; j < $scope.selectedVersions.length; j++) {
-//					if ()
-//				}
-//			}
+			//if this activity is not in the chosen versions and if it is checked
+			if($scope.disabled && $scope.isSelected) {
+				$scope.isSelected = false;
+				$scope.toggleSelection($scope.processItemIndex, $scope.activityTypeIndex, $scope.activityIndex);
+			}
 		});
 	}]);
 });

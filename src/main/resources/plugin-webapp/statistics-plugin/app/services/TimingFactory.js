@@ -53,6 +53,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return filteredData;
 		}
 
+		var filterNullAndNegative = function(formatedData, attribute) {
+			var filteredData = [];
+			angular.forEach(formatedData, function(keyObject) {
+				filteredKeyObject = { key: keyObject.key };
+				filteredKeyObject.values = keyObject.values.map(function(d) {return (d[attribute] == null|| d[attribute]<=0)? null : d}).filter(function(d) { return d != null });
+				filteredData.push(filteredKeyObject);
+			})
+			return filteredData;
+		}
+		
 		/**
 		 * translates the user input into plot options
 		 * @formatedData{Object} the formated data which will be accessed by the plots
@@ -65,6 +75,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * Not the chosen options from the user!
 		 */
 		TimingFactory.prepareData = function(formatedData, options, colorScale, numberOfInstancesMap) {
+			console.log(formatedData);
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 				TimingFactory.options  = {
@@ -88,7 +99,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				};
 				TimingFactory.parseX = parseDate;
 				TimingFactory.parseY = function(d) { return d;};
-				TimingFactory.dataForPlot = formatedData;
+				TimingFactory.dataForPlot = filterNullAndNegative(formatedData, TimingFactory.options.y);
+				console.log(TimingFactory.dataForPlot)
 			} else if(options.propertyToPlot == "startEndTime") {
 				var filteredData = filterFormatedData(formatedData, options.time);
 				console.log(filteredData);
