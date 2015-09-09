@@ -663,7 +663,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						var actName = activityObject.activity;
 						keyList.push(actName);
 						angular.forEach(processObject.procDefIds, function(id){
-							console.log("activity-instance?processDefinitionId="+id);
 //							we need to sort the results by start time for the splines in regressionplot directive
 							promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+id+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
 						})

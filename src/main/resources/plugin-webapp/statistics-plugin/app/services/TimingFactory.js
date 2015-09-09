@@ -14,17 +14,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		TimingFactory.getMenuData = function(){
 			return DataFactory.getActivityNamesTypesProcDefinition()
 			.then(function () {
-//				var menuData = Format.bringSortedDataInPlotFormat
-//				(DataFactory.activityNamesTypesProcDefinition,"procDefKey","type","activityName",undefined,undefined);
-//				for(var i = 0; i< menuData.length;i++){
-//					menuData[i].values = Format.bringNotSortedDataInPlotFormat(menuData[i].values,"x","y",undefined,undefined,undefined);
-//					var j = DataFactory.activityNamesTypesProcDefinition.map(function(e) { return e.procDefKey; }).indexOf(menuData[i].key);
-//					//add procDefId (we need that later to get the results from database using Rest API)
-//					menuData[i].Id = DataFactory.activityNamesTypesProcDefinition[j].procDefId;
-//				}
-				
 				TimingFactory.menuData = Format.formatMenuData(DataFactory.activityNamesTypesProcDefinition);
-				console.log(TimingFactory.menuData);
 			});
 		};
 
@@ -75,7 +65,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * Not the chosen options from the user!
 		 */
 		TimingFactory.prepareData = function(formatedData, options, colorScale, numberOfInstancesMap) {
-			console.log(formatedData);
 			if(options.propertyToPlot == "regression"){
 				var parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S").parse;
 				TimingFactory.options  = {
@@ -100,10 +89,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				TimingFactory.parseX = parseDate;
 				TimingFactory.parseY = function(d) { return d;};
 				TimingFactory.dataForPlot = filterNullAndNegative(formatedData, TimingFactory.options.y);
-				console.log(TimingFactory.dataForPlot)
 			} else if(options.propertyToPlot == "startEndTime") {
 				var filteredData = filterFormatedData(formatedData, options.time);
-				console.log(filteredData);
 				if(options.cluster.algo == "kmeans") {
 					TimingFactory.dataForPlot = Format.getKMeansClusterFromFormatedData(filteredData, timeFormatAndParser[options.timeFrame], options.time, numberOfInstancesMap);
 					TimingFactory.options = GraphFactory.getOptionsForStartEndTimeGraph({"format" : timeFormatAndParser[options.timeFrame + "Format"], "parser": function(d) { return new Date(d);}}, options.cluster.algo == "kmeans", options.time, colorScale);
@@ -140,7 +127,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * formating is now happening inside the loop, if performance becomes an issue we have to think of sth new
 		 */
 		TimingFactory.getModelMenuData = function(selectedFromMenu, options, evaluateData){
-			console.log(selectedFromMenu);
 			//make an iterator over the 20 d3 default colors
 			//colorDictionary is a map which assigns each key a color. This map is used to make 
 			//a color function for the plots. It is calculated here and then reused in each update call
