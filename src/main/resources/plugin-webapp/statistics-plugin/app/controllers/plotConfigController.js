@@ -170,8 +170,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 
 		var checkData = function(data) {
-			console.log(data);
-			console.log(data.length);
 			if(data.length == 0) {
 				addAlert("noSuchData");
 				return false;
@@ -201,9 +199,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if (!requestToDataBank) {
 				var update = TimingFactory.updateCharts($scope.chosenOptions, $scope.numberOfInstancesMap);
 				if(!checkData(update.data)) return;
-				console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				$scope.data = update.data;
-				console.log("data:", $scope.data);
 				$scope.options = update.options;
 				$scope.parseX = TimingFactory.parseX;
 				$scope.parseY = TimingFactory.parseY;
@@ -215,7 +211,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			} else {
 				TimingFactory.getModelMenuData($scope.selected, $scope.chosenOptions, true)
 				.then(function(){
-					console.log(TimingFactory.dataForPlot);
 					if(!checkData(TimingFactory.dataForPlot)) return;
 					$scope.data = TimingFactory.dataForPlot;
 					$scope.options = TimingFactory.options;
@@ -235,7 +230,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		TimingFactory.getMenuData()
 		.then(function(){
 			$scope.menuData = TimingFactory.menuData;
-			console.log($scope.menuData);
 		});
 
 		//data chosen from the user in the accordion
@@ -313,9 +307,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 		//used by the remove icon in the list itself
 		$scope.removeFromList = function(process, type, activity) {
-			console.log(process);
-			console.log(type);
-			console.log(activity);
 			//right now that cant happen, but if we include sth to delete processes in the list next 
 			//to the menu it must be implemented
 			if (!type) {}
@@ -325,7 +316,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				var removeItem ={"process": process, "wholeProcess": false, "activityType": type, "activity": activity};
 				//we dont use all input parameters since in the delete case they are not used anyway
 				$scope.change(removeItem,false);
-				$scope.$broadcast('activityDeleted', {"val": activity})
+				$scope.$broadcast('activityDeleted', {"key": process, "type": type, "act": activity})
 			}
 		}
 
@@ -357,7 +348,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		var a=[],b=$scope.versions.length;while(b--)a[b]=b+1;
 		$scope.selectedVersions = a;
 		$scope.$watchCollection('selectedVersions', function() {
-			console.log("watch fired, selectedVersions:", $scope.selectedVersions);
 			$scope.changeVersions($scope.processItem.key, $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions));
 		});
 		
@@ -366,17 +356,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			e.stopPropagation();
 			e.preventDefault();
 			var procDefIds = $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions);
-			console.log(procDefIds);
 			$scope.change( {"process":$scope.processItem.key, "procName": $scope.processItem.name, "procDefIds": procDefIds, "wholeProcess": true }, $scope.isSelected, processIndex, undefined, undefined);
 		}; 
 
 		$scope.getProcDefIdsFromIds = function(ids, versions) {
 			procDefIds = [];
-			console.log(ids);
 			for(var i = 0; i < ids.length; i++) {
-				console.log(versions);
 				angular.forEach(versions, function(ver){
-					console.log(ver);
 					if (ver.id == ids[i]) procDefIds.push(ver.procDefId);
 				})
 			}
@@ -430,7 +416,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		//listens for the event when an item is removed from the list with the remove icon
 		//and unchecks the box, so the list and boxes stay in sync
 		$scope.$on('activityDeleted', function(event, args) {
-			if($scope.activity.actName == args.val) {
+			if($scope.processItem.key == args.key && $scope.activityType.type == args.type && $scope.activity.actName == args.act) {
 				$scope.isSelected = false;
 			}
 		});
@@ -438,7 +424,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.isSelected = false;
 		$scope.toggleSelection = function(processIndex, activityTypeIndex, activityIndex) {
 			var procDefIds = $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions);
-			console.log(procDefIds);
 			var insert = {"process": $scope.processItem.key, "procName": $scope.processItem.name, "procDefIds": procDefIds, "wholeProcess": false, "activityType": $scope.activityType.type, "activity": $scope.activity.actName};
 			$scope.change(insert, $scope.isSelected, processIndex, activityTypeIndex, activityIndex);
 		}; 

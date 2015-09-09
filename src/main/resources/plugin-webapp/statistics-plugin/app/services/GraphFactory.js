@@ -52,7 +52,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				options.chart.size = function(d){ return d.size; };
 				options.chart.sizeDomain = [0,1]; //https://github.com/krispo/angular-nvd3/issues/49
 				options.chart.tooltipContent = function(key, x, y, e, graph) {
-					console.log("x:", x, "Y:", y, "e:", e);
 					var d = e.series.values[e.pointIndex];
 					return '<h3>' + key + '</h3>' +
 					'<p>instances started/ended around that time: <b>' + d.clusterSize;
@@ -94,7 +93,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 							+ ' - ' + moment.duration(thresholds[e.point.x+1], 'milliseconds').humanize();
 							var exactTime = Format.milliSecondsToString(thresholds[e.point.x])
 							+ ' - ' +Format.milliSecondsToString(thresholds[e.point.x+1]);
-							console.log("x:", x, "Y:", y, "e:", e);
 							return '<h3>' + key + '</h3>' +
 							'<p>' + y + ' on ' +  String + '</p>' +
 							'<p>exact time window:' +
