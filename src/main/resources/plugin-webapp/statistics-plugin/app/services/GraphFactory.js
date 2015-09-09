@@ -1,5 +1,5 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
-	module.factory('GraphFactory', function() {
+	module.factory('GraphFactory', function(Format) {
 		var GraphFactory = [];
 
 		//if clustered we add a size function displaying the cluster sizes
@@ -52,6 +52,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				options.chart.size = function(d){ return d.size; };
 				options.chart.sizeDomain = [0,1]; //https://github.com/krispo/angular-nvd3/issues/49
 				options.chart.tooltipContent = function(key, x, y, e, graph) {
+					console.log("x:", x, "Y:", y, "e:", e);
 					var d = e.series.values[e.pointIndex];
 					return '<h3>' + key + '</h3>' +
 					'<p>instances started/ended around that time: <b>' + d.clusterSize;
@@ -77,7 +78,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		};
 
-		GraphFactory.getOptionsForTimeDistributionGraph = function(bins, thresholds, parseX, colorScale){
+		GraphFactory.getOptionsForTimeDistributionGraph = function(bins, thresholds, colorScale){
 			var options = {
 					chart: {
 						type: 'multiBarChart',
@@ -89,9 +90,15 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						reduceXTicks : false, //we want all ticks to be displayed!
 						// e is the mouse event
 						tooltip : function(key, x, y, e, graph) {
-							var String = (parseX(thresholds[e.point.x])).toFixed(2) + ' min - ' + (parseX(thresholds[e.point.x+1])).toFixed(2)+" min";
+							var String = moment.duration(thresholds[e.point.x], 'milliseconds').humanize() 
+							+ ' - ' + moment.duration(thresholds[e.point.x+1], 'milliseconds').humanize();
+							var exactTime = Format.milliSecondsToString(thresholds[e.point.x])
+							+ ' - ' +Format.milliSecondsToString(thresholds[e.point.x+1]);
+							console.log("x:", x, "Y:", y, "e:", e);
 							return '<h3>' + key + '</h3>' +
-							'<p>' + y + ' on ' +  String + '</p>'
+							'<p>' + y + ' on ' +  String + '</p>' +
+							'<p>exact time window:' +
+							'<br>' + exactTime + '</p>'
 						},
 						xAxis: {
 //							tickFormat: function(d) {return d3.time.format("%Y-%m-%dT%H:%M:%S")(new Date(d))}
