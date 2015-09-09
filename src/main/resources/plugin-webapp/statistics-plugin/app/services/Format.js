@@ -2,11 +2,19 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	module.factory('Format', function(kMeansFactory) {
 		var Format = {};
 
+		/**
+		 * helper function for 'Format.formatMenuData'
+		 */
 		var addNewProcess = function(formatedData, act) {
 			formatedData.push({"key": act.procDefKey, "name": act.procName, "vIds": [{"id": 1, "value": act.procVersion, "procDefId": act.procDefId}], "actTypes": []});
 			return formatedData;
 		}
 		
+		/**
+		 * helper function for 'Format.formatMenuData'
+		 * checks weather the process already holds the information for this version and if not stores a new 'id' (Integer)
+		 * for the directive it is used in, 'value': the version, 'procDefId': the process definition id coming with this version
+		 */
 		var addNewVersion = function(processObject, act) {
 			var vIndex = processObject.vIds.map(function(e) { return e.procDefId }).indexOf(act.procDefId);
 			if(vIndex == -1) {
@@ -14,6 +22,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				processObject.vIds.push({"id": newId, "value": act.procVersion, "procDefId": act.procDefId})
 			}
 		}
+		
+		/**
+		 * formats the data for the accordion menu, each process holds the information what versions are available
+		 * and each activity knows in which versions it is used
+		 * @menuData{Array} the data from database, coming back from the "selectActivityNamesTypesProcessDefinition" query
+		 * @return formated data
+		 */
 		Format.formatMenuData = function(menuData) {
 			var formatedData = [];
 			angular.forEach(menuData, function(activity) {
@@ -132,60 +147,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		 * @param parsey the name of a function, before the y property is pushed in the new data structure
 		 * it will be parsed by parseY
 		 */
-//		Format.bringSortedDataInPlotFormat = function(data, keyArray, x, y, parseX, parseY){
-//
-//			var identity = function(value){return value};
-//			var parseX = (typeof parseX == "undefined" || parseX == "")? identity:parseX;
-//			var parseY = (typeof parseY == "undefined" || parseY == "")? identity:parseY;
-//
-//			var formatedData = [];
-//			var i = -1;
-//			angular.forEach(data ,function(element){
-//				if(typeof keyArray == "string") var key = keyArray;
-//				else {
-//					var key = !element.hasOwnProperty(keyArray[0]) ? keyArray[1] : keyArray[0];
-//				}
-//				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
-//					formatedData.push({"key": element[key], "values": []});
-//					i++;
-//				};
-//				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
-//				//remove this when query doesnt give nullvalues anymore
-//				if(element[x] == null);
-//				else  {
-//					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
-//				}
-//			});
-//			return formatedData;
-//		};
-//		//when method works combine the two, default will be unsorted, when sorted argument is true, the sorted algo will
-//		//be used to improove perfomance
-//		Format.bringNotSortedDataInPlotFormat = function(data, key, x, y, parseX, parseY){
-//			var identity = function(value){return value};
-//			var parseX = (typeof parseX == "undefined" || parseX == "")? identity:parseX;
-//			var parseY = (typeof parseY == "undefined" || parseY == "")? identity:parseY;
-//
-//			var formatedData = [];
-//			var i = -1;
-//			angular.forEach(data, function(element){
-//				if(typeof formatedData[i] == "undefined" || formatedData[i].key != element[key]){
-//					i = formatedData.map(function(e) {return e.key;}).indexOf(element[key]);
-//					if(i==-1){
-//						formatedData.push({"key": element[key], "values": []});
-//						i= formatedData.length-1;
-//					};
-//				};
-//				var yValue = (typeof y == "undefined" || y == "")? i+1 : element[y];
-//				//remove this when query doesnt give nullvalues anymore
-//				if(element[x] == null) {
-//
-//				} else {  
-//					formatedData[i].values.push({"x": parseX(element[x]), "y": parseY(yValue)  });
-//				}
-//			});
-//			return formatedData;
-//		};
-
 
 		var getGlobalMinMax = function (formatedData, attribute) {
 			var min, max;
