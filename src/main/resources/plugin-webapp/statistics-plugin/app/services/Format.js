@@ -311,7 +311,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var numminutes = Math.floor((((milliSeconds % 31536000000) % 86400000) % 3600000) / 60000);
 			var numseconds = Math.floor(((((milliSeconds % 31536000000) % 86400000) % 3600000) % 60000)/1000);
 
-			return numyears + "y" +  numdays + "d" + numhours + "h" + numminutes + "m" + numseconds + "s";
+			return numyears + "y " +  numdays + "d " + numhours + "h " + numminutes + "m " + numseconds + "s ";
 		};
 
 		return Format;

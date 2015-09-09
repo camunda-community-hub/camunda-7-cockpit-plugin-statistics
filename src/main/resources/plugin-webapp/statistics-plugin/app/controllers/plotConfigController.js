@@ -360,9 +360,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			console.log("watch fired, selectedVersions:", $scope.selectedVersions);
 			$scope.changeVersions($scope.processItem.key, $scope.getProcDefIdsFromIds($scope.selectedVersions, $scope.versions));
 		});
-		$scope.$watch('selectedVersions', function() {
-			console.log("other watch");
-		});
+		
 		$scope.toggleSelection = function(e, processIndex) {
 			$scope.isSelected= !$scope.isSelected;
 			e.stopPropagation();
