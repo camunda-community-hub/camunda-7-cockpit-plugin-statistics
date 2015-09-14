@@ -1,3 +1,8 @@
+/**
+ * with special thanks to Dariush Tasdighi on whose code this directive is build.
+ * published by Dariush Tasdighi under MIT license at 
+ * http://www.codeproject.com/Tips/894838/Multi-Select-Drop-Down-List-with-Bootstrap-Angular
+ */
 ngDefine('cockpit.plugin.statistics-plugin.directives', function(module) {
 	
 	var controller = function ($scope) {

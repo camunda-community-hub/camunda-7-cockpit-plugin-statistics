@@ -186,7 +186,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var x = Scales[0];
 			var y = Scales[1];
 
-			angular.forEach(data,function(processSet){
+			angular.forEach(data, function(processSet){
 				svg.selectAll("#dot"+processSet.key)
 				.data(processSet.values)
 				.enter().append("circle")
@@ -201,7 +201,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 						tooltip.transition()
 						.duration(200)
 						.style("opacity", .9);
-						tooltip.html("started at: " + d[options.x] +
+						tooltip.html("key: " + processSet.key +
+								"<br/> started at: " + d[options.x] +
 								"<br/> duration: " + options.yTick(d[options.y]))
 //								"<br/> exact duration: " + options.yTickExact(d[options.y])
 								.style("left", (d3.event.pageX + 5) + "px")
