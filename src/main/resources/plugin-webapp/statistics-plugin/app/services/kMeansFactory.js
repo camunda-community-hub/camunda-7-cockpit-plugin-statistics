@@ -17,7 +17,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var instances = kMeansFactory.getAccessor(time);
 			
 			angular.forEach(numberOfInstancesMap, function(instanceObject) {
-				instanceObject.numberOfClusters = Math.floor( Math.sqrt(instanceObject[instances]));
+				instanceObject.numberOfClusters = Math.floor( Math.sqrt(instanceObject[instances]/2));
 			});
 			
 			return numberOfInstancesMap;
