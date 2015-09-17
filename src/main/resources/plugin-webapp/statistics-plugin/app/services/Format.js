@@ -33,17 +33,17 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			var formatedData = [];
 			angular.forEach(menuData, function(activity) {
 				//if process has not been added yet
-				if(!formatedData.some(function(e) e.key == activity.procDefKey)) formatedData = addNewProcess(formatedData, activity);
+				if(!formatedData.some(function(e) { return e.key == activity.procDefKey; })) formatedData = addNewProcess(formatedData, activity);
 				//get index of process
 				var procIndex = formatedData.map(function(e) { return e.key; }).indexOf(activity.procDefKey);
 				addNewVersion(formatedData[procIndex], activity);
 				//if activityType has not been added yet
-				if(!formatedData[procIndex].actTypes.some(function(e) e.type == activity.type))
+				if(!formatedData[procIndex].actTypes.some(function(e) { return e.type == activity.type; }))
 					formatedData[procIndex].actTypes.push({"type": activity.type, "acts": []});
 				//get type index
 				var typeIndex = formatedData[procIndex].actTypes.map(function(e) { return e.type; }).indexOf(activity.type);
 				//check weather activity has been added before with different version
-				if(!formatedData[procIndex].actTypes[typeIndex].acts.some(function(e) e.actName == activity.activityName))
+				if(!formatedData[procIndex].actTypes[typeIndex].acts.some(function(e) { return e.actName == activity.activityName; }))
 					formatedData[procIndex].actTypes[typeIndex].acts.push({"actName": activity.activityName, "versions": [activity.procVersion]});
 				else {
 					//find Index
