@@ -3,7 +3,7 @@
 ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 	//in html navigator-chart!!!
-	module.directive('navigatorChart', ['DataFactory', 'SettingsFactory', '$rootScope', function(DataFactory, SettingsFactory, $rootScope){
+	module.directive('navigatorChart', ['$rootScope', function($rootScope){
 
 		function formatTime(input) {
 			var milliseconds = parseInt((Math.floor(input)%1000));
@@ -38,38 +38,6 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				if(value.y > max) max = value.y;
 			});
 			return [min, max];
-		}
-		
-		function updateArea(svg, yScale, margin) {
-			var area = d3.svg.area()
-			.x(function(d) { 
-				return d.x;
-			})
-			.y0(function(d) {
-				return d.y1;
-			})
-			.y1(function(d) {
-				return d.y2;
-			});
-
-			var areaData = [
-			    {
-			    	"x": margin.left-10,
-			    	"y1": yScale(SettingsFactory.lowerDurationLimitInMs)+margin.top+2,
-			    	"y2": yScale(SettingsFactory.upperDurationLimitInMs)+margin.top+2
-			    },
-				{ 
-			    	"x": 730,
-			    	"y1": yScale(SettingsFactory.lowerDurationLimitInMs)+margin.top+2,
-					"y2": yScale(SettingsFactory.upperDurationLimitInMs)+margin.top+2
-			    }];
-			
-			var path = svg.selectAll('.area').data([areaData]);
-			path.attr("d", area).attr("class", "area");
-			path.enter().append('svg:path').attr("d", area).attr("class", "area");
-			path.exit().remove();
-			path.moveToBack();
-
 		}
 		
 		function updateNavigator(start, end, data, navYScale, navHeight, navWidth) {
@@ -198,73 +166,76 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		
 		function link($scope,element,attrs){
 			
-			var origData = $scope.data;
-			
-			var times = [];
-			for(var i in origData) {
-				if(times.indexOf(origData[i].end)==-1) times.push(origData[i].end);
-			}
-//			times.sort().reverse();
-			
-			$scope.start = {
-					datetime: times[0],
-					dateOptions: {
-						minDate: times[0],
-						maxDate: times[times.length-1]
-					},
-					timeOptions: {
-						min: times[0],
-						max: times[times.length-1]
-					},
-					isOpen: false
-			};
-
-			$scope.end = {
-					datetime: times[times.length-1],
-					dateOptions: {
-						minDate: times[0],
-						maxDate: times[times.length-1]
-					},
-					timeOptions: {
-						min: times[0],
-						max: times[times.length-1]
-					},
-					isOpen: false
-			};
-			
-			$scope.openStart = function($event) {
-				$event.preventDefault();
-				$event.stopPropagation();
-
-				$scope.end.isOpen = false;
-				$scope.start.isOpen = true;
-			};
-
-			$scope.openEnd = function($event) {
-				$event.preventDefault();
-				$event.stopPropagation();
-
-				$scope.start.isOpen = false;
-				$scope.end.isOpen = true;
-			};
-
-			
-			// draw navigation chart
-			
+			var origData, navYScale;
 			var navWidth = 550;
 			var navHeight = 100;
 			
-			var minmaxY = getMinMaxY(origData);
-			var yMin = minmaxY[0];
-			var yMax = minmaxY[1];
-			var navYScale = d3.scale.linear()
-			.domain([yMin, yMax])
-			.range([navHeight, 0]);
-			
-			var minDate = $scope.start.dateOptions.minDate;
-			var maxDate = $scope.end.dateOptions.maxDate;
-			
-			updateNavigator(minDate, maxDate, $scope.data, navYScale, navHeight, navWidth);
+			$scope.$watch('data', function() {
+				origData = $scope.data;
+				
+				var times = [];
+				for(var i in origData) {
+					if(times.indexOf(origData[i].end)==-1) times.push(origData[i].end);
+				}
+	//			times.sort().reverse();
+				
+				$scope.start = {
+						datetime: times[0],
+						dateOptions: {
+							minDate: times[0],
+							maxDate: times[times.length-1]
+						},
+						timeOptions: {
+							min: times[0],
+							max: times[times.length-1]
+						},
+						isOpen: false
+				};
+	
+				$scope.end = {
+						datetime: times[times.length-1],
+						dateOptions: {
+							minDate: times[0],
+							maxDate: times[times.length-1]
+						},
+						timeOptions: {
+							min: times[0],
+							max: times[times.length-1]
+						},
+						isOpen: false
+				};
+				
+				$scope.openStart = function($event) {
+					$event.preventDefault();
+					$event.stopPropagation();
+	
+					$scope.end.isOpen = false;
+					$scope.start.isOpen = true;
+				};
+	
+				$scope.openEnd = function($event) {
+					$event.preventDefault();
+					$event.stopPropagation();
+	
+					$scope.start.isOpen = false;
+					$scope.end.isOpen = true;
+				};
+	
+				
+				// draw navigation chart
+				
+				var minmaxY = getMinMaxY(origData);
+				var yMin = minmaxY[0];
+				var yMax = minmaxY[1];
+				navYScale = d3.scale.linear()
+				.domain([yMin, yMax])
+				.range([navHeight, 0]);
+				
+				var minDate = $scope.start.dateOptions.minDate;
+				var maxDate = $scope.end.dateOptions.maxDate;
+				
+				updateNavigator(minDate, maxDate, $scope.data, navYScale, navHeight, navWidth);
+			}, true);
 			
 			$scope.updatePlot = function() {
 				// check time (does not work in ui.bootstrap...)

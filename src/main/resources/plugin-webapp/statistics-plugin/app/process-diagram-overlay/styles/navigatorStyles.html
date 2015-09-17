@@ -1,0 +1,38 @@
+<div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/styles/datetimePickerStyles.html'"></div>
+
+<style>
+#navigator {
+	margin-left: 30px;
+	height: 125px;
+	margin-top: 15px;
+}
+
+#navigator .line {
+    fill: none;
+    stroke: darkgrey;
+    stroke-width: 1px;
+}
+
+#navigator .viewport .extent{
+	fill: #E5E5E5;
+	fill-opacity: 0.5;
+}
+
+.draggable {
+	cursor: n-resize;
+}
+
+.resize rect { 
+ 	fill: rgb(181, 21, 43);
+}
+
+.area {
+    fill: rgba(181, 21, 43, 0.2);
+    stroke-width: 0;
+}
+
+#navigator circle {
+	fill: darkgrey;
+	stroke: black; 
+}
+</style>
