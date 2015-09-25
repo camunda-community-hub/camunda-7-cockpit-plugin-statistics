@@ -1,0 +1,104 @@
+<script type="text/ng-template" id="activityHistoryModal.html">
+<div class="modal-header" id="modalHeader">
+	<h3 class="modal-title">Activity History for "{{ currentValueData.activityName }}"</h3>
+</div>
+<div class="modal-body" ng-init="init()">
+	<table style="position: relative; z-index: 1000000 !important;">
+		<colgroup><col width="250"><col width="800">
+		<tr>
+			<td colspan="2">
+				<div><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info=!info"></a></div>
+			</td>
+		</tr>
+		<tr ng-show="info">
+			<td colspan="2">
+				<ul>
+					<li><strong>Calendar Input Fields</strong><br>
+                    	The calender input can be used to set the start and end value for the navigational chart on the right.
+                   	</li>
+					<li><strong>Navigational Chart</strong><br>
+                    	The navigational chart - next to the calender input fields - can be used to further restrict the time span for the plotted activity instances with the draggable red lines.
+                   	</li>
+					<li><strong>Activity Instance Chart</strong><br>
+                    	The activity instance chart - in the middle - shows all activity instances finished in the selected time span. Hovering over an instance, more information will be shown at the bottom. An upper and lower bound for the duration can be set with the draggable red lines. The number of activity instances within and outside these duration boundaries are shown at the bottom. 
+                   	</li>
+                	<li><strong>Duration Format</strong><br>
+                    	The format of the displayed duration is DD:HH:MM:SS.mmm, where DD represents the days, HH the hours, MM the minutes, SS the seconds and mmm the milliseconds.
+                   	</li>
+				</ul>
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<navigator-chart data="historicActivityPlotData"></navigator-chart>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<hr>
+				<duration-chart data="historicActivityPlotData"></duration-chart>
+				<hr>
+			</td>
+		</tr>
+		<tr>
+			<td class="left">
+				<table>
+					<colgroup><col width="200"><col width="50"></colgroup>
+					<tr>
+						<th>number of activity instances</th>
+						<th>{{ instanceCount }}</th>
+					</tr>
+					<tr>
+						<td>below limit range:</td>
+						<td>{{ instanceCountBelowLimitRange }}</td>
+					</tr>
+					<tr>
+						<td>in limit range:</td>
+						<td>{{ instanceCountInLimitRange }}</td>
+					</tr>
+					<tr>
+						<td>above limit range:</td>
+						<td>{{ instanceCountAboveLimitRange }}</td>
+					</tr>
+				</table>
+			</td>
+			<td class="center">
+				<table>
+					<colgroup><col width="220"><col width="200"></colgroup>
+					<tr>
+						<th colspan="2">Information about selected activity instance:</th>
+					</tr>
+					<tr>
+						<td>Start date:</td>
+						<td>{{ currentValueData.start | transformDatetime }}</td>
+					</tr>
+					<tr>
+						<td>End date:</td>
+						<td>{{ currentValueData.end | transformDatetime }}</td>
+					</tr>
+					<tr>
+						<td>Duration (DD:HH:MM:SS.mmm): </td>
+						<td>{{ currentValueData.y  | formatTime }}</td>
+					</tr>
+					<tr>
+						<td>Assignee:</td>
+						<td>{{ currentValueData.assignee }}</td>
+					</tr>
+					<tr>
+						<td>Process Key:</td>
+						<td>{{ currentValueData.processKey }}</td>
+					</tr>
+					<tr>
+						<td>Process Instance ID:</td>
+						<td>{{ currentValueData.processId }}</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-warning" ng-click="closeModal()">Close</button>
+</div>
+</script>

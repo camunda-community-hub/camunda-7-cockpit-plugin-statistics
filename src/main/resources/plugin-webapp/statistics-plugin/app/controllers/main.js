@@ -9,7 +9,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', [
   './durationsCtrl',
   './timingCtrl',
   './slaChartCtrl',
-  './feedbackCtrl'
+  './feedbackCtrl',
+  '../process-diagram-overlay/controllers/overlayMenuCtrl',
+  '../process-diagram-overlay/controllers/processDiagramCtrl',
+  '../process-diagram-overlay/controllers/processDiagramSettingsCtrl',
+  '../process-diagram-overlay/controllers/activityHistoryCtrl',
+  '../process-diagram-overlay/controllers/noHistoryCtrl'
 ], function(module) {
 
 });

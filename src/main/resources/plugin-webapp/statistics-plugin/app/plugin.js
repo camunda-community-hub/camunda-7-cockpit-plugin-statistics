@@ -1,7 +1,8 @@
 ngDefine('cockpit.plugin.statistics-plugin', ['./lib/d3',
-                                              './lib/nv.d3',
+                                              './lib/nv.d3.own',
                                               './lib/clusterfck-0.1',
                                               'module:nvd3:./lib/angular-nvd3',
+                                              'module:ui.bootstrap.datetimepicker:./lib/datetime-picker',
                                               'module:cockpit.plugin.statistics-plugin.controllers:./controllers/main',
                                               'module:cockpit.plugin.statistics-plugin.directives:./directives/main',
                                               'module:cockpit.plugin.statistics-plugin.services:./services/main'
@@ -25,6 +26,21 @@ ngDefine('cockpit.plugin.statistics-plugin', ['./lib/d3',
 			label: 'Statistics',
 			url: 'plugin://statistics-plugin/static/app/processDefinition.html',
 			controller: 'processDefinitionCtrl'
+		});
+		
+		ViewsProvider.registerDefaultView('cockpit.processDefinition.diagram.overlay', {
+			id: 'process-diagram-overlay',
+			priority: 20,	
+			label: 'Process Data',
+			url: 'plugin://statistics-plugin/static/app/process-diagram-overlay/views/processDiagram.html',
+			controller: 'processDiagramCtrl'
+		});
+
+		ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.action', {
+			id: 'overlay-menu-action',
+			priority: 20, 
+			url: 'plugin://statistics-plugin/static/app/process-diagram-overlay/views/overlayMenu.html',
+			controller: 'overlayMenuCtrl'
 		});
 	};
 
