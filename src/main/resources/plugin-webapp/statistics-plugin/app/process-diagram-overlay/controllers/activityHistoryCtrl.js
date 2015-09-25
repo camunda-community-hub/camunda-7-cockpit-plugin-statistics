@@ -62,52 +62,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 
 		var data = DataFactory.activityDurations[activityId];
-//		var times = [];
-//		for(var i in data) {
-//			if(times.indexOf(data[i].endTime)==-1) times.push(data[i].endTime);
-//		}
-//		times.sort();
-//		$scope.timeOptions = times; 
-		
-//		$scope.start = {
-//				datetime: stringToDate($scope.timeOptions[0]),
-//				dateOptions: {
-//					minDate: stringToDatestring($scope.timeOptions[0]),
-//					maxDate: stringToDatestring($scope.timeOptions[$scope.timeOptions.length-1]),
-//				},
-//				isOpen: false
-//		};
-//
-//		$scope.end = {
-//				datetime: stringToDate($scope.timeOptions[$scope.timeOptions.length-1]),
-//				dateOptions: {
-//					minDate: stringToDatestring($scope.timeOptions[0]),
-//					maxDate: stringToDatestring($scope.timeOptions[$scope.timeOptions.length-1])
-//				},
-//				isOpen: false
-//		};
-//		
-//		$scope.viewportStart = $scope.start.datetime;
-//		$scope.viewportEnd = $scope.end.datetime;
-//
-//		$scope.openStart = function($event) {
-//			$event.preventDefault();
-//			$event.stopPropagation();
-//
-//			$scope.end.isOpen = false;
-//			$scope.start.isOpen = true;
-//		};
-//
-//		$scope.openEnd = function($event) {
-//			$event.preventDefault();
-//			$event.stopPropagation();
-//
-//			$scope.start.isOpen = false;
-//			$scope.end.isOpen = true;
-//		};
 
 		$scope.init = function() {
-//			$scope.durationLimit = SettingsFactory.durationLimitInMs;
 			$scope.showPlot();
 			$rootScope.$broadcast("init");
 		}
@@ -115,31 +71,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.closeModal = function() {
 			$modalInstance.close();
 		}
-		
-//		$scope.updatePlot = function() {
-//			$scope.start.datetime = $scope.viewportStart;
-//			$scope.end.datetime = $scope.viewportEnd;
-//			$rootScope.$broadcast('datetimeChanged', datetimeToMs($scope.viewportStart), datetimeToMs($scope.viewportEnd));
-//			$scope.showPlot();
-//		}
 
 		$scope.showPlot = function() {
 			var data = DataFactory.activityDurations[activityId];
 			
-//			// check time (no options for min/max time in timepicker)
-//			var minmaxDate = getMinMaxDate(data);
-//			var minDate = minmaxDate[0];
-//			var maxDate = minmaxDate[1];
-//			var startDate = datetimeToMs($scope.start.datetime);
-//			var endDate = datetimeToMs($scope.end.datetime);
-//			if(startDate < minDate) $scope.start.datetime = msToDatetimeString(minDate);
-//			if(endDate > maxDate) $scope.end.datetime = msToDatetimeString(maxDate);
-			
 			var filteredData = [];
 			var datetime;
 			durations.data = [];
-//			var start = datetimeToMs($scope.start);
-//			var end = datetimeToMs($scope.end);
 			var start = $scope.start;
 			var end = $scope.end;
 			var min = Number.MAX_VALUE;
@@ -172,16 +110,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			$scope.historicActivityPlotData = filteredData;
 
 			getInstanceCount(SettingsFactory.lowerDurationLimitInMs, SettingsFactory.upperDurationLimitInMs);
-		}
-		
-//		function getMinMaxDate(data) {
-//			var min = Number.MAX_VALUE, max = 0, date;
-//			angular.forEach(data, function(value, index) {
-//				date = datetimeToMs(value.endTime);
-//				if(date < min) min = date;
-//				if(date > max) max = date;
-//			});
-//			return [min, max];
 //		}
 
 		function getInstanceCount(lowerLimit, upperLimit) {

@@ -170,7 +170,8 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var navWidth = 550;
 			var navHeight = 100;
 			
-			$scope.$watch('data', function() {
+//			$scope.$watch('data', function() {
+				
 				origData = $scope.data;
 				
 				var times = [];
@@ -235,7 +236,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				var maxDate = $scope.end.dateOptions.maxDate;
 				
 				updateNavigator(minDate, maxDate, $scope.data, navYScale, navHeight, navWidth);
-			}, true);
+//			}, true);
 			
 			$scope.updatePlot = function() {
 				// check time (does not work in ui.bootstrap...)
