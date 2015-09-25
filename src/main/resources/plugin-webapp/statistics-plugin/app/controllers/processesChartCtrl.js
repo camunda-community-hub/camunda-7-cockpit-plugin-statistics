@@ -51,7 +51,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
           }
           $scope.applyDataToPlots();
         }
-        
       }
     });
     

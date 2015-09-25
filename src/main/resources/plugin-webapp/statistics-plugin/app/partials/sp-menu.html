@@ -1,0 +1,54 @@
+<accordion> <!-- it is important to use ng-repeat outside the accordion-group. The reason is a scope issue -->
+  <div
+	ng-repeat="(processItemIndex,processItem) in menuData"
+	ng-controller="processItemController">
+	<accordion-group is-open = "process.open">
+	  <accordion-heading>
+	    <a
+	      class="pull-left glyphicon"
+	      ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
+	      ng-style="{color : 'black'}"
+	      ng-click="toggleSelection($event,processItemIndex)">
+	    </a>&nbsp {{processItem.name}}
+	    <div class="pull-right">
+	      <sp-drop-down-multi-select model="selectedVersions" options="versions" title="Vers"></sp-drop-down-multi-select>
+          &nbsp
+	      <i
+	        class="glyphicon"
+	        ng-class="{'glyphicon-chevron-down': process.open, 'glyphicon-chevron-right': !process.open}">
+	      </i>
+        </div>
+	  </accordion-heading> 
+	<accordion>
+	<div
+	  ng-repeat="(activityTypeIndex,activityType) in processItem.actTypes"
+	  ng-controller="activityTypeController as aTC">
+	  <accordion-group is-open="status.open">
+	    <accordion-heading>
+	      <a
+	        class="pull-left glyphicon"
+	        ng-class="{'glyphicon-unchecked': !isSelected, 'glyphicon-check': isSelected}"
+			ng-style="{color : 'black'}"
+			ng-click="toggleSelection($event)">
+          </a>&nbsp {{activityType.type}}
+          <i
+			class="pull-right glyphicon"
+			ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}">
+          </i>
+        </accordion-heading>
+          <div
+            ng-repeat="(activityIndex, activity) in activityType.acts"
+			ng-controller="activityController">
+			<input
+			  type="checkbox"
+			  ng-model="isSelected"
+			  ng-disabled="disabled"
+			  ng-change="toggleSelection(processItemIndex,activityTypeIndex,activityIndex)">
+			  {{activity.actName}}
+          </div>
+        </accordion-group>
+      </div>
+    </accordion>
+  </accordion-group>
+</div>
+</accordion>

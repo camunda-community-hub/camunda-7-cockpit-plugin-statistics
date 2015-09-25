@@ -1,5 +1,5 @@
 ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
-	module.factory('DataFactory', ['$http', 'Uri', '$rootScope', function($http, Uri, $rootScope) {
+	module.factory('DataFactory', ['$http', 'Uri', '$rootScope','$q', function($http, Uri, $rootScope,$q) {
 
 		var DataFactory = {};
 
@@ -13,7 +13,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.processesStartEnd = [];
 		DataFactory.allRunningUserTasksCountOByProcDefKey = [];
 		DataFactory.allEndedUserTasksCountOByProcDefKey = [];
-		DataFactory.durations = [];
 		DataFactory.historicActivityCountsDurationByProcDefKey = [];
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
 		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
@@ -26,7 +25,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.bpmnElementsToHighlightAsWarning = {};
 		DataFactory.processDefinitionKey = "";
 		DataFactory.activityDurations = {};
-		
+
 		/*
 		 * case related data
 		 */
@@ -58,6 +57,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.prepForBroadcast = function(chosenTab) {
 			this.chosenTab = chosenTab;
 			this.broadcastItem();
+			console.log("braodcast:");
+			console.log(chosenTab);
 		};
 
 		DataFactory.broadcastItem = function() {
@@ -74,16 +75,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		};
 
-		DataFactory.test = function(procDefKey) {
-			console.debug("do http get..."+procDefKey);
-			$http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-instance-start-end"))
-			.success(function (data){
-				console.debug(data);
-			})
-			.error(function(){        
-				console.debug("error in getting processes with start and end time");
-			});
-		}
+//		DataFactory.test = function(procDefKey) {
+//			console.debug("do http get..."+procDefKey);
+//			$http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-instance-start-end"))
+//			.success(function (data){
+//				console.debug(data);
+//			})
+//			.error(function(){        
+//				console.debug("error in getting processes with start and end time");
+//			});
+//		}
 
 		DataFactory.getAllRunningUserTasksCountOByProcDefKey = function() {
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/running-user-tasks"))
@@ -222,26 +223,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/businessdata?firstresult=0&maxresults=10000"));
 		};
 
-		DataFactory.getDurations = function(processDefKeys) {
-			var String = "";
-			if(processDefKeys){
-				for (var i = 0; i < processDefKeys.length; i++) {
-					if (i == 0) {
-						String = String + "?processdefkey=" + processDefKeys[i].processDefinitionKey;
-					}
-					else
-						String = String + "&processdefkey=" + processDefKeys[i].processDefinitionKey;
-				}
-			};
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/durations" + String))
-			.success(function (data){
-				DataFactory.durations = data;
-			})
-			.error(function(){				
-				console.debug("error in getting durations");
-			});
-		};
-
 		DataFactory.getProcessDefWithFinishedInstances = function() {
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/pdkeysfinishedinst"))
 			.success(function (data){
@@ -250,16 +231,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			.error(function(){
 				console.debug("error in getting process definitions with finished instances")
 			})
-		};
-
-		DataFactory.getProcessesStartEnd = function(){
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-instance-start-end"))
-			.success(function (data){
-				DataFactory.processesStartEnd = data;
-			})
-			.error(function(){				
-				console.debug("error in getting processes with start and end time");
-			});
 		};
 
 		DataFactory.getAggregatedUserTasksByProcDefinition = function(procDefKey) {
@@ -376,97 +347,97 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						 * iterate through instances
 						 */
 
-						var shortenendCaseDefinitionId = data[i].caseDefinitionId.substring(0,data[i].caseDefinitionId.indexOf(":"));           
-						var idAfterShortened = data[i].caseDefinitionId.substring(data[i].caseDefinitionId.indexOf(":")+1);
-						var definitionVersion = idAfterShortened.substring(0,idAfterShortened.indexOf(":"));
+            var shortenendCaseDefinitionId = data[i].caseDefinitionId.substring(0,data[i].caseDefinitionId.indexOf(":"));           
+            var idAfterShortened = data[i].caseDefinitionId.substring(data[i].caseDefinitionId.indexOf(":")+1);
+            var definitionVersion = idAfterShortened.substring(0,idAfterShortened.indexOf(":"));
 
-						if(data[i].caseDefinitionId==caseDefinitionId) {
+            if(data[i].caseDefinitionId==caseDefinitionId) {
 
-							activityId = data[i].caseActivityType+"_"+data[i].caseActivityName;
-
-
-							if(!(activityId in historicCaseActivityInstanceDetails)) {
-								historicCaseActivityInstanceDetails[activityId] = {
-										activityType : data[i].caseActivityType,
-										activityId : activityId,
-										activityName: data[i].caseActivityName,
-										caseDefinitionId:caseDefinitionId,
-										shortCaseDefinitionId: shortenendCaseDefinitionId
-								}; 
-
-								if(data[i].caseActivityType=="humanTask") {
-									historicCaseActivityInstanceDetails[activityId].taskDefinitionKey = data[i].caseActivityId;
-								}
-
-							}
+              activityId = data[i].caseActivityType+"_"+data[i].caseActivityName;
 
 
+              if(!(activityId in historicCaseActivityInstanceDetails)) {
+                historicCaseActivityInstanceDetails[activityId] = {
+                    activityType : data[i].caseActivityType,
+                    activityId : activityId,
+                    activityName: data[i].caseActivityName,
+                    caseDefinitionId:caseDefinitionId,
+                    shortCaseDefinitionId: shortenendCaseDefinitionId
+                }; 
 
-							if(!historicCaseActivityInstanceDetails[activityId].required) {
-								historicCaseActivityInstanceDetails[activityId].required = 0;
-							}
+                if(data[i].caseActivityType=="humanTask") {
+                  historicCaseActivityInstanceDetails[activityId].taskDefinitionKey = data[i].caseActivityId;
+                }
 
-							if(data[i].required) {
-								historicCaseActivityInstanceDetails[activityId].required+=1;
-							}
+              }
 
-							if(!historicCaseActivityInstanceDetails[activityId].enabled) {
-								historicCaseActivityInstanceDetails[activityId].enabled = 0;
-							}
 
-							if(data[i].enabled) {
-								historicCaseActivityInstanceDetails[activityId].enabled+=1;
-							}
 
-							if(!historicCaseActivityInstanceDetails[activityId].disabled) {
-								historicCaseActivityInstanceDetails[activityId].disabled = 0;
-							}
+              if(!historicCaseActivityInstanceDetails[activityId].required) {
+                historicCaseActivityInstanceDetails[activityId].required = 0;
+              }
 
-							if(data[i].disabled) {
-								historicCaseActivityInstanceDetails[activityId].disabled+=1;
-							}
+              if(data[i].required) {
+                historicCaseActivityInstanceDetails[activityId].required+=1;
+              }
 
-							if(!historicCaseActivityInstanceDetails[activityId].available) {
-								historicCaseActivityInstanceDetails[activityId].available = 0;
-							}
+              if(!historicCaseActivityInstanceDetails[activityId].enabled) {
+                historicCaseActivityInstanceDetails[activityId].enabled = 0;
+              }
 
-							if(data[i].available) {
-								historicCaseActivityInstanceDetails[activityId].available+=1;
-							}
+              if(data[i].enabled) {
+                historicCaseActivityInstanceDetails[activityId].enabled+=1;
+              }
 
-							if(!historicCaseActivityInstanceDetails[activityId].active) {
-								historicCaseActivityInstanceDetails[activityId].active = 0;
-							}
+              if(!historicCaseActivityInstanceDetails[activityId].disabled) {
+                historicCaseActivityInstanceDetails[activityId].disabled = 0;
+              }
 
-							if(data[i].active) {
-								historicCaseActivityInstanceDetails[activityId].active+=1;
-							}
+              if(data[i].disabled) {
+                historicCaseActivityInstanceDetails[activityId].disabled+=1;
+              }
 
-							if(!historicCaseActivityInstanceDetails[activityId].completed) {
-								historicCaseActivityInstanceDetails[activityId].completed = 0;
-							}
+              if(!historicCaseActivityInstanceDetails[activityId].available) {
+                historicCaseActivityInstanceDetails[activityId].available = 0;
+              }
 
-							if(data[i].completed) {
-								historicCaseActivityInstanceDetails[activityId].completed+=1;
-							}
+              if(data[i].available) {
+                historicCaseActivityInstanceDetails[activityId].available+=1;
+              }
 
-							if(!historicCaseActivityInstanceDetails[activityId].terminated) {
-								historicCaseActivityInstanceDetails[activityId].terminated = 0;
-							}
+              if(!historicCaseActivityInstanceDetails[activityId].active) {
+                historicCaseActivityInstanceDetails[activityId].active = 0;
+              }
 
-							if(data[i].terminated) {
-								historicCaseActivityInstanceDetails[activityId].terminated+=1;
-							}
+              if(data[i].active) {
+                historicCaseActivityInstanceDetails[activityId].active+=1;
+              }
 
-							if(!historicCaseActivityInstanceDetails[activityId].durations) {
-								historicCaseActivityInstanceDetails[activityId].durations = [];
-							}
+              if(!historicCaseActivityInstanceDetails[activityId].completed) {
+                historicCaseActivityInstanceDetails[activityId].completed = 0;
+              }
 
-							if(data[i].durationInMillis && data[i].durationInMillis>0) {
-								historicCaseActivityInstanceDetails[activityId].durations.push(data[i].durationInMillis);
-							}
+              if(data[i].completed) {
+                historicCaseActivityInstanceDetails[activityId].completed+=1;
+              }
 
-						}
+              if(!historicCaseActivityInstanceDetails[activityId].terminated) {
+                historicCaseActivityInstanceDetails[activityId].terminated = 0;
+              }
+
+              if(data[i].terminated) {
+                historicCaseActivityInstanceDetails[activityId].terminated+=1;
+              }
+
+              if(!historicCaseActivityInstanceDetails[activityId].durations) {
+                historicCaseActivityInstanceDetails[activityId].durations = [];
+              }
+
+              if(data[i].durationInMillis && data[i].durationInMillis>0) {
+                historicCaseActivityInstanceDetails[activityId].durations.push(data[i].durationInMillis);
+              }
+
+            }
 
 					}
 
@@ -501,66 +472,66 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						 * iterate through instances
 						 */
 
-						var shortenendCaseDefinitionId = data[i].caseDefinitionId.substring(0,data[i].caseDefinitionId.indexOf(":"));           
-						var idAfterShortened = data[i].caseDefinitionId.substring(data[i].caseDefinitionId.indexOf(":")+1);
-						var definitionVersion = idAfterShortened.substring(0,idAfterShortened.indexOf(":"));
+            var shortenendCaseDefinitionId = data[i].caseDefinitionId.substring(0,data[i].caseDefinitionId.indexOf(":"));           
+            var idAfterShortened = data[i].caseDefinitionId.substring(data[i].caseDefinitionId.indexOf(":")+1);
+            var definitionVersion = idAfterShortened.substring(0,idAfterShortened.indexOf(":"));
 
 
-						if(!(shortenendCaseDefinitionId in historicCaseActivityInstanceDetails)) {
+            if(!(shortenendCaseDefinitionId in historicCaseActivityInstanceDetails)) {
 
-							historicCaseActivityInstanceDetails[shortenendCaseDefinitionId] = {
-									caseDefinitionId : data[i].caseDefinitionId,
-									shortDefinitionId : shortenendCaseDefinitionId,
-									version: definitionVersion,
-									available:0,
-									ended:0,
-									active:0,
-									milestones:0,
-									completed:0,
-									durations:[],
-									minDuration:0,
-									maxDuration:0,
-									meanDuration:0,
-									terminated:0
-							};
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId] = {
+                  caseDefinitionId : data[i].caseDefinitionId,
+                  shortDefinitionId : shortenendCaseDefinitionId,
+                  version: definitionVersion,
+                  available:0,
+                  ended:0,
+                  active:0,
+                  milestones:0,
+                  completed:0,
+                  durations:[],
+                  minDuration:0,
+                  maxDuration:0,
+                  meanDuration:0,
+                  terminated:0
+              };
 
-						}
+            }
 
 
-						if(data[i].enabled && foundCaseInstanceIdsEnabled.indexOf(data[i].caseInstanceId)==-1) {
-							historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].enabled+=1;
-							foundCaseInstanceIdsEnabled.push(data[i].caseInstanceId);
-						}
+            if(data[i].enabled && foundCaseInstanceIdsEnabled.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].enabled+=1;
+              foundCaseInstanceIdsEnabled.push(data[i].caseInstanceId);
+            }
 
-						if(data[i].available && foundCaseInstanceIdsAvailable.indexOf(data[i].caseInstanceId)==-1) {
-							if(data[i].caseActivityType!="milestone") {
-								historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].available+=1;
-								foundCaseInstanceIdsAvailable.push(data[i].caseInstanceId);
-							} 
-						}
+            if(data[i].available && foundCaseInstanceIdsAvailable.indexOf(data[i].caseInstanceId)==-1) {
+              if(data[i].caseActivityType!="milestone") {
+                historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].available+=1;
+                foundCaseInstanceIdsAvailable.push(data[i].caseInstanceId);
+              } 
+            }
 
-						if(data[i].available && foundCaseInstanceIdsMilestones.indexOf(data[i].caseInstanceId)==-1) {
-							if(data[i].caseActivityType=="milestone") {
-								historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].milestones+=1;
-								foundCaseInstanceIdsMilestones.push(data[i].caseInstanceId);
-							} 
-						}
+            if(data[i].available && foundCaseInstanceIdsMilestones.indexOf(data[i].caseInstanceId)==-1) {
+              if(data[i].caseActivityType=="milestone") {
+                historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].milestones+=1;
+                foundCaseInstanceIdsMilestones.push(data[i].caseInstanceId);
+              } 
+            }
 
-						if(data[i].active && foundCaseInstanceIdsActive.indexOf(data[i].caseInstanceId)==-1) {
-							historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].active+=1;
-							foundCaseInstanceIdsActive.push(data[i].caseInstanceId);
-						}
+            if(data[i].active && foundCaseInstanceIdsActive.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].active+=1;
+              foundCaseInstanceIdsActive.push(data[i].caseInstanceId);
+            }
 
-						if(data[i].completed && foundCaseInstanceIdsCompleted.indexOf(data[i].caseInstanceId)==-1) {
-							historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].completed+=1;
-							foundCaseInstanceIdsCompleted.push(data[i].caseInstanceId);
-							historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].durations.push(data[i].durationInMillis);
-						}            
+            if(data[i].completed && foundCaseInstanceIdsCompleted.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].completed+=1;
+              foundCaseInstanceIdsCompleted.push(data[i].caseInstanceId);
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].durations.push(data[i].durationInMillis);
+            }            
 
-						if(data[i].terminated && foundCaseInstanceIdsTerminated.indexOf(data[i].caseInstanceId)==-1) {
-							historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].terminated+=1;
-							foundCaseInstanceIdsTerminated.push(data[i].caseInstanceId);
-						}
+            if(data[i].terminated && foundCaseInstanceIdsTerminated.indexOf(data[i].caseInstanceId)==-1) {
+              historicCaseActivityInstanceDetails[shortenendCaseDefinitionId].terminated+=1;
+              foundCaseInstanceIdsTerminated.push(data[i].caseInstanceId);
+            }
 
 					}
 
@@ -658,6 +629,64 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 
 		}
+		/**
+		 * @dateFrom: a string in the format:"%Y-%m-%dT%H:%M:%S"
+		 * @return: an objet with all promises in one vector and the keyList which contains all the keys of
+		 * the chosen data, used for the legend
+		 */
+		DataFactory.getDataFromModelMenu = function(selectedFromModelMenu,timeWindow){
+			//keyList is an array containing all keys of the chosen data. It is currently not used! Maybe it will be later
+			var keyList = [];
+			DataFactory.resultData = [];
+			var promises =[];
+			//formats date into a LOCAL time date string for the database
+			var formatDate = d3.time.format("%Y-%m-%dT%H:%M:%S");
+			timeRequest = "";
+			if(timeWindow.start !="")
+				timeRequest = "&" + timeWindow.start + "=" + formatDate(timeWindow.startDate);
+			if(timeWindow.end != "")
+				timeRequest = timeRequest + "&" + timeWindow.end + "=" + formatDate(timeWindow.endDate);
+			angular.forEach(selectedFromModelMenu, function(processObject){
+				var procDefId = processObject.procDefId;
+				//this could also be done outside the loop, might be faster, but order of pushed objects in promises is destroyed
+				//if performance becomes an issue we have to change this
+				if(processObject.wholeProcess){
+					angular.forEach(processObject.procDefIds, function(id) {
+						console.log("process-instance?processDefinitionId="+id+timeRequest);
+						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+id+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+						keyList.push(processObject.process);
+					})
+				}
+				angular.forEach(processObject.activityTypes, function(activityTypeObject, indexActType){
+					angular.forEach(activityTypeObject.activities, function(activityObject, indexAct){
+						var activityType = activityTypeObject.activityType;
+						var actName = activityObject.activity;
+						keyList.push(actName);
+						angular.forEach(processObject.procDefIds, function(id){
+//							we need to sort the results by start time for the splines in regressionplot directive
+							promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+id+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+						})
+					})
+				})
+			})
+			DataFactory.keyList = keyList;
+			return $q.all(promises);
+//			.then(function(data){
+////			DataFactory.resultData[index] = data;
+//			})
+		};
+
+		//inserted this from my old local version
+		//TODO: need to checked if there is a new way of doing this
+		DataFactory.getActivityNamesTypesProcDefinition = function() {
+			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/activity-names-types-procdef"))
+			.success(function (data){
+				DataFactory.activityNamesTypesProcDefinition = data;
+			})
+			.error(function(){				
+				console.debug("error in fetching ActivityNamesTypesProcDefinition");
+			});
+		};
 
 
 		return DataFactory;

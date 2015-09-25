@@ -15,26 +15,28 @@
    </tab-heading>
    <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/casesTab.html'"></div>
   </tab> -->
-  <tab heading="Timing" select="handleTabClick('startEnd')"
-		ng-controller="timingCtrl">
-		  <div class="row">
-				<div class="col-lg-8 col-md-8 col-sm-8">
-					<div id="chart3">
-						<nvd3 options="options" data="data"></nvd3>
-					</div>
-				</div>
-				<div class="col-lg-4 col-md-4 col-sm-4">
-					<start-end-control-element></start-end-control-element>
-				</div>
+  <tab heading="Plots" select="handleTabClick('startEnd')">
+    <div class="row" ng-controller = "plotConfigController">
+      <div class="col-xs-12 col-lg-7">
+        <div id="timingChartDiv" ng-if = "chosenOptions.propertyToPlot=='startEndTime'||chosenOptions.propertyToPlot=='distribution'">
+          <nvd3 options="options" data="data" api = "$parent.api"></nvd3>
+        </div>
+        <div id="regPlotDiv" ng-if="chosenOptions.propertyToPlot=='regression'">
+          <sp-regression-plot data="data" options="options" parse-x = "parseX(x)" parse-y = "parseY(y)" legend = "false"></sp-regression-plot>
+        </div>
       </div>
-	</tab>
+      <div class="col-xs-12 col-lg-5 well">
+        <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/partials/plotConfigDialog.html'"></div>
+      </div>
+    </div>
+  </tab>
  	<!--tab heading="Durations" select="handleTabClick('durations')">
-	 <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/durationsTab.html'"></div>
+	 	<div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/durationsTab.html'"></div>
 	</tab-->
-	<tab heading="Feedback" ng-controller="feedbackCtrl">
-	 <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/feedbackTab.html'"></div>
-	</tab>
-	</tabset>
+  <tab heading="Feedback" ng-controller="feedbackCtrl">
+    <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/views/feedbackTab.html'"></div>
+  </tab>
+</tabset>
 </div>
 
 

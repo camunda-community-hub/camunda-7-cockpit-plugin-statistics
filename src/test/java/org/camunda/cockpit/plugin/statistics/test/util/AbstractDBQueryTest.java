@@ -142,6 +142,13 @@ public abstract class AbstractDBQueryTest extends AbstractCockpitPluginTest impl
     sqlSession.selectList("cockpit.statistics.selectRunningUserTasksCountByProcDefKey");
   }
   
+  //processes, activity types and activities for a menu
+  
+  @Test
+  public void testQueryActivityNamesTypesProcessDefinition() {
+    sqlSession.selectList("cockpit.statistics.selectActivityNamesTypesProcessDefinition");
+  }
+  
   /*
    * process related queries
    */

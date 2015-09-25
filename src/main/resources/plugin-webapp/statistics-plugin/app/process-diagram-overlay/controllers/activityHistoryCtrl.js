@@ -110,7 +110,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			$scope.historicActivityPlotData = filteredData;
 
 			getInstanceCount(SettingsFactory.lowerDurationLimitInMs, SettingsFactory.upperDurationLimitInMs);
-//		}
+		}
 
 		function getInstanceCount(lowerLimit, upperLimit) {
 			$scope.instanceCountBelowLimitRange = 0;

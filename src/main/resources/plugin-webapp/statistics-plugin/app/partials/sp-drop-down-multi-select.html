@@ -1,0 +1,25 @@
+<div class='btn-group' data-ng-class='{open: open}'>
+  <a data-ng-click ='openDropdown($event)'>{{title}}</a>
+  <a class='dropdown-toggle' data-ng-click='openDropdown($event)'>
+    <span class='caret'></span>
+  </a>
+  <ul class='dropdown-menu' aria-labelledby='dropdownMenu'>
+    <li>
+      <a data-ng-click='selectAll($event)'>
+        Check All
+      </a>
+    </li>
+    <li>
+      <a data-ng-click='deselectAll($event);'>
+        Uncheck All
+      </a>
+    </li>
+    <li class='divider'></li>
+    <li data-ng-repeat='option in options'>
+      <a data-ng-click='toggleSelectItem($event, option)'>
+      {{option.value}}
+        <span data-ng-class='getClassName(option)' aria-hidden='true'></span>
+      </a>
+    </li>
+  </ul>
+</div>
