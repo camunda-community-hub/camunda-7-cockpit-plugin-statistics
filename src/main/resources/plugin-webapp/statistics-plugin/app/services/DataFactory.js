@@ -57,8 +57,6 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.prepForBroadcast = function(chosenTab) {
 			this.chosenTab = chosenTab;
 			this.broadcastItem();
-			console.log("braodcast:");
-			console.log(chosenTab);
 		};
 
 		DataFactory.broadcastItem = function() {

@@ -100,7 +100,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
     
     $scope.$on('destroy', function(){
       if($scope.cacheKiller) {
-        console.debug("stopping cache killer...");
         $scope.stopCacheKiller();
       }
     });
@@ -458,6 +457,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.applyDataToPlots = function() {
 		  
+		  
 		  if($scope.showApplyChangesAlert) {
 		    $scope.showApplyChangesAlert = false;
 		  }
@@ -535,32 +535,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
       if($scope.cacheKiller) {
         $scope.stopCacheKiller();
       }
-		  
-		  /*
-		   * start interval function for cache deletion
-		   */
-		  
-//		  $scope.cacheKiller = $interval(function() {
-//		    console.log("killing cache...");
-//		    console.log("before:");
-//		    console.log(DataFactory.allProcessInstanceCountsByState["data"]);
-//		    DataFactory.allProcessInstanceCountsByState["data"] = {};
-//		    console.log("afterwards:");
-//        console.log(DataFactory.allProcessInstanceCountsByState["data"]);
-//        
-//		  }, $scope.myPlotsPluginSettings.cacheExpirationInMillis);
-		  
+		  		  
 		}
-		
-    $(document).mouseup(function (e)
-        {
-            var container = $("#tooltipRunning");
-            if (!container.is(e.target) // if the target of the click isn't the container...
-                && container.has(e.target).length === 0) // ... nor a descendant of the container
-            {
-                container.hide();
-            }
-    });
 
 	}])
 });
