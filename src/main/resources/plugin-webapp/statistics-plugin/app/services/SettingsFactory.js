@@ -24,6 +24,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
       $rootScope.$broadcast('pluginSettingsChanged');
     };
     
+    $rootScope.$on('chosenTabChangedBroadcast', function() {
+      if(DataFactory.chosenTab=="processes") {
+        loadPluginSettings();
+      }
+    });
+    
     SettingsFactory.loadPluginSettings = function() {
       
       var deferred = $q.defer();
@@ -221,12 +227,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
        
     }
     
-    SettingsFactory.loadPluginSettings().then(function(settings) {
-      SettingsFactory.pluginSettings = settings;
-      SettingsFactory.prepForBroadcast(settings);
-    });
-
-    
+    var loadPluginSettings = function() {
+      SettingsFactory.loadPluginSettings().then(function(settings) {
+        SettingsFactory.pluginSettings = settings;
+        SettingsFactory.prepForBroadcast(settings);
+      });
+    }
+        
     return SettingsFactory;
     
     
