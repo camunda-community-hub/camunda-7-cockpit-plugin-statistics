@@ -148,45 +148,7 @@ public abstract class AbstractDBQueryTest extends AbstractCockpitPluginTest impl
   public void testQueryActivityNamesTypesProcessDefinition() {
     sqlSession.selectList("cockpit.statistics.selectActivityNamesTypesProcessDefinition");
   }
-  
-  /*
-   * process related queries
-   */
-  
-  //single process instances with start and end time and proc def key
-  
-  @Test
-  public void testQueryProcessInstanceStartEnd() {
-    sqlSession.selectList("cockpit.statistics.selectProcessInstancesStartEnd");
-  }
-  
-  //single process instances with start and end time and duration filtered by proc def key(s)
-  
-  @Test
-  public void testQueryProcessInstanceStartEndDurByProcDefKey() {
-    sqlSession.selectList("cockpit.statistics.selectDurationOfTheChosenProcesses",getMapListQueryParameterObject("procDefKey","test"));
-  }
-  
-  //aggregated process instance incidents by proc def key
-  
-  @Test
-  public void testQueryIncidentsPerProcDefKey() {
-    sqlSession.selectList("cockpit.statistics.selectIncidentCountsByProcessDefinition");
-  }
-  
-  //aggregated process definitions that have finished instances
-  
-  @Test
-  public void testQueryProcDefsWithFinishedInstances() {
-    sqlSession.selectList("cockpit.statistics.selectProcessesWithFinishedInstances");
-  }
-  
-  //aggregated process definition informations (durations, count) by key and version
-  
-  @Test
-  public void testQueryProcDefInformationByKeyAndVersion() {
-    sqlSession.selectList("cockpit.statistics.selectProcessInstanceVersionCountsByProcessDefinition");
-  }
+    
 
 
 }

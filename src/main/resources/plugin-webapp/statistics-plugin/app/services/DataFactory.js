@@ -16,6 +16,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.historicActivityCountsDurationByProcDefKey = [];
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
 		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
+		DataFactory.allHistoricActivitiesInformationByProcDefKeyActivityNameActivityType = [];
 		DataFactory.processDefWithFinishedInstances = [];
 		DataFactory.aggregatedUsertasksByProcDef = [];
 		DataFactory.processDefinitions = [];
@@ -117,28 +118,19 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.debug("error in fetching historic activity information");
 			});
 		}
+		
+		DataFactory.getAllHistoricActivitiesInformationByProcDefKeyActivityNameActivityType = function(procDefKey,activityName, activityType) {
+		  return $http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?finished=true&processDefinitionKey="+procDefKey+"&activityName="+activityName.replace(" ", "%20")+"&activityType="+activityType))
+      .success(function(data) {
+        DataFactory.allHistoricActivitiesInformationByProcDefKeyActivityNameActivityType[procDefKey] = data;
+      })
+      .error(function() {
+        console.debug("error in fetching historic activity by proc def id information");
+      });
+		}
 
 		DataFactory.activityInstanceCounts = function() {
 			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/activity-instance"));
-		};
-
-
-		DataFactory.getAllProcessInstanceCountsByState = function(procDefKeyProc) {
-
-			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/process-instance?procDefKey="+procDefKeyProc))
-			.success(function(data) {
-				if(procDefKeyProc!=undefined) {
-					DataFactory.allProcessInstanceCountsByState[procDefKeyProc] = data;
-				} else {
-					DataFactory.allProcessInstanceCountsByState["data"] = data;
-				}
-
-			})
-			.error(function(){
-				console.debug("error in fetching process instance counts by state");
-			});	
-
-
 		};
 
 		DataFactory.getHistoricActivityCountsDurationByProcDefKey = function(procDefKeyAct) {
@@ -559,8 +551,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		}
 
-		DataFactory.getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey = function() {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance"))
+		DataFactory.getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey = function(processDefinitionKey) {
+		  
+		  var url = "";
+		  if(processDefinitionKey) {
+		    url = "/engine-rest/engine/default/history/process-instance?finished=true&processDefinitionKey="+processDefinitionKey;
+		  } else {
+		    url = "/engine-rest/engine/default/history/process-instance?finished=true";
+		  }
+		  
+			return $http.get(Uri.appUri(url))
 			.success(function(data){
 
 				var preResults = {};
@@ -593,7 +593,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 					});
 				}
 
-				DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey = results;
+				if(processDefinitionKey) {
+				  DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey[processDefinitionKey] = results;
+				} else {
+				  DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey["data"] = results;
+				}
+				
 
 			})
 			.error(function(data) {

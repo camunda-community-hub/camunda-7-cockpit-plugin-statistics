@@ -33,32 +33,32 @@
 	      group by ACT_NAME_, ACT_TYPE_, PROC_DEF_KEY_
 	 </select>
 
-  	<resultMap id="activityNameTypeProcessDefinitionMap"
-		type="org.camunda.cockpit.plugin.statistics.dto.activity.ActivityInstanceCountDto">
-		<result property="activityName" column="ACT_NAME" />
-		<result property="procName" column="NAME" />
-		<result property="procVersion" column="VERSION" />
-		<result property="procDefKey" column="PROC_DEF_KEY" />
-		<result property="procDefId" column="PROC_DEF_ID" />
-		<result property="type" column="ACT_TYPE" />
-	</resultMap>
-	
-	 <select id="selectActivityNamesTypesProcessDefinition"
+    <resultMap id="activityNameTypeProcessDefinitionMap"
+    type="org.camunda.cockpit.plugin.statistics.dto.activity.ActivityInstanceCountDto">
+    <result property="activityName" column="ACT_NAME" />
+    <result property="procName" column="NAME" />
+    <result property="procVersion" column="VERSION" />
+    <result property="procDefKey" column="PROC_DEF_KEY" />
+    <result property="procDefId" column="PROC_DEF_ID" />
+    <result property="type" column="ACT_TYPE" />
+  </resultMap>
+  
+   <select id="selectActivityNamesTypesProcessDefinition"
     resultMap="activityNameTypeProcessDefinitionMap">
-	   SELECT
-	      ACT_NAME_ as ACT_NAME, 
-	      ACT_TYPE_ as ACT_TYPE, 
-	      PROC_DEF_KEY_ as PROC_DEF_KEY,
-		  NAME_  as NAME,
-		  VERSION_ as VERSION,
-	      PROC_DEF_ID_ as 	PROC_DEF_ID  
+     SELECT
+        ACT_NAME_ as ACT_NAME, 
+        ACT_TYPE_ as ACT_TYPE, 
+        PROC_DEF_KEY_ as PROC_DEF_KEY,
+      NAME_  as NAME,
+      VERSION_ as VERSION,
+        PROC_DEF_ID_ as   PROC_DEF_ID  
       FROM act_hi_actinst A 
-		LEFT JOIN ACT_RE_PROCDEF def ON def.ID_ = A.PROC_DEF_ID_
+    LEFT JOIN ACT_RE_PROCDEF def ON def.ID_ = A.PROC_DEF_ID_
       WHERE
-	   	  ACT_TYPE_ IS NOT NULL
-	  GROUP BY ACT_NAME_, ACT_TYPE_, PROC_DEF_ID_
-	  ORDER BY PROC_DEF_KEY, ACT_NAME
+        ACT_TYPE_ IS NOT NULL
+    GROUP BY ACT_NAME_, ACT_TYPE_, PROC_DEF_ID_
+    ORDER BY PROC_DEF_KEY, ACT_NAME
 
-	 </select>
+   </select>
 	 
 </mapper>

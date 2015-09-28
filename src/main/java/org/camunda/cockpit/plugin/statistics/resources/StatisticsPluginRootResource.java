@@ -1,12 +1,11 @@
 package org.camunda.cockpit.plugin.statistics.resources;
 
-import java.util.List;
-
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginRootResource;
+import org.camunda.bpm.engine.rest.sub.runtime.ProcessInstanceResource;
 import org.camunda.cockpit.plugin.statistics.StatisticsPlugin;
 import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityNamesTypesProcDefinitionRessource;
@@ -19,7 +18,6 @@ import org.camunda.cockpit.plugin.statistics.resources.other.VariablesSizeResour
 import org.camunda.cockpit.plugin.statistics.resources.process.IncidentResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessDefinitionRessource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessDefinitionsWithFinishedInstancesResource;
-import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.process.ProcessInstanceVersionResource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.AllTaskInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.usertask.EndedUserTaskResource;
@@ -45,18 +43,6 @@ public class StatisticsPluginRootResource extends
       super(StatisticsPlugin.ID);
     }
 
-    /**
-     * This method provides aggregated process instance information.
-     *
-     * @param engineName Name the selectable engine.
-     * @return
-     */
-    @Path("{engineName}/process-instance")
-    public ProcessInstanceResource getProcessInstanceResource(
-        @PathParam("engineName") String engineName,
-        @QueryParam("procDefKey") String procDefKey) {
-      return subResource(new ProcessInstanceResource(engineName, procDefKey), engineName);
-    }
 
     /**
      * This method provides aggregated process instance information.

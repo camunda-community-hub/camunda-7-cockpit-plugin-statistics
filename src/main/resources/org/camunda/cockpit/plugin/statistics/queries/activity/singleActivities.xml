@@ -20,7 +20,7 @@
 		SELECT
 			A.ACT_NAME_ as ACT_NAME,
 			A.ACT_TYPE_ as ACT_TYPE,
-			def.KEY_ as PROC_DEF_KEY,
+			A.PROC_DEF_KEY_ as PROC_DEF_KEY,
 			A.PROC_DEF_ID_ as PROC_DEF_ID,
 			A.PROC_INST_ID_ as PROC_INST_ID,
 			A.DURATION_ as DURATION,
@@ -30,10 +30,6 @@
 			<!-- start,end time -->
 			<include refid="cockpit.statistics.commonDates"/>
 		FROM ACT_HI_ACTINST A
-		  LEFT JOIN
-		    ACT_RE_PROCDEF def
-		  ON
-		    def.ID_ = A.PROC_DEF_ID_
 		  WHERE
 				ACT_TYPE_ in ('userTask', 'callActivity', 'serviceTask', 'subProcess','transaction', 'sendTask', 'receiveTask')
 				ORDER by DURATION_ desc
