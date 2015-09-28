@@ -10,37 +10,34 @@
 		<result property="procDefKey" column="PDKEY" />
 		<result property="activityName" column="ACT_NAME" />
 		<result property="assigned" column="ASSIGNED" />
-		<result property="delegated" column="DELEGATED" />
 	</resultMap>
 
 	<select id="selectRunningUserTaskCountGroupedByTaskNameFilteredByProcDefKey"
 		resultMap="runningUserTaskMap" parameterType="String">
-           select t.name_ as ACT_NAME,
-                  def.key_ as PDKEY,
-                  SUM(CASE WHEN T.ASSIGNEE_ IS NOT NULL THEN 1 ELSE 0 END) as ASSIGNED,
-                  SUM(CASE WHEN T.DELEGATION_ IS NOT NULL THEN 1 ELSE 0 END) as DELEGATED,
+           select NAME_ as ACT_NAME,
+                  PROC_DEF_KEY_ as PDKEY,
+                  SUM(CASE WHEN ASSIGNEE_ IS NOT NULL THEN 1 ELSE 0 END) as ASSIGNED,
                   count(*) as COUNT
-           from act_ru_task T 
-            LEFT JOIN ACT_RE_PROCDEF def
-            ON def.ID_ = T.PROC_DEF_ID_
+           FROM ACT_HI_TASKINST 
             <if test="parameter != null">
-              WHERE def.key_ = #{parameter}
+              WHERE PROC_DEF_KEY_ = #{parameter} AND
             </if>
-           group by def.key_, t.name_
+            <if test="parameter == null">
+              WHERE PROC_DEF_KEY_ = #{parameter} AND
+            </if>
+            END_TIME_ IS NULL
+           group by PROC_DEF_KEY_, NAME_
 	</select>
 	
 	 <select id="selectRunningUserTasksCountByProcDefKey"
     resultMap="runningUserTaskMap">
     SELECT
       COUNT(*) AS COUNT,
-      def.KEY_ AS PDKEY
+      PROC_DEF_KEY_ AS PDKEY
     FROM
-      ACT_RU_TASK T
-        LEFT JOIN
-          ACT_RE_PROCDEF def
-        ON 
-          def.ID_ = T.PROC_DEF_ID_
-    GROUP BY KEY_
+      ACT_HI_TASKINST
+    WHERE END_TIME_ IS NULL
+    GROUP BY PROC_DEF_KEY_
   </select>
   
 	   <resultMap id="userTaskMap"
@@ -81,17 +78,13 @@
   <select id="selectHistoricUserTasksCountByProcDefKey"
     resultMap="endedUserTaskMap">
            SELECT
-             def.KEY_ AS PDKEY,
+             PROC_DEF_KEY_ AS PDKEY,
              <!-- count, min, max, avg, duration -->
              <include refid="cockpit.statistics.commonAggregations"/> 
            FROM
-            ACT_HI_TASKINST T
-                LEFT JOIN
-                    ACT_RE_PROCDEF def
-                ON
-                    def.ID_ = T.PROC_DEF_ID_
-           WHERE T.DELETE_REASON_='completed' AND PARENT_TASK_ID_ IS NULL
-           group by def.KEY_
+            ACT_HI_TASKINST
+           WHERE DELETE_REASON_='completed' AND PARENT_TASK_ID_ IS NULL
+           group by PROC_DEF_KEY_
            order by COUNT DESC
   </select>
   

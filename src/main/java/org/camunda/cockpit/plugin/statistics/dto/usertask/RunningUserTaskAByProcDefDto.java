@@ -4,7 +4,6 @@ public class RunningUserTaskAByProcDefDto {
   
   private int count;
   private int assigned;
-  private int delegated;
   private String activityName;
   private String procDefKey;
   
@@ -21,12 +20,7 @@ public class RunningUserTaskAByProcDefDto {
   public void setAssigned(int assigned) {
     this.assigned = assigned;
   }
-  public int getDelegated() {
-    return delegated;
-  }
-  public void setDelegated(int delegated) {
-    this.delegated = delegated;
-  }
+ 
   public String getActivityName() {
     return activityName;
   }

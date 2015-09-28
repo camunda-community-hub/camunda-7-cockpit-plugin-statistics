@@ -1,20 +1,13 @@
 <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/styles/pluginStyles.html'"></div>
 <div class="row">
-	<div class="col-lg-4 col-md-4 col-sm-4" id="plot1" ng-controller="processDefinitionCtrl">
+	<div class="col-lg-6 col-md-6 col-sm-6" id="plot1" ng-controller="processDefinitionCtrl">
 		<nvd3 options="options" data="statesOfDefinition"></nvd3>
-		<p class="text-center">instances by state</p>
+		<p class="text-center">process instances by state</p>
 	</div>
 	<div ng-controller="slaChartCtrl">
-		<div class="col-lg-4 col-md-4 col-sm-4" id="plot2" >
+		<div class="col-lg-6 col-md-6 col-sm-6" id="plot2" >
 			<nvd3 options="options" data="activitiesForProcDef"></nvd3>
 			<p class="text-center">finished activities</p>
-		</div>
-		<div class="col-lg-4 col-md-4 col-sm-4">
-		    <select ng-model="selectedActivity" ng-options="activity.name for activity in activities" ng-change="selectionChanged()">
-  		    <option value="">-- choose activity --</option>
-		    </select>
-		    <nvd3 options="optionsLineChart" data="historicActivityPlotData"></nvd3>
-		    <p class="text-center">duration in seconds (top 100 longest)</p>
 		</div>
 	</div>
 </div>

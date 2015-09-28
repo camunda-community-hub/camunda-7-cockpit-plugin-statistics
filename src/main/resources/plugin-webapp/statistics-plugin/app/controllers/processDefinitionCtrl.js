@@ -9,7 +9,8 @@ ngDefine(
                   '$scope',
                   'DataFactory',
                   'Uri',
-                  function($scope, DataFactory, Uri) {
+                  '$q',
+                  function($scope, DataFactory, Uri, $q) {
 
                     $scope.options = {
                       chart : {
@@ -50,39 +51,67 @@ ngDefine(
                         }
                       }
                     };
+                    
+                    $q.all([DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi(),
+                            DataFactory.getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey($scope.processDefinition.key)]).then(function(){
+                      var counts = [];
 
+                      $scope.statesOfDefinition = counts;
+                      
+                      counts
+                      .push({
+                        "key" : "finished",
+                        "y" : DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey[$scope.processDefinition.key][0].y,
+                        "avg" : DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey[$scope.processDefinition.key][0].avg,
+                        "min" : DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey[$scope.processDefinition.key][0].min,
+                        "max" : DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey[$scope.processDefinition.key][0].max
+                      });
+                      
+                      var data = DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi;
+                      
+                      var resultRunning = {};
+                      var resultIncidents = {};
+                      
+                      for(i in data) {
+                        
+                        if(data[i].definition.key==$scope.processDefinition.key) {
+                          if(!resultRunning[data[i].definition.key]) {
+                            resultRunning[data[i].definition.key]=0;
+                          }
+                          
+                          resultRunning[data[i].definition.key]+=data[i].instances;
+                          
+                          
+                          if(!resultIncidents[data[i].definition.key]) {
+                            resultIncidents[data[i].definition.key] = 0;
+                          }
+                            
+                          if(data[i].incidents && data[i].incidents.length>0) {
+                            for(j in data[i].incidents) {
+                              resultIncidents[data[i].definition.key]+=data[i].incidents[j].incidentCount;  
+                            }  
+                          }
+                        }
 
-                    DataFactory
-                        .getAllProcessInstanceCountsByState(
-                            $scope.processDefinition.key)
-                        .then(
-                            function() {
+                        
+                      }
 
-                              var processDefinitionCounts = DataFactory.allProcessInstanceCountsByState[$scope.processDefinition.key];
-                              var counts = [];
+                      
+                      counts
+                      .push({
+                        "key" : "running",
+                        "y" : resultRunning[$scope.processDefinition.key]
+                      });
+                      counts
+                      .push({
+                        "key" : "failed",
+                        "y" : resultIncidents[$scope.processDefinition.key]
+                      });
+                      
+                      
+                    });
 
-                              counts
-                                  .push({
-                                    "key" : "running",
-                                    "y" : processDefinitionCounts[0].runningInstanceCount
-                                  });
-                              counts
-                                  .push({
-                                    "key" : "failed",
-                                    "y" : processDefinitionCounts[0].failedInstanceCount
-                                  });
-                              counts
-                                  .push({
-                                    "key" : "finished",
-                                    "y" : processDefinitionCounts[0].endedInstanceCount,
-                                    "avg" : processDefinitionCounts[0].duration,
-                                    "min" : processDefinitionCounts[0].minDuration,
-                                    "max" : processDefinitionCounts[0].maxDuration
-                                  });
-
-                              $scope.statesOfDefinition = counts;
-
-                            });
+                  
 
                   } ]);
     });

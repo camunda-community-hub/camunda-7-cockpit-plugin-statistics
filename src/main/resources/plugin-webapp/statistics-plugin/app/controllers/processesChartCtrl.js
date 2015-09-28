@@ -296,7 +296,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		  var newRunning = [];
 		  for(i in newDataArray){
 		    if(newDataArray[i].count) {
-		      newRunning.push({"key":newDataArray[i].activityName,"y":newDataArray[i].count, "delegated":newDataArray[i].delegated, "assigned":newDataArray[i].assigned});
+		      newRunning.push({"key":newDataArray[i].activityName,"y":newDataArray[i].count, "assigned":newDataArray[i].assigned});
 		    }
 		  }
 		  
@@ -305,8 +305,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
         return '<h3>' + key + '</h3>' +
         '<p>count:<b>' +  y + '</b><br/>assigned:<b>'+
         e.point.assigned+
-        '</b><br/>delegated:<b>'+
-        e.point.delegated+
         '</b></p>'
         };
       
@@ -485,7 +483,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		  .then(function(){
         $scope.reload.showReloadProcessEnded = false;
         $scope.showPlotDescriptions = true;
-        setEndedPlotData(DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey);
+        setEndedPlotData(DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey["data"]);
 		  });
       
       /*

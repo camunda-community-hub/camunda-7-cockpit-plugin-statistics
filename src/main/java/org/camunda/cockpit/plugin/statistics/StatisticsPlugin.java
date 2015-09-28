@@ -46,10 +46,7 @@ public class StatisticsPlugin extends AbstractCockpitPlugin {
         
         //add all activity related mapping files
         mappingFiles.addAll(getActivityRelatedMappingFiles());
-        
-        //add all process instance related mapping files
-        mappingFiles.addAll(getProcessInstanceRelatedMappingFiles());
-        
+
         //add all user task related mapping files
         mappingFiles.addAll(getUserTaskRelatedMappingFiles());
         
@@ -76,13 +73,7 @@ public class StatisticsPlugin extends AbstractCockpitPlugin {
       activityRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/activity/aggregatedActivities.xml");
       return activityRelatedMappingFiles;
     }
-    
-    private List<String> getProcessInstanceRelatedMappingFiles() {
-      List<String> procinstRelatedMappingFiles = new ArrayList<String>();
-      
-      procinstRelatedMappingFiles.add("org/camunda/cockpit/plugin/statistics/queries/process/aggregatedProcessInstances.xml");
-      return procinstRelatedMappingFiles;
-    }
+
     
     private List<String> getUserTaskRelatedMappingFiles() {
       List<String> usertaskRelatedMappingFiles = new ArrayList<String>();

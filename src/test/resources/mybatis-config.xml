@@ -11,10 +11,6 @@
       <!-- for user tasks -->
     <mapper resource="org/camunda/cockpit/plugin/statistics/queries/usertask/singleUserTasks.xml"/>
     <mapper resource="org/camunda/cockpit/plugin/statistics/queries/usertask/aggregatedUserTasks.xml"/>
-      <!-- for process instances -->
-    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/process/singleProcessInstances.xml"/>
-    <mapper resource="org/camunda/cockpit/plugin/statistics/queries/process/aggregatedProcessInstances.xml"/>
-    
       <!-- common query parts -->
     <mapper resource="org/camunda/cockpit/plugin/statistics/queries/common/commonQueryParts.xml"/>
     

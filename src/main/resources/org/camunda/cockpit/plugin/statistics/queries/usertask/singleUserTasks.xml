@@ -16,31 +16,24 @@
 	SELECT 
 	  A.NAME_ as ACT_NAME, 
 	  CREATE_TIME_ as START_TIME,
-	  def.KEY_ as PROC_DEF_KEY
-	FROM act_ru_task A 
-	  LEFT JOIN
-	    ACT_RE_PROCDEF def
-	  ON 
-	    def.ID_ = A.PROC_DEF_ID_
-	ORDER BY def.KEY_, A.NAME_
+	  PROC_DEF_KEY_ as PROC_DEF_KEY
+	FROM act_hi_taskinst A
+	WHERE END_TIME IS NULL 
+	ORDER BY PROC_DEF_KEY_, A.NAME_
 	</select>
 	
 	<select id="selectHistoricUserTaskTimeSpec"
 	  resultMap="singleUserTaskTimeSpecMap" parameterType="org.camunda.bpm.engine.impl.db.ListQueryParameterObject">
 	  SELECT 
 	    A.NAME_ as ACT_NAME, 
-	    def.KEY_ as PROC_DEF_KEY,
+	    A.PROC_DEF_KEY_ as PROC_DEF_KEY,
 	    <!-- start,end time -->
 	    <include refid="cockpit.statistics.commonDates"/>
 	  FROM act_hi_taskinst A 
-	    LEFT JOIN
-	      ACT_RE_PROCDEF def
-	    ON 
-	      def.ID_ = A.PROC_DEF_ID_
 	    <if test="parameter != null">
 	        ${parameter}
 	    </if>
-	  ORDER BY def.KEY_,A.NAME_
+	  ORDER BY A.PROC_DEF_KEY_,A.NAME_
 	</select>
 
   
