@@ -1,5 +1,16 @@
 <!--  <style type="text/css" media="screen" scoped>@import "#/css/style.css";</style> -->
 <style>
+.accordion-toggle > span { 
+  overflow: hidden; 
+  white-space: nowrap; 
+  text-overflow: ellipsis;
+  display: inline-block; 
+  width: -moz-calc(100% - 100px); /* Firefox */
+  width: -webkit-calc(100% - 100px); /* Chrome */
+  width: calc(100% - 100px); /* Chrome */
+}
+
+
 rect {
   -moz-transition: all 0.3s;
   -o-transition: all 0.3s;
