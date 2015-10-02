@@ -155,7 +155,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
                   }
                 },
                 tooltips: true,
-                noData:"No Processes met the requirements",
+                noData:"No process instances met the requirements",
                 legend: {
                     margin: {
                         top: 5,
