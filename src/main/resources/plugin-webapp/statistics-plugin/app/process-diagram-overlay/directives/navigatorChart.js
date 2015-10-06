@@ -23,7 +23,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 			return days + ":" + hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 		}
-		
+
 		function getY(data, height, y) {
 			var minmax = getMinMax(data);
 			var value = height-y;
@@ -39,91 +39,94 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			});
 			return [min, max];
 		}
-		
-		function updateNavigator(start, end, data, navYScale, navHeight, navWidth) {
-			
+
+		function updateNavigator(start, end, data, navYScale, navHeight, navWidth, $scope) {
+
 			var minDate = new Date(start);
 			var maxDate = new Date(end);
 //			minDate.setDate(minDate.getDate()-1);
 //			maxDate.setDate(maxDate.getDate()+1);
-			
-			var navXScale = d3.time.scale()
-				.domain([minDate, maxDate])
-				.nice(d3.time.minute)
-				.range([0, navWidth]);
 
-			
+			var navXScale = d3.time.scale()
+			.domain([minDate, maxDate])
+			.nice(d3.time.minute)
+			.range([0, navWidth]);
+
+
 			var navXAxis = d3.svg.axis()
-				.scale(navXScale)
-				.orient('bottom')
-				.ticks(5);
-			
+			.scale(navXScale)
+			.orient('bottom')
+			.ticks(5);
+
 			var viewport = d3.svg.brush()
-				.x(navXScale)
-				.on("brushend", function() {
-					// update data for main chart -> send notification to controller
-					$rootScope.$broadcast('datetimeRangeChanged', viewport.extent()[0], viewport.extent()[1]);
-				});
-			
+			.x(navXScale)
+			.on("brushend", function() {
+				// update data for main chart -> send notification to controller
+				$rootScope.$broadcast('datetimeRangeChanged', viewport.extent()[0], viewport.extent()[1]);
+				$scope.start.datetime = viewport.extent()[0];
+				$scope.end.datetime = viewport.extent()[1];
+				updateNavigator($scope.start.datetime, $scope.end.datetime, data, navYScale, navHeight, navWidth, $scope);
+			});
+
 			nv.addGraph(function() {
-				
+
 				// default: complete datetime range
 				viewport.extent([minDate, maxDate]);
-				
+
 				var svg = d3.select("#navigator svg")
-					.attr('width', navWidth+25)
-					.attr('transform', 'translate(20,5)');
-				
+				.attr('width', navWidth+40)
+				.attr('transform', 'translate(20,5)');
+
 				svg.selectAll('*').remove();
-				
+
 				svg.append('g')
-					.attr('class', 'x axis')
-					.attr('transform', 'translate(0,' + navHeight + ')')
-					.call(navXAxis);
-				
+				.attr('class', 'x axis')
+				.attr('transform', 'translate(0,' + navHeight + ')')
+				.call(navXAxis);
+
 				svg.selectAll("scatter-dots")
-			      .data(data)
-			      .enter().append("svg:circle")
-			          .attr("cx", function (d,i) { 
-			        	  return navXScale(d.datetime); } )
-			          .attr("cy", function (d) { 
-			        	  return navYScale(d.y); } )
-			          .attr("r", 4);
-				
+				.data(data)
+				.enter().append("svg:circle")
+				.attr("cx", function (d,i) { 
+					return navXScale(d.datetime); } )
+					.attr("cy", function (d) { 
+						return navYScale(d.y); } )
+						.attr("r", 4);
+
 				svg.append('g')
-					.attr('class', 'viewport')
-					.call(viewport)
-					.selectAll('rect')
-						.attr('height', navHeight);
-				
+				.attr('class', 'viewport')
+				.call(viewport)
+				.selectAll('rect')
+				.attr('height', navHeight);
+
 				// draw left and right border of brush (styling with border-left/right is not possible for rect)
 				d3.select('.resize.e rect').remove();
 				d3.select('.resize.e')
-					.append('rect')
-					.attr('x', 0)
-					.attr('y', 0)
-					.attr('width', 3)
-					.attr('height', 105);				
+				.append('rect')
+				.attr('x', 0)
+				.attr('y', 0)
+				.attr('width', 3)
+				.attr('height', 105);				
 				d3.select('.resize.w rect').remove();
 				d3.select('.resize.w')
-					.append('rect')
-					.attr('x', 0)
-					.attr('y', 0)
-					.attr('width', 3)
-					.attr('height', 105);
+				.append('rect')
+				.attr('x', 0)
+				.attr('y', 0)
+				.attr('width', 3)
+				.attr('height', 105);
 			});
 		}
-		
-		
+
+
 		d3.selection.prototype.moveToBack = function() { 
-		    return this.each(function() { 
-		        var firstChild = this.parentNode.firstChild; 
-		        if (firstChild) { 
-		            this.parentNode.insertBefore(this, firstChild); 
-		        } 
-		    }); 
+			return this.each(function() { 
+				var firstChild = this.parentNode.firstChild; 
+				if (firstChild) { 
+					this.parentNode.insertBefore(this, firstChild); 
+				} 
+			}); 
 		};
-		
+
 		function updateData(origData, start, end) {
 			var endTime;
 			var data = [];
@@ -145,11 +148,11 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var datesplitted = date.split('-');
 			return "'" + datesplitted[0] + "-" + datesplitted[1] + "-" + datesplitted[2] + "'";
 		}
-		
+
 		function dateToDatestring(date) {
 			return "'" + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + "'";
 		}
-		
+
 		function msToDatetimeString(time) {
 			var datetime = (new Date(time)).toString().split(' ');
 			return datetime[0] + ", " + datetime[2] + " " + datetime[1] + " " + datetime[3] + ", " + datetime[4];
@@ -163,130 +166,156 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			var timesplitted = time.split(':');
 			return new Date(datesplitted[0], datesplitted[1]-1, datesplitted[2], timesplitted[0], timesplitted[1], timesplitted[2]);
 		}
+
+		function getMinMaxDatetime(data) {
+			var times = [];
+			for(var i in data) {
+				if(times.indexOf(data[i].end)==-1) times.push(data[i].end);
+			}
+			//			times.sort().reverse();
+			return [times[0], times[times.length-1]];
+		}
 		
+		function init($scope, initData) {
+			$scope.data = initData;
+			
+			var minMax = getMinMaxDatetime(initData);
+			var min = minMax[0];
+			var max = minMax[1];
+			
+			$scope.start = {
+					datetime: min,
+					dateOptions: {
+						minDate: min,
+						maxDate: max
+					},
+					timeOptions: {
+						min: min,
+						max: max
+					},
+					isOpen: false
+			};
+
+			$scope.end = {
+					datetime: max,
+					dateOptions: {
+						minDate: min,
+						maxDate: max
+					},
+					timeOptions: {
+						min: min,
+						max: max
+					},
+					isOpen: false
+			};
+		}
+
 		function link($scope,element,attrs){
-			
+
 			var origData, navYScale;
-			var navWidth = 550;
+			var navWidth = 750;
 			var navHeight = 100;
+
+			// store original data
+			var initData = $scope.data;
 			
-//			$scope.$watch('data', function() {
-				
+			init($scope, initData);
+
+			$scope.openStart = function($event) {
+				$event.preventDefault();
+				$event.stopPropagation();
+
+				$scope.end.isOpen = false;
+				$scope.start.isOpen = true;
+			};
+
+			$scope.openEnd = function($event) {
+				$event.preventDefault();
+				$event.stopPropagation();
+
+				$scope.start.isOpen = false;
+				$scope.end.isOpen = true;
+			};
+
+			$scope.$watch('data', function() {
+
 				origData = $scope.data;
-				
-				var times = [];
-				for(var i in origData) {
-					if(times.indexOf(origData[i].end)==-1) times.push(origData[i].end);
-				}
-	//			times.sort().reverse();
-				
-				$scope.start = {
-						datetime: times[0],
-						dateOptions: {
-							minDate: times[0],
-							maxDate: times[times.length-1]
-						},
-						timeOptions: {
-							min: times[0],
-							max: times[times.length-1]
-						},
-						isOpen: false
-				};
-	
-				$scope.end = {
-						datetime: times[times.length-1],
-						dateOptions: {
-							minDate: times[0],
-							maxDate: times[times.length-1]
-						},
-						timeOptions: {
-							min: times[0],
-							max: times[times.length-1]
-						},
-						isOpen: false
-				};
-				
-				$scope.openStart = function($event) {
-					$event.preventDefault();
-					$event.stopPropagation();
-	
-					$scope.end.isOpen = false;
-					$scope.start.isOpen = true;
-				};
-	
-				$scope.openEnd = function($event) {
-					$event.preventDefault();
-					$event.stopPropagation();
-	
-					$scope.start.isOpen = false;
-					$scope.end.isOpen = true;
-				};
-	
-				
+
 				// draw navigation chart
-				
+
 				var minmaxY = getMinMaxY(origData);
 				var yMin = minmaxY[0];
 				var yMax = minmaxY[1];
 				navYScale = d3.scale.linear()
 				.domain([yMin, yMax])
 				.range([navHeight, 0]);
-				
-				var minDate = $scope.start.dateOptions.minDate;
-				var maxDate = $scope.end.dateOptions.maxDate;
-				
-				updateNavigator(minDate, maxDate, $scope.data, navYScale, navHeight, navWidth);
-//			}, true);
-			
+
+				var minDate = $scope.start.datetime;
+				var maxDate = $scope.end.datetime;
+
+				updateNavigator(minDate, maxDate, $scope.data, navYScale, navHeight, navWidth, $scope);
+			}, true);
+
 			$scope.updatePlot = function() {
 				// check time (does not work in ui.bootstrap...)
 				if($scope.start.datetime < $scope.start.dateOptions.minDate) $scope.start.datetime = $scope.start.dateOptions.minDate;
 				if($scope.end.datetime > $scope.end.dateOptions.maxDate) $scope.end.datetime = $scope.end.dateOptions.maxDate;
 				if($scope.start.datetime > $scope.end.datetime) $scope.start.datetime = $scope.end.datetime;
-				
+
 				// update min and max datetimes
 				$scope.start.dateOptions.maxDate = $scope.end.datetime;
 				$scope.end.dateOptions.minDate = $scope.start.datetime;
-				
+
 				var updatedData = updateData(origData, $scope.start.datetime, $scope.end.datetime);
 				updateNavigator($scope.start.datetime.getTime(), $scope.end.datetime.getTime(), updatedData, navYScale, navHeight, navWidth);
 				$rootScope.$broadcast('datetimeRangeChanged', datetimeToMs($scope.start.datetime), datetimeToMs($scope.end.datetime));
 			}
+
+			$scope.resetMinMaxDatetime = function($event) {
+				$event.preventDefault();
+				$event.stopPropagation();
+
+				init($scope, initData);
+			}
+			
+			$scope.showResetButton = function() {
+				if(initData.length == $scope.data.length) return false;
+				else return true;
+			}
 		}
-		
+
 		return {
 			link: link,
 			restrict: 'E',
 			scope: { 
-						data: '='
-					},
+				data: '='
+			},
 			template:
 				'<table ng-init="updatePlot()">' +
-					'<tr>' +
-						'<td>' +
-							'<label class="control-label">Start of considerated time period:</label>' +
-							'<p class="input-group" style="width: 250px; position: relative; z-index: 1000000 !important;">' +
-								'<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="start.datetime" ng-change="updatePlot()" is-open="start.isOpen" min-date="start.dateOptions.minDate" max-date="start.dateOptions.maxDate"/>' +
-								'<span class="input-group-btn">' +
-									'<button type="button" class="btn btn-default" ng-click="openStart($event)">' +
-										'<i class="glyphicon glyphicon-calendar"></i>' +
-										'</button>' +
-								'</span>' +
-							'</p>' +
-							'<label class="control-label">End of considerated time period:</label>' +
-							'<p class="input-group" style="width: 250px; position: relative; z-index: 100000 !important;">' +
-								'<input type="text" class="form-control" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="end.datetime" ng-change="updatePlot()" is-open="end.isOpen" min-date="end.dateOptions.minDate" max-date="end.dateOptions.maxDate"/>' +
-								'<span class="input-group-btn">' +
-									'<button type="button" class="btn btn-default" ng-click="openEnd($event)">' +
-										'<i class="glyphicon glyphicon-calendar"></i>' +
-									'</button>' +
-								'</span>' +
-							'</p>' +
-						'</td>' +
-						'<td>' +
-							'<div id="navigator"><svg /></div>' +
-						'</td>' +
-					'</tr>' +
+				'<tr style="position: relative; z-index: 1000000 !important;">' +
+				'<td align="left">' +
+				'<button title="Edit start date" type="button" class="round-button small-button" ng-click="openStart($event)">' +
+				'<i class="glyphicon glyphicon-wrench"></i>' +
+				'</button>' +
+				'<input readonly type="text" class="div-like" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="start.datetime" ng-change="updatePlot()" is-open="start.isOpen" min-date="start.dateOptions.minDate" max-date="start.dateOptions.maxDate"/>' +
+				'</td>' +
+				'<td align="center">' +
+				'<button title="Reset minimum and maximum date" type="button" class="round-button small-button" ng-show="showResetButton()" ng-click="resetMinMaxDatetime($event)" style="margin-left:30px;">' +
+				'<i class="glyphicon glyphicon-zoom-out"></i>' +
+				'</button>' +
+				'</td>' +
+				'<td align="right">' +
+				'<input readonly type="text" class="div-like right-align" datetime-picker="EEE, dd MMM yyyy, HH:mm" ng-model="end.datetime" ng-change="updatePlot()" is-open="end.isOpen" min-date="end.dateOptions.minDate" max-date="end.dateOptions.maxDate"/>' +
+				'<button title="Edit end date" type="button" class="round-button small-button" ng-click="openEnd($event)">' +
+				'<i class="glyphicon glyphicon-wrench"></i>' +
+				'</button>' +
+				'</td>' +
+				'</tr>' +
+				'<tr>' +
+				'<td colspan="3">' +
+				'<div id="navigator"><svg /></div>' +
+				'</td>' +
+				'</tr>' +
 				'</table>'
 		}
 	}])

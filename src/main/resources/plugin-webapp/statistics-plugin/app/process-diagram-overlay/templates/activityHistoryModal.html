@@ -13,14 +13,11 @@
 		<tr ng-show="info">
 			<td colspan="2">
 				<ul>
-					<li><strong>Calendar Input Fields</strong><br>
-                    	The calender input can be used to set the start and end value for the navigational chart on the right.
-                   	</li>
 					<li><strong>Navigational Chart</strong><br>
-                    	The navigational chart - next to the calender input fields - can be used to further restrict the time span for the plotted activity instances with the draggable red lines.
+                    	The navigational chart at the top can be used to restrict the time span for the plotted activity instances. The draggable red lines or the edit buttons next to the start and end date can be used to zoom into the data on the time axis. After zooming in, a button appears to zoom out again, i.e. to set the start and end date to its original values.
                    	</li>
 					<li><strong>Activity Instance Chart</strong><br>
-                    	The activity instance chart - in the middle - shows all activity instances finished in the selected time span. Hovering over an instance, more information will be shown at the bottom. An upper and lower bound for the duration can be set with the draggable red lines. The number of activity instances within and outside these duration boundaries are shown at the bottom. 
+                    	The activity instance chart in the middle shows all activity instances finished in the selected time span. Hovering over an instance, more information will be shown at the bottom. An upper and lower bound for the duration can be set with the draggable red lines. The number of activity instances within and outside these duration boundaries are shown at the bottom. 
                    	</li>
                 	<li><strong>Duration Format</strong><br>
                     	The format of the displayed duration is DD:HH:MM:SS.mmm, where DD represents the days, HH the hours, MM the minutes, SS the seconds and mmm the milliseconds.
@@ -50,16 +47,16 @@
 						<th>{{ instanceCount }}</th>
 					</tr>
 					<tr>
-						<td>below limit range:</td>
-						<td>{{ instanceCountBelowLimitRange }}</td>
+						<td>above limit range:</td>
+						<td>{{ instanceCountAboveLimitRange }}</td>
 					</tr>
 					<tr>
 						<td>in limit range:</td>
 						<td>{{ instanceCountInLimitRange }}</td>
 					</tr>
 					<tr>
-						<td>above limit range:</td>
-						<td>{{ instanceCountAboveLimitRange }}</td>
+						<td>below limit range:</td>
+						<td>{{ instanceCountBelowLimitRange }}</td>
 					</tr>
 				</table>
 			</td>
