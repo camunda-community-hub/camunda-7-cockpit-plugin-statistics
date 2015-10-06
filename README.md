@@ -10,7 +10,6 @@ To get an initial overview on the different features please consider the followi
 
 [Analytics](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-2/)
 
-![Screenshot: Processes Plots Settings](screenshot_settings_modal.png)
 
 
 ![Screenshot: Process Instances](screenshot_process_instances.png)
