@@ -3,14 +3,18 @@ camunda Cockpit Statistics Plugin
 
 camunda BPM community extension, which provides a statistics plugin for camunda Cockpit.
 This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
-The current master release was successfully tested on Camunda 7.3.0 Final.
+The current master release was successfully tested on Camunda 7.3.0 Final with IBM DB2, MySQL and H2.
 
 
-![Screenshot: Process Instances](screenshot-process-instances.png)
+![Screenshot: Process Instances](screenshot_process_instances.png)
 
-![Screenshot: Timing](screenshot-timing.png)
+![Screenshot: Processes Plots Settings](screenshot_settings_modal.png)
 
-![Screenshot: Process Definition](screenshot-process-definition.png)
+![Screenshot: Analytics](screenshot_analytics_tab_start.png)
+
+![Screenshot: Activity History](screenshot_overlay_act_history.png)
+
+![Screenshot: Diagram Overlays](screenshot_overlay_mean.png)
 
 ## Get started
 
@@ -19,23 +23,22 @@ Do not forget to customize build.properties in case you choose the latter option
 
 ## Known issues
 
-- zoom in/out not working with enabled "statistics" tab in process definition detail view
-## Roadmap
 
 **features we are working on**
 
-- overlay information for rendered process diagram
-- more analytics graphs
+- more fancy plots ;)
+- generic dashboard mechanism
 
 **todo**
 
 - implement some kind of caching mechanism
-- implement a generic dashboard mechanism
 - implement further graphs (cases)
 - more tests
 
 **done**
 
+- overlay information for rendered process diagram
+- more analytics graphs
 - db query tests for different databases
 - drill-in/out for process instance / activity pie charts
 - feedback mechanism
@@ -58,6 +61,7 @@ Do not forget to customize build.properties in case you choose the latter option
 Within NovaTec Consulting GmbH the following persons are contributing
 
 - Ingo G&uuml;hring
+- Kerstin G&uuml;nther
 
 
 ![NovaTec Consulting GmbH](http://www.novatec-gmbh.de/fileadmin/styles/novatec_v5.5/images/header-logo.jpg)
