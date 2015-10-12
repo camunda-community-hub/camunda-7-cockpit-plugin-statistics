@@ -1,9 +1,9 @@
 camunda Cockpit Statistics Plugin
 =================================
 
-camunda BPM community extension, which provides a statistics plugin for camunda Cockpit.
-This plugin provides a set of charts helping you to understand what is and what was going on with your engine.
-The current master release was successfully tested on Camunda 7.3.0 Final with IBM DB2, MySQL and H2.
+This plugin is a camunda BPM community extension, which provides a statistics plugin for the camunda BPM Cockpit.
+It provides a set of charts helping you to understand what is and what was going on with your engine.
+The current master release was successfully tested on Camunda 7.3.0 Final with IBM DB2 9.7, MySQL 5.6 and H2.
 
 
 ![Screenshot: Process Instances](screenshot_process_instances.png)
@@ -33,7 +33,7 @@ Do not forget to customize build.properties in case you choose the latter option
 
 - implement some kind of caching mechanism
 - implement further graphs (cases)
-- more tests
+- more (ui-driven) tests
 
 **done**
 
