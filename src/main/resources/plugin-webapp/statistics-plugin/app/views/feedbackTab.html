@@ -18,9 +18,9 @@
       <select ng-model="feedbackSubject" id="inputSubject">
         <option>Tab - Processes</option>
         <!-- <option>Tab - Cases</option> -->
-        <option>Tab - Timing</option>
-        <!-- <option>Tab - Durations</option> -->
+        <option>Tab - Analytics</option>
         <option>Tab - Statistics (Within process definition view)</option>
+        <option>Diagram Overlays (Within process definition view)</option>        
       </select>
     </div>
   </div>
@@ -36,7 +36,7 @@
   <div class="row">
     <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-md-9 col-md-offset-3">
       <button type="button" class="btn btn-primary"
-        ng-click="sendFeedback()" data-toggle="tooltip" title="via email">Give
+        ng-click="sendFeedback(feedbackText, feedbackSubject, feedbackCategory)" data-toggle="tooltip" title="via email">Give
         Feedback!</button>
     </div>
   </div>

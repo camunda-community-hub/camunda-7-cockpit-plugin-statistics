@@ -1,20 +1,17 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', ['require'], function(module) {
 
   module.controller('feedbackCtrl',
-      ['$scope', '$http', '$window', function($scope, $http, $window,feedbackCategory,feedbackSubject, feedbackText) {   
+      ['$scope', '$http', '$window', function($scope, $http, $window) {   
         
-        $scope.feedbackCategory = feedbackCategory;
-        $scope.feedbackSubject = feedbackSubject;
-        $scope.feedbackText = feedbackText;
+        $scope.feedbackText = "";
+        $scope.feedbackCategory = "Feature-Request";
+        $scope.feedbackSubject = "Tab - Processes";
         
-        $scope.feedbackCategory = 'Feature-Request';
-        $scope.feedbackSubject = 'Tab - Processes';
-        
-        $scope.sendFeedback = function() {
+        $scope.sendFeedback = function(feedbackText, feedbackCategory, feedbackSubject) {
           var body = "";
-          body+="Category:"+$scope.feedbackCategory+", ";
-          body+="Subject:"+$scope.feedbackSubject+", ";
-          body+="Feedback: Oh! That is a nice plugin you have created, but.. "+$scope.feedbackText;
+          body+="Category:"+feedbackCategory+", ";
+          body+="Subject:"+feedbackSubject+", ";
+          body+="Feedback: Oh! That is a nice plugin you have created, but.. "+feedbackText;
           $window.open("mailto:eric.klieme"+"@"+"novatec-gmbh.de?subject=Feedback camunda-cockpit-statistics-plugin&body="+body,'Give Feedback');
           //$window.location = ;
         };
