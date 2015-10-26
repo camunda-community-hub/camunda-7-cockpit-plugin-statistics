@@ -11,7 +11,7 @@ ngDefine(
                   'Uri',
                   '$q',
                   function($scope, DataFactory, Uri, $q) {
-
+                    
                     $scope.options = {
                       chart : {
                         type : 'pieChart',
