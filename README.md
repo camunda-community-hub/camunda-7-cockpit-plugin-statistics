@@ -6,11 +6,12 @@ It provides a set of charts helping you to understand what is and what was going
 The current master release was successfully tested on Camunda 7.3.0 Final with IBM DB2 9.7, MySQL 5.6 and H2.
 To get an initial overview on the different features please consider the following links:
 
-![Introduction](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-1/)
+[Introduction](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-1/)
 
-![Analytics](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-2/)
+[Analytics](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-2/)
 
-![Overlays](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-3/)
+[Overlays](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-3/)
+
 
 ![Screenshot: Process Instances](screenshot_process_instances.png)
 
