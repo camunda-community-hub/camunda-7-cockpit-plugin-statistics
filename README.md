@@ -4,7 +4,13 @@ camunda Cockpit Statistics Plugin
 This plugin is a camunda BPM community extension, which provides a statistics plugin for the camunda BPM Cockpit.
 It provides a set of charts helping you to understand what is and what was going on with your engine.
 The current master release was successfully tested on Camunda 7.3.0 Final with IBM DB2 9.7, MySQL 5.6 and H2.
+To get an initial overview on the different features please consider the following links:
 
+![Introduction](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-1/)
+
+![Analytics](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-2/)
+
+![Overlays](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-3/)
 
 ![Screenshot: Process Instances](screenshot_process_instances.png)
 
@@ -19,11 +25,8 @@ The current master release was successfully tested on Camunda 7.3.0 Final with I
 ## Get started
 
 To include this plugin into your cockpit you can either include it in your custom build on [camunda's plugin store](http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
-Do not forget to customize build.properties in case you choose the latter option. Please customize testdbs.properties.example, too to get the tests running on your system. Please see the provided maven profiles for further options. Please consider the following links for further information on the current features of the plugin:
+Do not forget to customize build.properties in case you choose the latter option. Please customize testdbs.properties.example, too to get the tests running on your system. Please see the provided maven profiles for further options.
 
-[Introduction](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-1/)
-[Analytics](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-2/)
-[Overlays](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-3/)
 
 ## Known issues
 
