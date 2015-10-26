@@ -19,7 +19,11 @@ The current master release was successfully tested on Camunda 7.3.0 Final with I
 ## Get started
 
 To include this plugin into your cockpit you can either include it in your custom build on [camunda's plugin store](http://camunda.org/plugins/) or you build the cockpit on your own and deploy it to your server.
-Do not forget to customize build.properties in case you choose the latter option. Please customize testdbs.properties.example, too to get the tests running on your system. Please see the provided maven profiles for further options.
+Do not forget to customize build.properties in case you choose the latter option. Please customize testdbs.properties.example, too to get the tests running on your system. Please see the provided maven profiles for further options. Please consider the following links for further information on the current features of the plugin:
+
+[Introduction](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-1/)
+[Analytics](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-2/)
+[Overlays](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-3/)
 
 ## Known issues
 
@@ -60,8 +64,8 @@ Do not forget to customize build.properties in case you choose the latter option
 
 Within NovaTec Consulting GmbH the following persons are contributing
 
-- Ingo G&uuml;hring
-- Kerstin G&uuml;nther
+- [Ingo G&uuml;hring](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-2/)
+- [Kerstin G&uuml;nther](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-3/)
 
 
 ![NovaTec Consulting GmbH](http://www.novatec-gmbh.de/fileadmin/styles/novatec_v5.5/images/header-logo.jpg)
