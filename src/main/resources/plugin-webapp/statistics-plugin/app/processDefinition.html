@@ -1,6 +1,7 @@
-<div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/styles/pluginStyles.html'"></div>
-<div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6" id="plot1" ng-controller="processDefinitionCtrl">
+<div class="row" ng-controller="processDefinitionCtrl">
+  <div ng-include="'./../../../api/cockpit/plugin/statistics-plugin/static/app/styles/pluginStyles.html'"></div>
+	<div class="col-lg-6 col-md-6 col-sm-6" id="plot1">
+	
 		<nvd3 options="options" data="statesOfDefinition"></nvd3>
 		<p class="text-center">process instances by state</p>
 	</div>

@@ -1,8 +1,8 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', ['require'], function(module) {
 
   module.controller('dashboardController',
-		['$scope','DataFactory' , '$http', 'Uri', '$templateCache', '$modal', function($scope, DataFactory , $http, Uri, $templateCache,$modal) {	  
-		  		  
+		['$scope','DataFactory' , '$http', 'Uri', '$templateCache', '$modal', function($scope, DataFactory , $http, Uri, $templateCache, $modal) {	  
+		  
 		  $scope.handleTabClick = function(chosenTab) {
 		    DataFactory.prepForBroadcast(chosenTab);
 	    };
