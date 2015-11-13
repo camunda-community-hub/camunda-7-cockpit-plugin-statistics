@@ -1,5 +1,6 @@
 ngDefine('cockpit.plugin.statistics-plugin.controllers', [
-      //add dependency to your controller here 
+      //add dependency to your controller here
+  '../lib/nv.d3.own',    
   'module:cockpit.plugin.statistics-plugin.services:../services/main',
   './dashboardCtrl',
   './processDefinitionCtrl',
