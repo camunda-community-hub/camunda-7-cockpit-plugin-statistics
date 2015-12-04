@@ -291,7 +291,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				data: '='
 			},
 			template:
-				'<table ng-init="updatePlot()">' +
+				'<table ng-init="updatePlot()" style="width: 850px;">' +
 				'<tr style="position: relative; z-index: 1000000 !important;">' +
 				'<td align="left">' +
 				'<button title="Edit start date" type="button" class="round-button small-button" ng-click="openStart($event)">' +
