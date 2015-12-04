@@ -54,6 +54,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		} 
 		
 		$scope.showActivityHistoryInformation = function() {
+			$scope.loading = $modal.open({
+				templateUrl: 'loadingModal.html',
+				controller: 'loadingModalCtrl',
+				size: 'lg',
+			});
 			DataFactory.activityDurations = {};
 			DataFactory.getAllHistoricActivitiesInformationByProcDefId(DataFactory.processDefinitionId, $scope.bpmnElement.id, getShortType($scope.bpmnElement.$type)).
 			then(function() {
