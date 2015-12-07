@@ -313,7 +313,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				'</tr>' +
 				'<tr>' +
 				'<td colspan="3">' +
-				'<div id="navigator"><svg /></div>' +
+				'<div id="navigator"><svg style="-webkit-logical-width:775px; -webkit-padding-start:20px;"/></div>' +
 				'</td>' +
 				'</tr>' +
 				'</table>'

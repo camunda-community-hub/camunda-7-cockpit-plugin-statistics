@@ -268,7 +268,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			link: link,
 			restrict: 'E',
 			scope: { data: '=' },
-			template: '<div id="plot"><svg/></div>'
+			template: '<div id="plot" style="height: 300px;"><svg/></div>'
 		}
 	}])
 });
