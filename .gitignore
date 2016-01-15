@@ -23,6 +23,9 @@ target
 .idea
 .iml
 
+# customized build.properties
+build.properties
+
 # Ant
 #build.properties
 
