@@ -118,6 +118,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 					var svg = d3.select('#plot svg')
 					.data([scope.data])
 					.attr('height', 300)
+					.transition().duration(500)
 					.call(chart);
 	
 					if(scope.data.length > 0) {
@@ -158,13 +159,13 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		//						SettingsFactory.lowerDurationLimitInMs = getY(d, 430, d3.event.y-margin.top);
 								text_low.text(formatTime(SettingsFactory.lowerDurationLimitInMs));
 								updateArea(svg, yScale, margin);
-								// broadcast "duration limit changed" event to controller for updating number of instances
-								$rootScope.$broadcast('durationLimitChanged');
 							}
 						})
 						.on("dragend", function(){
 //							line_low.style("stroke", color);
 //							text_low.style("fill", color);
+								// broadcast "duration limit changed" event to controller for updating number of instances
+								$rootScope.$broadcast('durationLimitChanged');
 						});
 		
 						var drag_high = d3.behavior.drag()
@@ -188,13 +189,13 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 		//						SettingsFactory.upperDurationLimitInMs = getY(d, 430, d3.event.y-margin.top);
 								text_high.text(formatTime(SettingsFactory.upperDurationLimitInMs));
 								updateArea(svg, yScale, margin);
-								// broadcast "duration limit changed" event to controller for updating number of instances
-								$rootScope.$broadcast('durationLimitChanged');
 							}
 						})
 						.on("dragend", function(){
 //							line_high.style("stroke", color);
 //							text_high.style("fill", color);
+								// broadcast "duration limit changed" event to controller for updating number of instances
+								$rootScope.$broadcast('durationLimitChanged');
 						});
 		
 						var svg = d3.select("#plot svg");

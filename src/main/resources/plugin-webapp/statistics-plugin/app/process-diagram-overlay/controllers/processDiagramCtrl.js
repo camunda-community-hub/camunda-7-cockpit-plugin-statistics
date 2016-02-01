@@ -90,7 +90,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					$scope.modalInstance = $modal.open({
 						templateUrl: 'noHistoryModal.html',
 						controller: 'noHistoryCtrl',
-						size: 'sm'
+						size: 'sm',
+						resolve: {
+							activityName: function () {
+								return $scope.bpmnElement.name;
+							}
+						}
 					});
 				} else {
 					DataFactory.activityDurations[id].sort(compare);

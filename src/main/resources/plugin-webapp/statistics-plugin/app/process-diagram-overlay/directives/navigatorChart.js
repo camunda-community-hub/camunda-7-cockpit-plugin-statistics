@@ -3,7 +3,7 @@
 ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 	//in html navigator-chart!!!
-	module.directive('navigatorChart', ['$rootScope', function($rootScope){
+	module.directive('navigatorChart', ['$rootScope', 'Format', function($rootScope, Format){
 
 		function formatTime(input) {
 			var milliseconds = parseInt((Math.floor(input)%1000));
@@ -40,6 +40,24 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			return [min, max];
 		}
 
+		// format data for Format.getKMeansClusterFromFormatedData
+		var formatData = function(data) {
+			var values = [];
+			angular.forEach(data, function(item) {
+				values.push({
+					"durationInMillis": item.y,
+					"endTime": item.datetime,
+					"startTime": null,
+					"processDefinitionId": item.processDefId,
+					"processDefinitionKey": item.processKey
+				});
+			})
+			return [{
+				"key": data[0].processKey,
+				"values": values
+			}];
+		}
+
 		function updateNavigator(start, end, data, navYScale, navHeight, navWidth, $scope) {
 
 			var minDate = new Date(start);
@@ -68,6 +86,26 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				updateNavigator($scope.start.datetime, $scope.end.datetime, data, navYScale, navHeight, navWidth, $scope);
 			});
 
+			/*** START cluster data ***/
+
+			var numberOfInstancesMap = {};
+			numberOfInstancesMap[data[0].processKey] = {
+					"endedInst": data.length,
+					"numberOfClusters": 1000
+			};
+
+			// taken from TiminFactory
+			var formatAndParser = {
+					format: "%Y-%m-%dT%H", 
+					parser: d3.time.format("%Y-%m-%dT%H:%M:%S").parse 
+			}
+
+//			var clusteredData = Format.getKMeansClusterFromFormatedData(formatData(data), formatAndParser, "endTime", numberOfInstancesMap);
+			
+//			 var clusteredData = clusterfck.kmeans(formatData(data)[0].values, 1000);
+
+			/*** END cluster data ***/
+
 			nv.addGraph(function() {
 
 				// default: complete datetime range
@@ -86,12 +124,15 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 				svg.selectAll("scatter-dots")
 				.data(data)
+//				.data(clusteredData)
 				.enter().append("svg:circle")
 				.attr("cx", function (d,i) { 
+//					return navXScale(d.centroid.endTime); } )
 					return navXScale(d.datetime); } )
-					.attr("cy", function (d) { 
-						return navYScale(d.y); } )
-						.attr("r", 4);
+//				.attr("cy", 10)
+				.attr("cy", function (d) { 
+					return navYScale(d.y); } )
+				.attr("r", 4);
 
 				svg.append('g')
 				.attr('class', 'viewport')
@@ -175,14 +216,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			//			times.sort().reverse();
 			return [times[0], times[times.length-1]];
 		}
-		
+
 		function init($scope, initData) {
 			$scope.data = initData;
-			
+
 			var minMax = getMinMaxDatetime(initData);
 			var min = minMax[0];
 			var max = minMax[1];
-			
+
 			$scope.start = {
 					datetime: min,
 					dateOptions: {
@@ -270,6 +311,26 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				updateNavigator($scope.start.datetime.getTime(), $scope.end.datetime.getTime(), updatedData, navYScale, navHeight, navWidth);
 				$rootScope.$broadcast('datetimeRangeChanged', datetimeToMs($scope.start.datetime), datetimeToMs($scope.end.datetime));
 			}
+			
+			$scope.hideNavigatorChart = function($event) {
+				$event.preventDefault();
+				$event.stopPropagation();
+				hideNavigatorChart = true;
+			}
+			
+			$scope.showNavigatorChart = function($event) {
+				$event.preventDefault();
+				$event.stopPropagation();
+				hideNavigatorChart = false;
+			}
+			
+			$scope.shouldShowNavigatorChart = function() {
+				return !hideNavigatorChart;
+			}
+			
+			$scope.showHideButton = function() {
+				return (initData.length > instanceThreshold) ? true : false;
+			}
 
 			$scope.resetMinMaxDatetime = function($event) {
 				$event.preventDefault();
@@ -277,11 +338,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 
 				init($scope, initData);
 			}
-			
+
 			$scope.showResetButton = function() {
 				if(initData.length == $scope.data.length) return false;
 				else return true;
 			}
+			
+			var instanceThreshold = 1000;
+			var hideNavigatorChart = $scope.showHideButton();
 		}
 
 		return {
@@ -292,7 +356,7 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 			},
 			template:
 				'<table ng-init="updatePlot()" style="width: 850px;">' +
-				'<tr style="position: relative; z-index: 1000000 !important;">' +
+				'<tr style="position: relative;">' +
 				'<td align="left">' +
 				'<button title="Edit start date" type="button" class="round-button small-button" ng-click="openStart($event)">' +
 				'<i class="glyphicon glyphicon-wrench"></i>' +
@@ -302,6 +366,9 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				'<td align="center">' +
 				'<button title="Reset minimum and maximum date" type="button" class="round-button small-button" ng-show="showResetButton()" ng-click="resetMinMaxDatetime($event)" style="margin-left:30px;">' +
 				'<i class="glyphicon glyphicon-zoom-out"></i>' +
+				'</button>' +
+				'<button title="Hide navigator chart" type="button" class="round-button small-button" ng-show="showHideButton() && shouldShowNavigatorChart()" ng-click="hideNavigatorChart($event)" style="margin-left:30px;">' +
+				'<i class="glyphicon glyphicon-eye-close"></i>' +
 				'</button>' +
 				'</td>' +
 				'<td align="right">' +
@@ -313,7 +380,14 @@ ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
 				'</tr>' +
 				'<tr>' +
 				'<td colspan="3">' +
-				'<div id="navigator"><svg style="-webkit-logical-width:775px; -webkit-padding-start:20px;"/></div>' +
+				'<div ng-show="shouldShowNavigatorChart()" id="navigator"><svg style="-webkit-logical-width:775px; -webkit-padding-start:20px;"/></div>' +
+				'<div ng-show="!shouldShowNavigatorChart()">' +
+				'<div style="margin-top: 10px">Navigator chart is hidden due to a large amount of activity instances. You can define the range by editing the start and end dates above directly using the "edit" buttons. Displaying the navigator chart can worsen the performance. Display anyway:' +
+				'<button title="Show navigator chart" type="button" class="round-button small-button" ng-click="showNavigatorChart($event)">' +
+				'<i class="glyphicon glyphicon-eye-open"></i>' +
+				'</button>' +
+				'</div>' +
+				'</div>' +
 				'</td>' +
 				'</tr>' +
 				'</table>'
