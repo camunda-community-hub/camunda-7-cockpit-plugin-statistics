@@ -12,6 +12,8 @@ To get an initial overview on the different features please consider the followi
 
 [Process Diagram Overlay](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-3/)
 
+
+![Screenshot: Processes Plots Settings](screenshot_settings_modal.png)
 ![Screenshot: Process Instances](screenshot_process_instances.png)
 
 ![Screenshot: Plugin Settings](screenshot_settings_modal.png)
