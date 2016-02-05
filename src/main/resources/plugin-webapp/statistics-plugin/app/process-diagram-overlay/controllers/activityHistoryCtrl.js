@@ -42,6 +42,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		});
 		
 		$scope.$on('hideSparklineValue', function(event) {
+			$scope.currentValueData = null;
 			$scope.$apply();
 		});
 		
@@ -52,7 +53,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.$on('datetimeRangeChanged', function(event, start, end) {
 			$scope.start = start;
-			$scope.end = end;
+			$scope.end = end; 
 			$scope.showPlot();
 			$scope.$evalAsync();
 		});
@@ -64,6 +65,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		var data = DataFactory.activityDurations[activityId];
 
 		$scope.init = function() {
+			$scope.activityName = data[0].name;
 			$scope.showPlot();
 			$rootScope.$broadcast("init");
 		}
