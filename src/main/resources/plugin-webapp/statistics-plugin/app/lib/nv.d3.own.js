@@ -14832,7 +14832,11 @@ nv.models.sparklinePlus = function($rootScope) {
 
       gEnter.select('.nv-hoverArea').append('rect')
           .on('mousemove', sparklineHover)
-          .on('click', function() { paused = !paused })
+          .on('click', function() { 
+          	paused = !paused;
+          	if(paused && index.length > 0) $rootScope.$broadcast('showSparklineValue', index[0]); // <--- ADDED 
+          	if(!paused) $rootScope.$broadcast('hideSparklineValue'); // <--- ADDED
+          })
           .on('mouseout', function() { index = []; updateValueLine(); });
           //.on('mouseout', function() { index = null; updateValueLine(); });
 
@@ -14892,8 +14896,6 @@ nv.models.sparklinePlus = function($rootScope) {
 
         g.select('.nv-hoverValue .nv-yValue')
             .text(yTickFormat(sparkline.y()(data[index[0]], index[0])));
-        
-        if(index.length > 0) $rootScope.$broadcast('showSparklineValue', index[0]); // <--- ADDED 
       }
 
 

@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="activityHistoryModal.html">
 <div class="modal-header" id="modalHeader">
-	<h3 class="modal-title">Activity History for "{{ currentValueData.activityName }}"</h3>
+	<h3 class="modal-title">Activity History for "{{ activityName }}"</h3>
 </div>
 <div class="modal-body" ng-init="init()">
 	<table style="position: relative; z-index: 1000000 !important;">
@@ -66,27 +66,30 @@
 					<tr>
 						<th colspan="2">Information about selected activity instance:</th>
 					</tr>
-					<tr>
+					<tr ng-hide="currentValueData != null">
+						<td colspan="2">No instance selected. Select an activity instance by hovering with your mouse over the mainchart and click on an instance. You can deselect the instance by clicking on the chart again.</td>
+					</tr>
+					<tr ng-hide="currentValueData == null">
 						<td>Start date:</td>
 						<td>{{ currentValueData.start | transformDatetime }}</td>
 					</tr>
-					<tr>
+					<tr ng-hide="currentValueData == null">
 						<td>End date:</td>
 						<td>{{ currentValueData.end | transformDatetime }}</td>
 					</tr>
-					<tr>
+					<tr ng-hide="currentValueData == null">
 						<td>Duration (DD:HH:MM:SS.mmm): </td>
 						<td>{{ currentValueData.y  | formatTime }}</td>
 					</tr>
-					<tr>
+					<tr ng-hide="currentValueData == null">
 						<td>Assignee:</td>
 						<td>{{ currentValueData.assignee }}</td>
 					</tr>
-					<tr>
+					<tr ng-hide="currentValueData == null">
 						<td>Process Key:</td>
 						<td>{{ currentValueData.processKey }}</td>
 					</tr>
-					<tr>
+					<tr ng-hide="currentValueData == null">
 						<td>Process Instance ID:</td>
 						<td>{{ currentValueData.processId }}</td>
 					</tr>
