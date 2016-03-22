@@ -17,8 +17,6 @@ To get an initial overview on the different features please consider the followi
 
 ![Screenshot: Process Instances](screenshot_process_instances.png)
 
-![Screenshot: Processes Plots Settings](screenshot_settings_modal.png)
-
 ![Screenshot: Analytics](screenshot_analytics_tab_start.png)
 
 ![Screenshot: Activity History](screenshot_overlay_act_history.png)
