@@ -3,7 +3,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		var DataFactory = {};
 
-		//TODO: DataFactory for process/case data, create ProcessDetailsFactory and CaseDetailsFactory
+		//TODO: Separate DataFactory for process/case data, create ProcessDetailsFactory and CaseDetailsFactory
 
 		/*
 		 * process related data
@@ -106,7 +106,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		// call to REST API (see: http://docs.camunda.org/latest/api-references/rest/#history-get-activity-instances-historic)
 		DataFactory.getAllHistoricActivitiesInformationByProcDefId = function(procDefId, activityId, activityType) {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+procDefId+"&activityId="+activityId+"&activityType="+activityType))
+			return $http.get(Uri.appUri("engine://engine/:engine/history/activity-instance?processDefinitionId="+procDefId+"&activityId="+activityId+"&activityType="+activityType))
 			.success(function(data) {
 				if(procDefId!=undefined) {
 					DataFactory.allHistoricActivitiesInformationByProcDefId[procDefId] = data;
@@ -120,7 +120,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 		
 		DataFactory.getAllHistoricActivitiesInformationByProcDefKeyActivityNameActivityType = function(procDefKey,activityName, activityType) {
-		  return $http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?finished=true&processDefinitionKey="+procDefKey+"&activityName="+activityName.replace(" ", "%20")+"&activityType="+activityType))
+		  return $http.get(Uri.appUri("engine://engine/:engine/history/activity-instance?finished=true&processDefinitionKey="+procDefKey+"&activityName="+activityName.replace(" ", "%20")+"&activityType="+activityType))
       .success(function(data) {
         DataFactory.allHistoricActivitiesInformationByProcDefKeyActivityNameActivityType[procDefKey] = data;
       })
@@ -238,7 +238,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 
 		DataFactory.getProcessDefinitions = function() {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/process-definition"))
+			return $http.get(Uri.appUri("engine://engine/:engine/process-definition"))
 			.success(function(data) {
 				DataFactory.processDefinitions = data;
 			})
@@ -248,7 +248,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 
 		DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi = function() {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/process-definition/statistics?failedJobs=true&incidents=true"))
+			return $http.get(Uri.appUri("engine://engine/:engine/process-definition/statistics?failedJobs=true&incidents=true"))
 			.success(function(data) {
 				DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi = data;
 			})
@@ -259,7 +259,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 
 		DataFactory.getHistoricCaseInstanceDetailsAggregatedByCasedDefinitionId = function() {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/history/case-instance"))
+			return $http.get(Uri.appUri("engine://engine/:engine/history/case-instance"))
 			.success(function(data){
 				var caseDefinitionDetails = {};
 
@@ -323,7 +323,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 		//TODO ==> param in query aufnehmen
 		DataFactory.getHistoricCaseActivityInstanceDetailsAggregatedByCasedDefinitionId = function(caseDefinitionId) {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/history/case-activity-instance"))
+			return $http.get(Uri.appUri("engine://engine/:engine/history/case-activity-instance"))
 			.success(function(data){
 
 
@@ -555,9 +555,9 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		  
 		  var url = "";
 		  if(processDefinitionKey) {
-		    url = "/engine-rest/engine/default/history/process-instance?finished=true&processDefinitionKey="+processDefinitionKey;
+		    url = "engine://engine/:engine/history/process-instance?finished=true&processDefinitionKey="+processDefinitionKey;
 		  } else {
-		    url = "/engine-rest/engine/default/history/process-instance?finished=true";
+		    url = "engine://engine/:engine/history/process-instance?finished=true";
 		  }
 		  
 			return $http.get(Uri.appUri(url))
@@ -607,7 +607,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 
 		DataFactory.getRunningTaskInstancesByTaskDefinitionKey = function(taskDefinitionKey) {
-			return $http.get(Uri.appUri("/engine-rest/engine/default/history/task?taskDefinitionKey="+taskDefinitionKey))
+			return $http.get(Uri.appUri("engine://engine/:engine/history/task?taskDefinitionKey="+taskDefinitionKey))
 			.success(function(data){
 
 				var result = {
@@ -656,7 +656,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				if(processObject.wholeProcess){
 					angular.forEach(processObject.procDefIds, function(id) {
 						console.log("process-instance?processDefinitionId="+id+timeRequest);
-						promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/process-instance?processDefinitionId="+id+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+						promises.push($http.get(Uri.appUri("engine://engine/:engine/history/process-instance?processDefinitionId="+id+timeRequest+"&sortBy=startTime&sortOrder=asc")));
 						keyList.push(processObject.process);
 					})
 				}
@@ -667,7 +667,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 						keyList.push(actName);
 						angular.forEach(processObject.procDefIds, function(id){
 //							we need to sort the results by start time for the splines in regressionplot directive
-							promises.push($http.get(Uri.appUri("/engine-rest/engine/default/history/activity-instance?processDefinitionId="+id+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
+							promises.push($http.get(Uri.appUri("engine://engine/:engine/history/activity-instance?processDefinitionId="+id+"&activityType="+activityType+"&activityName="+actName+timeRequest+"&sortBy=startTime&sortOrder=asc")));
 						})
 					})
 				})
