@@ -20,7 +20,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<camunda.version>7.3.0</camunda.version>
+		<camunda.version>7.4.0</camunda.version>
 		<!-- This property must be present for the pom.xml to be recognized as 
 			a plugin -->
 		<camunda.plugin.category>Monitoring</camunda.plugin.category>
@@ -29,7 +29,7 @@
 		<camunda.plugin.screenshot.2>screenshot_analytics_tab_start.png</camunda.plugin.screenshot.2>
 		<camunda.plugin.screenshot.3>screenshot_overlay_act_history.png</camunda.plugin.screenshot.3>
 		<camunda.plugin.screenshot.4>screenshot_overlay_mean.png</camunda.plugin.screenshot.4>
-		<camunda.plugin.testedOnVersion>7.3.0</camunda.plugin.testedOnVersion>
+		<camunda.plugin.testedOnVersion>7.4.0</camunda.plugin.testedOnVersion>
 		<camunda.plugin.language>EN</camunda.plugin.language>
 	</properties>
 
