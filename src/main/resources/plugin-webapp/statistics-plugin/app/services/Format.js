@@ -1,4 +1,4 @@
-ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
+ngDefine('cockpit.plugin.statistics-plugin.services', ['../lib/d3'], function(module) {
 	module.factory('Format', function(kMeansFactory) {
 		var Format = {};
 
