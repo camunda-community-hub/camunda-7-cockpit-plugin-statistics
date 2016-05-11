@@ -135,7 +135,7 @@
 							</excludes>
 						</configuration>
 					</plugin>
-					         <plugin>
+<!-- 					         <plugin>
             <groupId> com.samaxes.maven </groupId>
             <artifactId>minify-maven-plugin</artifactId>
             <version>1.7.4</version>
@@ -149,21 +149,21 @@
                   <jsEngine>CLOSURE</jsEngine>
                   <closureLanguage>ECMASCRIPT5</closureLanguage>
                   <jsSourceIncludes>
-                    <!-- <jsSourceInclude>controllers/*</jsSourceInclude>
-                    <jsSourceInclude>directives/*</jsSourceInclude> -->
+                    <jsSourceInclude>controllers/*</jsSourceInclude>
+                    <jsSourceInclude>directives/*</jsSourceInclude>
                     <jsSourceInclude>lib/*</jsSourceInclude>
-<!--                    <jsSourceInclude>services/*</jsSourceInclude>
+                   <jsSourceInclude>services/*</jsSourceInclude>
                     <jsSourceInclude>process-diagram-overlay/controllers/*</jsSourceInclude>
                     <jsSourceInclude>process-diagram-overlay/services/*</jsSourceInclude>
-                    <jsSourceInclude>process-diagram-overlay/directives/*</jsSourceInclude> -->
+                    <jsSourceInclude>process-diagram-overlay/directives/*</jsSourceInclude>
                   </jsSourceIncludes>
                   <jsSourceExcludes>
-                    <!-- <jsSourceExclude>**/main.js</jsSourceExclude> -->
+                    <jsSourceExclude>**/main.js</jsSourceExclude>
                     
                     <jsSourceExclude>lib/plugin-scripts.js</jsSourceExclude>
                     <jsSourceExclude>lib/plugin-scripts.min.js</jsSourceExclude>
-                    <!-- <jsSourceExclude>lib/nv.d3.own.js</jsSourceExclude>
-                    <jsSourceExclude>lib/d3.min.js</jsSourceExclude> -->
+                    <jsSourceExclude>lib/nv.d3.own.js</jsSourceExclude>
+                    <jsSourceExclude>lib/d3.min.js</jsSourceExclude>
                   </jsSourceExcludes>
                   <webappTargetDir>${basedir}/src/main/resources/plugin-webapp/statistics-plugin/app</webappTargetDir>
                   <jsFinalFile>plugin-scripts.js</jsFinalFile>
@@ -174,7 +174,7 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
+          </plugin> -->
 				</plugins>
 			</build>
 		</profile>
