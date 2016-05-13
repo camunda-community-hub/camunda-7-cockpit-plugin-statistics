@@ -1,6 +1,6 @@
 'use strict'
 
-ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
+ngDefine('cockpit.plugin.statistics-plugin.directives', ['../../lib/d3','../../lib/nv.d3.own'],  function(module) {
 
 	//in html duration-chart!!!
 	module.directive('durationChart', ['SettingsFactory', '$rootScope', function(SettingsFactory, $rootScope){

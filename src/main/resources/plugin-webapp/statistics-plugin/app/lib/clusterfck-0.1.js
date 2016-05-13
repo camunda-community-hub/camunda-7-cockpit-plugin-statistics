@@ -309,4 +309,4 @@ var clusterfck = (function() {
 
 		module.exports = clusterfck;
 		return module.exports;   })();
-	return module.exports;   })()
+	return module.exports;   })();
