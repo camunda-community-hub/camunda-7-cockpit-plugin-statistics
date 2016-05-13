@@ -1,4 +1,4 @@
-ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
+ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.d3.own'], function(module) {
 	module.controller('processesChartController',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', 'UserInteractionFactory', '$http', '$modal', '$interval', '$window',
 	                                  function($scope, element, Uri, DataFactory, SettingsFactory, UserInteractionFactory, $http,$modal, $interval, $window){
 	  

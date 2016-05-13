@@ -29,7 +29,7 @@
 		<camunda.plugin.screenshot.2>screenshot_analytics_tab_start.png</camunda.plugin.screenshot.2>
 		<camunda.plugin.screenshot.3>screenshot_overlay_act_history.png</camunda.plugin.screenshot.3>
 		<camunda.plugin.screenshot.4>screenshot_overlay_mean.png</camunda.plugin.screenshot.4>
-		<camunda.plugin.testedOnVersion>7.3.0</camunda.plugin.testedOnVersion>
+		<camunda.plugin.testedOnVersion>7.4.0</camunda.plugin.testedOnVersion>
 		<camunda.plugin.language>EN</camunda.plugin.language>
 	</properties>
 
