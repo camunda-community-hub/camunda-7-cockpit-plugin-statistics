@@ -1,5 +1,5 @@
 ngDefine(
-    'cockpit.plugin.statistics-plugin.controllers',
+    'cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.d3.own'],
     function(module) {
 
       module

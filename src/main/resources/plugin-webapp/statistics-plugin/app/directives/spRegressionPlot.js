@@ -1,7 +1,7 @@
-ngDefine('cockpit.plugin.statistics-plugin.directives',  function(module) {
+ngDefine('cockpit.plugin.statistics-plugin.directives',['../lib/d3','../lib/nv.d3.own'],  function(module) {
 
-	var formatHours = d3.time.format("%H:%M");
-	var parseTime = function(d) { return formatHours(new Date(0,0,1,0,0,0,d));};
+//	var formatHours = d3.time.format("%H:%M");
+//	var parseTime = function(d) { return formatHours(new Date(0,0,1,0,0,0,d));};
 
 	var margin = {top: 20, right: 0, bottom: 50, left: 100};
 

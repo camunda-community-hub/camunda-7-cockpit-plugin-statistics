@@ -1,4 +1,4 @@
-ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
+ngDefine('cockpit.plugin.statistics-plugin.services', ['../lib/d3'], function(module) {
 	module.factory('TimingFactory',['DataFactory','Format','GraphFactory', 'kMeansFactory', function(DataFactory, Format, GraphFactory, kMeansFactory) {
 		var TimingFactory = {};
 		
