@@ -18,19 +18,19 @@
 	 <select id="selectActivityInstanceCountsByProcessDefinition"
     resultMap="activityInstanceCountMap">
 	   SELECT
-	      ACT_NAME_ as ACT_NAME, 
-	      ACT_TYPE_ as ACT_TYPE, 
-	      PROC_DEF_KEY_ as PROC_DEF_KEY,
+	      ACT_NAME_ AS ACT_NAME, 
+	      ACT_TYPE_ AS ACT_TYPE, 
+	      PROC_DEF_KEY_ AS PROC_DEF_KEY,
 	      <!-- count, min, max, avg, duration -->
         <include refid="cockpit.statistics.commonAggregations"/>
-      FROM act_hi_actinst A 
+      FROM ACT_HI_ACTINST A 
       WHERE
 	      ACT_TYPE_ in ('userTask', 'callActivity', 'serviceTask', 'subProcess', 'transaction', 'sendTask', 'receiveTask')
 	      AND DURATION_ > 0
 	      <if test="parameter != null">
 	      AND PROC_DEF_KEY_ = '${parameter}'
 	      </if>
-	      group by ACT_NAME_, ACT_TYPE_, PROC_DEF_KEY_
+	      GROUP BY ACT_NAME_, ACT_TYPE_, PROC_DEF_KEY_
 	 </select>
 
     <resultMap id="activityNameTypeProcessDefinitionMap"
@@ -46,14 +46,14 @@
    <select id="selectActivityNamesTypesProcessDefinition"
     resultMap="activityNameTypeProcessDefinitionMap">
      SELECT
-        A.ACT_NAME_ as ACT_NAME, 
-        A.ACT_TYPE_ as ACT_TYPE, 
-        A.PROC_DEF_KEY_ as PROC_DEF_KEY,
-        A.PROC_DEF_ID_ as PROC_DEF_ID,
-        def.NAME_  as NAME,
-        def.VERSION_ as VERSION
-        FROM act_hi_actinst A 
-    LEFT JOIN ACT_RE_PROCDEF def ON def.ID_ = A.PROC_DEF_ID_
+        A.ACT_NAME_ AS ACT_NAME, 
+        A.ACT_TYPE_ AS ACT_TYPE, 
+        A.PROC_DEF_KEY_ AS PROC_DEF_KEY,
+        A.PROC_DEF_ID_ AS PROC_DEF_ID,
+        DEF.NAME_  AS NAME,
+        DEF.VERSION_ AS VERSION
+        FROM ACT_HI_ACTINST A 
+    LEFT JOIN ACT_RE_PROCDEF DEF ON DEF.ID_ = A.PROC_DEF_ID_
       WHERE
         A.ACT_TYPE_ IS NOT NULL
     GROUP BY A.ACT_NAME_, A.ACT_TYPE_, A.PROC_DEF_ID_, VERSION_, NAME_, PROC_DEF_KEY_

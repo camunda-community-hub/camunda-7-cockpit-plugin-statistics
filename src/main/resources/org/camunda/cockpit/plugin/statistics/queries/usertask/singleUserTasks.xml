@@ -14,10 +14,10 @@
 	<select id="selectRunningUserTaskTimeSpec"
 	  resultMap="singleUserTaskTimeSpecMap">
 	SELECT 
-	  A.NAME_ as ACT_NAME, 
-	  CREATE_TIME_ as START_TIME,
-	  PROC_DEF_KEY_ as PROC_DEF_KEY
-	FROM act_hi_taskinst A
+	  A.NAME_ AS ACT_NAME, 
+	  CREATE_TIME_ AS START_TIME,
+	  PROC_DEF_KEY_ AS PROC_DEF_KEY
+	FROM ACT_HI_TASKINST A
 	WHERE END_TIME IS NULL 
 	ORDER BY PROC_DEF_KEY_, A.NAME_
 	</select>
@@ -25,11 +25,11 @@
 	<select id="selectHistoricUserTaskTimeSpec"
 	  resultMap="singleUserTaskTimeSpecMap" parameterType="org.camunda.bpm.engine.impl.db.ListQueryParameterObject">
 	  SELECT 
-	    A.NAME_ as ACT_NAME, 
-	    A.PROC_DEF_KEY_ as PROC_DEF_KEY,
+	    A.NAME_ AS ACT_NAME, 
+	    A.PROC_DEF_KEY_ AS PROC_DEF_KEY,
 	    <!-- start,end time -->
 	    <include refid="cockpit.statistics.commonDates"/>
-	  FROM act_hi_taskinst A 
+	  FROM ACT_HI_TASKINST A 
 	    <if test="parameter != null">
 	        ${parameter}
 	    </if>

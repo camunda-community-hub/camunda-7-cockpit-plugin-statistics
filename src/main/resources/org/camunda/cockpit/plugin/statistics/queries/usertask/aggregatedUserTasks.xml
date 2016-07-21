@@ -14,10 +14,10 @@
 
 	<select id="selectRunningUserTaskCountGroupedByTaskNameFilteredByProcDefKey"
 		resultMap="runningUserTaskMap" parameterType="String">
-           select NAME_ as ACT_NAME,
-                  PROC_DEF_KEY_ as PDKEY,
+           select NAME_ AS ACT_NAME,
+                  PROC_DEF_KEY_ AS PDKEY,
                   SUM(CASE WHEN ASSIGNEE_ IS NOT NULL THEN 1 ELSE 0 END) as ASSIGNED,
-                  count(*) as COUNT
+                  COUNT(*) AS COUNT
            FROM ACT_HI_TASKINST 
             <if test="parameter != null">
               WHERE PROC_DEF_KEY_ = #{parameter} AND
@@ -26,7 +26,7 @@
               WHERE PROC_DEF_KEY_ = #{parameter} AND
             </if>
             END_TIME_ IS NULL
-           group by PROC_DEF_KEY_, NAME_
+           GROUP BY PROC_DEF_KEY_, NAME_
 	</select>
 	
 	 <select id="selectRunningUserTasksCountByProcDefKey"
@@ -84,8 +84,8 @@
            FROM
             ACT_HI_TASKINST
            WHERE DELETE_REASON_='completed' AND PARENT_TASK_ID_ IS NULL
-           group by PROC_DEF_KEY_
-           order by COUNT DESC
+           GROUP BY PROC_DEF_KEY_
+           ORDER BY COUNT DESC
   </select>
   
 	
