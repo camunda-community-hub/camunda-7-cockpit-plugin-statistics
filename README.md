@@ -3,7 +3,10 @@ camunda Cockpit Statistics Plugin
 
 This plugin is a camunda BPM community extension that provides a statistics plugin for the camunda BPM Cockpit.
 It provides a set of charts helping you to understand what is and what was going on with your engine.
-The current master release was successfully tested on Camunda 7.4.0 Final with IBM DB2 9.7, MySQL 5.6 and H2 and is running on 7.3, too.
+The current master was successfully tested on Camunda 7.5.0 Final (and 7.5.1 EE) with the H2 database provided by camunda.
+The versions 7.4 and 7.3 were tested successfully with IBM DB2 9.7, MySQL 5.6 and H2.
+
+Please feel free to share your system's setup for further working scenarios (please share any setup you experience trouble with, too ;) ).
 To get an initial overview on the different features please consider the following links:
 
 [Introduction](http://blog.novatec-gmbh.de/camunda-cockpit-plugin-part-1/)
