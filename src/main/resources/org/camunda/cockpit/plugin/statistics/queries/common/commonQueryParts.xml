@@ -8,8 +8,8 @@
       MAX(DURATION_) AS MAX_DURATION
   </sql>
   <sql id="commonDates">
-      START_TIME_ as START_TIME,
-      END_TIME_ as END_TIME
+      START_TIME_ AS START_TIME,
+      END_TIME_ AS END_TIME
   </sql>
 </mapper>
   

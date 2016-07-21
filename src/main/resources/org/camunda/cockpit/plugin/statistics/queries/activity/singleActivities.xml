@@ -18,20 +18,20 @@
 	<select id="selectHistoricActivityInformationWithProcDefKey"
 		resultMap="historicActivityInformationMap">
 		SELECT
-			A.ACT_NAME_ as ACT_NAME,
-			A.ACT_TYPE_ as ACT_TYPE,
-			A.PROC_DEF_KEY_ as PROC_DEF_KEY,
-			A.PROC_DEF_ID_ as PROC_DEF_ID,
-			A.PROC_INST_ID_ as PROC_INST_ID,
-			A.DURATION_ as DURATION,
-			A.ID_ as INST_ID,
-			A.ACT_ID_ as DEF_ID,
-			A.ASSIGNEE_ as ASSIGNEE,
+			A.ACT_NAME_ AS ACT_NAME,
+			A.ACT_TYPE_ AS ACT_TYPE,
+			A.PROC_DEF_KEY_ AS PROC_DEF_KEY,
+			A.PROC_DEF_ID_ AS PROC_DEF_ID,
+			A.PROC_INST_ID_ AS PROC_INST_ID,
+			A.DURATION_ AS DURATION,
+			A.ID_ AS INST_ID,
+			A.ACT_ID_ AS DEF_ID,
+			A.ASSIGNEE_ AS ASSIGNEE,
 			<!-- start,end time -->
 			<include refid="cockpit.statistics.commonDates"/>
 		FROM ACT_HI_ACTINST A
 		  WHERE
 				ACT_TYPE_ in ('userTask', 'callActivity', 'serviceTask', 'subProcess','transaction', 'sendTask', 'receiveTask')
-				ORDER by DURATION_ desc
+				ORDER by DURATION_ DESC
 	</select>
 </mapper>
