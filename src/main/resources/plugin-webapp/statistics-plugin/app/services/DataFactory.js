@@ -108,6 +108,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			});
 		}
 		
+
 		// startDate and endDate have to be in format "yyyy-MM-ddThh:mm:ss"
 		DataFactory.getAllHistoricVariablesOfProcessDefinitionInTimeRange = function(procDefId, procDefKey, startDate, endDate, startedOrFinished) {
 			var processInstances = [];
@@ -159,6 +160,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		function getVariableType(variable) {
 			return {}.toString.call(variable).split(' ')[1].slice(0, -1);
 		}
+
 
 		// call to REST API (see: http://docs.camunda.org/latest/api-references/rest/#history-get-activity-instances-historic)
 		DataFactory.getAllHistoricActivitiesInformationByProcDefId = function(procDefId, activityId, activityType) {
