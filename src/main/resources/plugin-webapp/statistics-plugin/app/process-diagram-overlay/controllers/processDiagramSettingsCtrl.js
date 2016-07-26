@@ -39,9 +39,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 		
 		$scope.cancel = function() {
-			DataFactory.bpmnElementsToHighlight = {};
-			DataFactory.bpmnElementsToHighlightAsWarning = {};
-			DataFactory.activityDurations = {};
 			$modalInstance.dismiss('cancel');
 		};
 
