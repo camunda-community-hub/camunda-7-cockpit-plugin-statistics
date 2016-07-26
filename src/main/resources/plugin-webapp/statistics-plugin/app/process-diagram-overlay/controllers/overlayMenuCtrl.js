@@ -6,15 +6,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		var modalInstance = null;
 
 		$rootScope.$on("$routeChangeStart", function(args){
-			console.log("route changed...");
 			if(modalInstance) {
   			closeModal();
   		}
 		});
 		
-		$scope.toggleMenu = function(event) {
-			event.preventDefault();
-			event.stopPropagation();
+		$scope.toggleMenu = function() {
 			if(!modalInstance) {
 				modalInstance = $modal.open({
 					templateUrl: 'processDiagramSettingsModal.html',
