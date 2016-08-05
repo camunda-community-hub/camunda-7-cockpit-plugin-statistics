@@ -17,6 +17,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
 		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
 		DataFactory.allHistoricActivitiesInformationByProcDefKeyActivityNameActivityType = [];
+		DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange = [];
 		DataFactory.processDefWithFinishedInstances = [];
 		DataFactory.aggregatedUsertasksByProcDef = [];
 		DataFactory.processDefinitions = [];
@@ -26,6 +27,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.bpmnElementsToHighlightAsWarning = {};
 		DataFactory.processDefinitionKey = "";
 		DataFactory.activityDurations = {};
+		DataFactory.bpmnElements = [];
+		DataFactory.processDefinitionId = "";
 
 		/*
 		 * case related data
@@ -101,6 +104,44 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			})
 			.error(function(){
 				console.debug("error in fetching ended user tasks count ordered by proc def key");
+			});
+		}
+		
+		// startDate and endDate have to be in format "yyyy-MM-ddThh:mm:ss"
+		DataFactory.getAllHistoricVariablesOfProcessDefinitionInTimeRange = function(procDefId, procDefKey, startDate, endDate) {
+			var processInstances = [];
+			DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange = [];
+			procDefId = procDefId ? "&processDefinitionId="+procDefId : "";
+			// get id of all process instances in time range
+			return $http.get(Uri.appUri("engine://engine/:engine/history/process-instance?processDefinitionKey=" + procDefKey + procDefId + "&finished=true&startedAfter="+startDate+"&startedBefore="+endDate))
+			.success(function(data) {
+				angular.forEach(data, function(item) {
+					processInstances.push(item.id);
+				});
+				console.log("instances: " + processInstances.length);
+			})
+			.error(function() {
+				console.debug("error in fetching historic process instances by process definition id");
+			})
+			.then(function() {
+				// get all variables for queried process instances
+				// TODO: if bug is fixed, use parameter processInstanceIdIn with array (https://app.camunda.com/jira/browse/CAM-6496)
+ 				//return $http.get(Uri.appUri("engine://engine/:engine/history/variable-instance?processInstanceIdIn="+processInstances))
+				
+				 return $q.all(processInstances.map(function (item) {
+					 return $http.get(Uri.appUri("engine://engine/:engine/history/variable-instance?processInstanceId="+item))
+					 .success(function(data) {
+						angular.forEach(data, function(item) {
+  						// sort out objects and variables of case instances
+  						if(item.type.valueOf() != "Object" && item.processInstanceId != null) {
+  							DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange.push(item);
+  						}
+  					});  
+					 })
+  				 .error(function() {
+  					 console.debug("error in fetching historic variables instances for specific process instance");
+  				 });
+         }));
 			});
 		}
 
