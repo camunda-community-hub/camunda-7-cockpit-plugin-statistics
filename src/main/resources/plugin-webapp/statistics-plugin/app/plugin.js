@@ -1,5 +1,7 @@
 ngDefine('cockpit.plugin.statistics-plugin', ['module:nvd3:./lib/angular-nvd3',
                                               'module:ui.bootstrap.datetimepicker:./lib/datetime-picker',
+                                              './lib/daterangepicker',
+                                              'module:daterangepicker:./lib/angular-daterangepicker',
                                               'module:cockpit.plugin.statistics-plugin.controllers:./controllers/main',
                                               'module:cockpit.plugin.statistics-plugin.directives:./directives/main',
                                               'module:cockpit.plugin.statistics-plugin.services:./services/main'

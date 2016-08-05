@@ -12,6 +12,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		DataFactory.bpmnElements = $scope.$parent.processDiagram.bpmnElements;
 		DataFactory.processDefinitionId = $scope.$parent.$parent.$parent.$parent.processDefinition.id;
+		DataFactory.processDefinitionKey = $scope.$parent.$parent.$parent.$parent.processDefinition.key;
 
 		$scope.isHighlightedAsWarning = function() {
 			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlightAsWarning, $scope.bpmnElement.id);

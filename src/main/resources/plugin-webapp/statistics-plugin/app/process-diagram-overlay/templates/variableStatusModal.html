@@ -1,0 +1,49 @@
+<script type="text/ng-template" id="variableStatusModal.html">
+<div class="modal-header" id="modalHeader">
+	<h3 class="modal-title">Variable Status</h3>
+</div>
+<div class="modal-body">
+	<div id="versionSettings">
+		<div>Show values of variables of ended process instances in specific time period for the following definition version:</div>
+	 	<form name="timePeriodSettings" class="form-horizontal form-group">
+			<select ng-model="version" required>
+				<option value="current">current version</option>
+				<option value="all">all versions</option>
+			</select>
+			<button class="btn btn-primary align-inline-right" ng-click="applyVersionSelection()">Apply</button>
+		</form>
+	</div>
+	<hr>
+	<div id="timePeriodSettings" ng-show="showTimePeriodSettings">
+		<form name="timePeriodSettings" class="form-horizontal form-group">
+			<label class="control-label">Time period: </label>
+			<!--select ng-model="timePeriod" ng-options="timePeriod.id as timePeriod.name for timePeriod in timePeriodOptions" required /-->
+			<input date-range-picker class="form-control date-picker" type="text" ng-model="timePeriod" options="timePeriodOptions" required style="width:200px; display: inline; margin-right: 10px;" ng-disabled="completeTimePeriod"/>
+			<input type="checkbox" ng-model="completeTimePeriod" ngChange="clickedCompleteTimePeriod()" />
+			<span>all process instances</label>
+			<button class="btn btn-primary align-inline-right" ng-click="applyTimePeriodSelection()">Apply</button>
+			<div ng-hide="variableOptionsAvailable" class="text-danger">no process instances found in specified time period</div>
+		</form>
+	</div>
+	<div id="variableSettings" ng-show="showVariableSettings">
+		<hr>
+		<form name="variableSettings" class="form-horizontal form-group">
+			<label class="control-label">Variable: </label>
+			<select ng-model="variable" ng-options="name as (name + ' [' + type + ']') for (name, type) in variableOptions" required />
+			<span ng-hide="isVariableSelected" class="text-danger" style="padding-right: 10px;">Please select variable</span>
+			<button class="btn btn-primary align-inline-right" ng-click="applyVariableSelection()">Apply</button>
+		</form>
+	</div>
+	<div id="variableStatus" ng-show="showVariableStatus">
+		<hr>
+		<div class="scrollable-container">
+			<div id="barchart">
+  				<svg></svg>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-warning" ng-click="closeModal()">Close</button>
+</div>
+</script>
