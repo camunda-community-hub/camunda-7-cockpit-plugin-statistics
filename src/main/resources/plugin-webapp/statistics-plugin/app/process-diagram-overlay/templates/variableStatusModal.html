@@ -1,38 +1,87 @@
 <script type="text/ng-template" id="variableStatusModal.html">
-<div class="modal-header" id="modalHeader">
-	<h3 class="modal-title">Variable Status</h3>
+<div class="modal-header" id="modalHeader" style="display: inline-flex;">
+	<h3 class="modal-title">Business Data Statistics</h3>
+	<a class="glyphicon glyphicon-question-sign" style="padding: 10px;" ng-click="info=!info"></a>
 </div>
 <div class="modal-body">
-	<div id="versionSettings">
-		<div>Show values of variables of ended process instances in specific time period for the following definition version:</div>
-	 	<form name="timePeriodSettings" class="form-horizontal form-group">
-			<select ng-model="version" required>
-				<option value="current">current version</option>
-				<option value="all">all versions</option>
-			</select>
-			<button class="btn btn-primary align-inline-right" ng-click="applyVersionSelection()">Apply</button>
-		</form>
+	<div ng-show="info" style="margin-top: 5px;">
+		<div>This plot helps you getting insights on the distribution of your process variables. By specifying the respective version of your process definition, the time period and the specific variable you can get an overview on the characteristics of finished process instances. In case of a typical invoice approval process, for instance, you could easily find out how many invoices got approved or which creditor occurred the most often.</div>
+		<hr>
 	</div>
-	<hr>
+	<div id="versionSettings">
+		<table>
+			<tr>
+				<td class="text">
+					<label class="control-label">Process Version:</label>
+				</td>
+				<td class="value">
+					<select ng-model="version" required>
+						<option value="current">current version</option>
+						<option value="all">all versions</option>
+					</select>
+				</td>
+				<td class="apply">
+					<button class="btn btn-primary" ng-click="applyVersionSelection()">Apply</button>
+				</td>
+			</tr>
+		</table>
+	</div>
 	<div id="timePeriodSettings" ng-show="showTimePeriodSettings">
-		<form name="timePeriodSettings" class="form-horizontal form-group">
-			<label class="control-label">Time period: </label>
-			<!--select ng-model="timePeriod" ng-options="timePeriod.id as timePeriod.name for timePeriod in timePeriodOptions" required /-->
-			<input date-range-picker class="form-control date-picker" type="text" ng-model="timePeriod" options="timePeriodOptions" required style="width:200px; display: inline; margin-right: 10px;" ng-disabled="completeTimePeriod"/>
-			<input type="checkbox" ng-model="completeTimePeriod" ngChange="clickedCompleteTimePeriod()" />
-			<span>all process instances</label>
-			<button class="btn btn-primary align-inline-right" ng-click="applyTimePeriodSelection()">Apply</button>
-			<div ng-hide="variableOptionsAvailable" class="text-danger">no process instances found in specified time period</div>
-		</form>
+		<hr>
+		<table>
+			<tr>
+				<td class="text">
+					<label class="control-label">Time period: </label>
+				</td>
+				<td class="value">
+					<form name="timePeriodSettings"><input date-range-picker class="form-control date-picker" type="text" ng-model="timePeriod" options="timePeriodOptions" required style="width:200px; display: inline; margin-right: 10px;" ng-disabled="completeTimePeriod"/></form>
+				</td>
+				<td class="loading">
+					<img ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/loading.gif">
+				</td>
+				<td class="apply">
+					<button class="btn btn-primary" ng-click="applyTimePeriodSelection()">Apply</button>
+				</td>
+			</tr>
+			<tr>
+				<td class="text"></td>
+				<td class="value">
+					<input class="checkbox-inline" type="checkbox" ng-model="completeTimePeriod" ngChange="clickedCompleteTimePeriod()" />
+					<span>all process instances</span>
+				</td>
+			</tr>
+			<tr ng-hide="variableOptionsAvailable">
+				<td class="text"></td>
+				<td class="value">
+					<div class="text-danger">No process instances finished in specified time period</div>
+				</td>
+			</tr>
+		</table>
 	</div>
 	<div id="variableSettings" ng-show="showVariableSettings">
 		<hr>
-		<form name="variableSettings" class="form-horizontal form-group">
-			<label class="control-label">Variable: </label>
-			<select ng-model="variable" ng-options="name as (name + ' [' + type + ']') for (name, type) in variableOptions" required />
-			<span ng-hide="isVariableSelected" class="text-danger" style="padding-right: 10px;">Please select variable</span>
-			<button class="btn btn-primary align-inline-right" ng-click="applyVariableSelection()">Apply</button>
-		</form>
+		<table>
+			<tr>
+				<td class="text">
+					<label class="control-label">Variable:</label>
+				</td>
+				<td class="value">
+					<form name="variableSettings"><select ng-model="variable" ng-options="name as (name + ' [' + type + ']') for (name, type) in variableOptions" required /></form>
+				</td>
+				<td class="loading">
+					<img ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/loading.gif">
+				</td>
+				<td class="apply">
+					<button class="btn btn-primary" ng-click="applyVariableSelection()">Apply</button>
+				</td>
+			</tr>
+			<tr ng-hide="isVariableSelected">
+				<td class="text"></td>
+				<td class="value">
+					<div class="text-danger">Please select variable</div>
+				</td>
+			</tr>
+		</table>
 	</div>
 	<div id="variableStatus" ng-show="showVariableStatus">
 		<hr>

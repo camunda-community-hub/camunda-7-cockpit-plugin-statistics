@@ -113,7 +113,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange = [];
 			procDefId = procDefId ? "&processDefinitionId="+procDefId : "";
 			// get id of all process instances in time range
-			return $http.get(Uri.appUri("engine://engine/:engine/history/process-instance?processDefinitionKey=" + procDefKey + procDefId + "&finished=true&startedAfter="+startDate+"&startedBefore="+endDate))
+			return $http.get(Uri.appUri("engine://engine/:engine/history/process-instance?processDefinitionKey=" + procDefKey + procDefId + "&finished=true&finishedAfter="+startDate+"&finishedBefore="+endDate))
 			.success(function(data) {
 				angular.forEach(data, function(item) {
 					processInstances.push(item.id);

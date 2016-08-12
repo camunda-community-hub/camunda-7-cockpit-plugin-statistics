@@ -7,12 +7,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.timePeriodOptions = {
       locale: {
-        applyClass: 'btn-primary',
-        applyLabel: "Apply",
-        fromLabel: "From",
         format: "YYYY-MM-DD",
-        toLabel: "To",
-        cancelLabel: 'Cancel',
         customRangeLabel: 'Custom range'
       },
       ranges: {
@@ -41,6 +36,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.showVariableSettings = false;
 		$scope.showVariableStatus = false;
 		
+		$scope.isLoadingVariables = false;
+		$scope.isLoadingVariableStatus = false;
+		
 		$scope.isTimePeriodSelected = true;
 		$scope.isVariableSelected = true;
 		
@@ -61,6 +59,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.applyTimePeriodSelection = function() {
 			if($scope.timePeriodSettings.$valid) {
+				$scope.isLoadingVariables = true;
 				// TODO: set time of dates
 				var startDate = new Date($scope.timePeriod.startDate);
 				var endDate = new Date($scope.timePeriod.endDate);
@@ -82,6 +81,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				DataFactory.getAllHistoricVariablesOfProcessDefinitionInTimeRange(procDefId, procDefKey, startDateString, endDateString)
 				.then(function() {
 					getVariableOptions();
+					$scope.isLoadingVariables = false;
 					if(Object.keys($scope.variableOptions).length > 0) {
       			// trigger next settings
       			$scope.showVariableSettings = true;
@@ -108,9 +108,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.applyVariableSelection = function() {
 			if($scope.variableSettings.$valid) {
+				$scope.isLoadingVariableStatus = true;
+				loadBarChart();
 				$scope.showVariableStatus = true;
 				$scope.isVariableSelected = true;
-				loadBarChart();
+				$scope.isLoadingVariableStatus = false;
 			} else {
 				$scope.showVariableStatus = false;
 				$scope.isVariableSelected = false;
@@ -131,7 +133,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		function loadBarChart() {
 			var data = getChartData(DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange, $scope.variable);
 			
-			var stringLength = 30;
+			var stringLength = 20;
 			
 			var height = calcHeightByBars(data[0].values.length);
 			
@@ -139,7 +141,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			  var chart = nv.models.multiBarHorizontalChart()
 			      .x(function(d) { return (d.label.length > stringLength ? d.label.substring(0, stringLength) + "..." : d.label) })
 			      .y(function(d) { return d.value })
-			      .margin({top: 0, right: 0, bottom: 5, left: 200})
+			      .margin({top: 0, right: 0, bottom: 5, left: 150})
 			      .showValues(true)
 			      .valueFormat(d3.format('d'))
 			      .tooltips(true)
