@@ -4,6 +4,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	module.controller('variableStatusModalCtrl', ['$scope', '$modalInstance', '$filter', 'DataFactory', function($scope, $modalInstance, $filter, DataFactory){
 
 		$scope.version = "current";
+		$scope.currentVersion = DataFactory.processDefinitionId.split(":")[1];
 		
 		$scope.timePeriodOptions = {
       locale: {
@@ -31,6 +32,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.variableOptions = {};
 		$scope.variableOptionsAvailable = true;
+		
+		$scope.processInstancesCount = 0;
+		$scope.showProcessInstancesCount = false;
 		
 		$scope.showTimePeriodSettings = false;
 		$scope.showVariableSettings = false;
@@ -82,9 +86,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				.then(function() {
 					getVariableOptions();
 					$scope.isLoadingVariables = false;
+					$scope.processInstancesCount = DataFactory.processInstancesCount;
+					$scope.showProcessInstancesCount = true;
+					if($scope.processInstancesCount > 0) $scope.showVariableSettings = true;
+					else $scope.showVariableSettings = false;
 					if(Object.keys($scope.variableOptions).length > 0) {
       			// trigger next settings
-      			$scope.showVariableSettings = true;
       			$scope.isTimePeriodSelected = true;
       			$scope.variableOptionsAvailable = true;
       			$scope.isVariableSelected = true;
@@ -94,7 +101,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
       			}
 					} else {
 						// show message
-						$scope.showVariableSettings = false;
       			$scope.isTimePeriodSelected = false;
       			$scope.variableOptionsAvailable = false;
       			$scope.showVariableStatus = false;
@@ -141,7 +147,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			  var chart = nv.models.multiBarHorizontalChart()
 			      .x(function(d) { return (d.label.length > stringLength ? d.label.substring(0, stringLength) + "..." : d.label) })
 			      .y(function(d) { return d.value })
-			      .margin({top: 0, right: 0, bottom: 5, left: 150})
+			      .margin({top: 0, right: 60, bottom: 5, left: 150})
 			      .showValues(true)
 			      .valueFormat(d3.format('d'))
 			      .tooltips(true)

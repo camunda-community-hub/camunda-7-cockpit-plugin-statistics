@@ -29,6 +29,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.activityDurations = {};
 		DataFactory.bpmnElements = [];
 		DataFactory.processDefinitionId = "";
+		DataFactory.processInstancesCount = 0;
 
 		/*
 		 * case related data
@@ -118,7 +119,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				angular.forEach(data, function(item) {
 					processInstances.push(item.id);
 				});
-				console.log("instances: " + processInstances.length);
+				DataFactory.processInstancesCount = processInstances.length;
 			})
 			.error(function() {
 				console.debug("error in fetching historic process instances by process definition id");
@@ -129,12 +130,22 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
  				//return $http.get(Uri.appUri("engine://engine/:engine/history/variable-instance?processInstanceIdIn="+processInstances))
 				
 				 return $q.all(processInstances.map(function (item) {
-					 return $http.get(Uri.appUri("engine://engine/:engine/history/variable-instance?processInstanceId="+item))
+					 return $http.get(Uri.appUri("engine://engine/:engine/history/variable-instance?processInstanceId="+item+"&deserializeValues=false"))
 					 .success(function(data) {
 						angular.forEach(data, function(item) {
-  						// sort out objects and variables of case instances
-  						if(item.type.valueOf() != "Object" && item.processInstanceId != null) {
-  							DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange.push(item);
+  						// sort out variables of case instances
+  						if(item.processInstanceId != null) {
+  							if(item.type.valueOf() != "Object") {
+  								DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange.push(item);
+  							} else {
+  								// for objects: take attributes of first level (if not an object)
+  								var obj = JSON.parse( item.value );
+  								angular.forEach(obj, function(value, key) {
+  									if(value != null && !angular.isObject(value)) {
+  										DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange.push({ "name":item.name+"."+key , "type":getVariableType(value), "value":value });
+  									}
+  								});
+  							}
   						}
   					});  
 					 })
@@ -143,6 +154,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
   				 });
          }));
 			});
+		}
+		
+		function getVariableType(variable) {
+			return {}.toString.call(variable).split(' ')[1].slice(0, -1);
 		}
 
 		// call to REST API (see: http://docs.camunda.org/latest/api-references/rest/#history-get-activity-instances-historic)
