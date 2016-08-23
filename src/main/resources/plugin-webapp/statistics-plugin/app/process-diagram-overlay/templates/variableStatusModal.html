@@ -15,8 +15,8 @@
 					<label class="control-label">Process Version:</label>
 				</td>
 				<td class="value">
-					<select ng-model="version" required>
-						<option value="current">current version</option>
+					<select ng-model="version" required class="width-300">
+						<option value="current">current version ({{ currentVersion }})</option>
 						<option value="all">all versions</option>
 					</select>
 				</td>
@@ -34,7 +34,7 @@
 					<label class="control-label">Time period: </label>
 				</td>
 				<td class="value">
-					<form name="timePeriodSettings"><input date-range-picker class="form-control date-picker" type="text" ng-model="timePeriod" options="timePeriodOptions" required style="width:200px; display: inline; margin-right: 10px;" ng-disabled="completeTimePeriod"/></form>
+					<form name="timePeriodSettings"><input date-range-picker class="form-control date-picker width-300" type="text" ng-model="timePeriod" options="timePeriodOptions" required style="width:200px; display: inline; margin-right: 10px;" ng-disabled="completeTimePeriod"/></form>
 				</td>
 				<td class="loading">
 					<img ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/loading.gif">
@@ -50,10 +50,10 @@
 					<span>all process instances</span>
 				</td>
 			</tr>
-			<tr ng-hide="variableOptionsAvailable">
+			<tr ng-show="showProcessInstancesCount">
 				<td class="text"></td>
 				<td class="value">
-					<div class="text-danger">No process instances finished in specified time period</div>
+					<div ng-class="{'text-danger': processInstancesCount==0, 'text-success': processInstancesCount>0}">{{ processInstancesCount }} process instance(s) found</div>
 				</td>
 			</tr>
 		</table>
@@ -61,12 +61,18 @@
 	<div id="variableSettings" ng-show="showVariableSettings">
 		<hr>
 		<table>
-			<tr>
+			<tr ng-hide="variableOptionsAvailable">
+				<td class="text"></td>
+				<td class="value">
+					<div class="text-danger">No variables found for selected process instances</div>
+				</td>
+			</tr>
+			<tr ng-show="variableOptionsAvailable">
 				<td class="text">
 					<label class="control-label">Variable:</label>
 				</td>
 				<td class="value">
-					<form name="variableSettings"><select ng-model="variable" ng-options="name as (name + ' [' + type + ']') for (name, type) in variableOptions" required /></form>
+					<form name="variableSettings"><select ng-model="variable" ng-options="name as (name + ' [' + type + ']') for (name, type) in variableOptions" required class="width-300"/></form>
 				</td>
 				<td class="loading">
 					<img ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/loading.gif">
