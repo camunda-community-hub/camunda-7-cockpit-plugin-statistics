@@ -41,6 +41,25 @@ ngDefine('cockpit.plugin.statistics-plugin', ['module:nvd3:./lib/angular-nvd3',
 			url: 'plugin://statistics-plugin/static/app/process-diagram-overlay/views/overlayMenu.html',
 			controller: 'overlayMenuCtrl'
 		});
+		
+		
+		
+		ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.action', {
+			id: 'process-diagram-kpi',
+			priority: 20,	
+			url: 'plugin://statistics-plugin/static/app/process-diagram-kpi/views/kpiIcon.html',
+			controller: 'kpiCtrl'
+		});
+		
+		
+		ViewsProvider.registerDefaultView('cockpit.processDefinition.diagram.overlay', {
+			id: 'process-diagram-kpi-elements',
+			priority: 20,	
+			label: 'Kpi Data',
+			url: 'plugin://statistics-plugin/static/app/process-diagram-kpi/views/processDiagramKpi.html',
+			controller: 'processDiagramKpiCtrl'
+		});
+		
 	};
 
 	Configuration.$inject = ['ViewsProvider'];

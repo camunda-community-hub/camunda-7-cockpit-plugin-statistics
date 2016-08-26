@@ -6,7 +6,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', [
     './SettingsFactory',
     './UserInteractionFactory',
     './MultiTranscludeFactory',
-    './kMeansFactory'
+    './kMeansFactory',
+    './StateService'
 ], function(module) {
 
 });
