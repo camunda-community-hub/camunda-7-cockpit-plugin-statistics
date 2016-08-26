@@ -29,6 +29,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		}
 		
 		$scope.completeTimePeriod = false;
+		$scope.startedOrFinished = 'finished';
 		
 		$scope.variableOptions = {};
 		$scope.variableOptionsAvailable = true;
@@ -82,7 +83,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				if($scope.version.valueOf() == "all") {
 					procDefId = null;
 				}
-				DataFactory.getAllHistoricVariablesOfProcessDefinitionInTimeRange(procDefId, procDefKey, startDateString, endDateString)
+				DataFactory.getAllHistoricVariablesOfProcessDefinitionInTimeRange(procDefId, procDefKey, startDateString, endDateString, $scope.startedOrFinished)
 				.then(function() {
 					getVariableOptions();
 					$scope.isLoadingVariables = false;
