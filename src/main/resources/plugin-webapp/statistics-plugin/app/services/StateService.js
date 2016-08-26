@@ -17,9 +17,10 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	            },
 	            setSelectedElement: function(value) {
 
-	            	console.log(value);
 	            	if(selectedElement.length < 2) {
 	            		
+						angular.element('#' + value.id).addClass('selectedKpiElementBlack2White');
+						
 						angular.element('[data-element-id="' + value.id + '"] > .djs-visual rect').attr('id', 'bad');	
 						angular.element('[data-element-id="' + value.id + '"] > .djs-visual circle').attr('id', 'bad');	
 						angular.element('[data-element-id="' + value.id + '"] > .djs-visual polygon').attr('id', 'bad');	
@@ -32,9 +33,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 	            	
 	            	for(i = 0; i < selectedElement.length; i++) {
 	            	
+	            		angular.element('#' + selectedElement[i].id).removeClass('selectedKpiElementBlack2White');
+	            		
 	            		angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual rect').attr('id', 'white');	
 	            		angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual circle').attr('id', 'white');	
 	            		angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual polygon').attr('id', 'white');	
+
 	            	}
 	            	
 	            	

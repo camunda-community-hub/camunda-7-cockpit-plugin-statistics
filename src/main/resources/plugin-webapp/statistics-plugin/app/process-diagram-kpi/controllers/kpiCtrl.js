@@ -5,6 +5,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		var modalInstance = null;
 		
+		$scope.$on("$routeChangeStart", function(args){
+
+			if(modalInstance) {
+
+				closeModal();
+			}
+		});
+		
 		$scope.toggleMenu = function() {
 			
 			if(!modalInstance) {
@@ -12,7 +20,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				modalInstance = $modal.open({
 					templateUrl: 'kpiSettings.html',
 					controller: 'kpiSettingsCtrl',
-					size: 'sm', //lg/sm/md
+					size: 'md', //lg/sm/md
 					windowClass: 'modal-right',
 					animation: false,
 					backdrop: false
@@ -24,5 +32,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				modalInstance = null;				
 			}
 		};
+		
+		function closeModal() {
+
+			modalInstance.close();
+			modalInstance = null;
+			DataFactory.bpmnElementsToHighlight = {};
+			DataFactory.bpmnElementsToHighlightAsWarning = {};
+			DataFactory.activityDurations = {};
+		}
 	}]);
 });

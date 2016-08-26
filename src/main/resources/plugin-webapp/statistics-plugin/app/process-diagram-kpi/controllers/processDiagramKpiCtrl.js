@@ -36,6 +36,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				
 				$scope.highlightElements = function(element) {
 
+					
 					DataFactory.bpmnElementsToHighlight = {};
 					DataFactory.bpmnElementsToHighlightAsWarning = {};
 					DataFactory.activityDurations = {};

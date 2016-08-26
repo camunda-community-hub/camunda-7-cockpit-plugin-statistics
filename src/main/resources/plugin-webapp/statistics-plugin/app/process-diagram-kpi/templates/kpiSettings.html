@@ -1,4 +1,5 @@
 <script type="text/ng-template" id="kpiSettings.html">
+
 <style>
 	#output {background: #e5e5e5; padding:10px; margin-top:5px}
 	#outTab {width:100%;}
@@ -13,65 +14,83 @@
 
 	#howTo {}
 	#howTo li {padding: 5px;}
+
+/*
+
+	.selectedKpiElementBlack2White{
+
+      background: black;
+      background: -webkit-linear-gradient(left, black 0% , white 20%);
+      background: -o-linear-gradient(right, black 0%, white 20%);
+      background: -moz-linear-gradient(right, black 20%, white 20%);
+      background: linear-gradient(to right, black 0% , white 20%); 
+      opacity: 0.3;
+      border-radius: 13px;
+	}
+	
+	.selectedKpiElementWhite2Black{ lieber rot
+
+      background: white;
+      background: -webkit-linear-gradient(left, white 0% , black 20%);
+      background: -o-linear-gradient(right, white 0%, black 20%);
+      background: -moz-linear-gradient(right, white 0%, black 20%);
+      background: linear-gradient(to right, white 0% , black 20%); 
+      opacity: 0.3;
+      border-radius: 13px;
+	}
+
+*/
 	
 </style>
+
+
 <div class="modal-header" id="modalHeader">
 	<h3 class="modal-title">KPI Selector</h3>
 </div>
 <div class="modal-body">
 	<tabset>
-		<tab heading="Duration" active="$parent.timingTab">
-
-		<table id="outTab">
-			<tr>
-				<td><b>Startelement (&empty;): </b></td>
-				<td>{{el[0].name}}</td>
-			</tr>
-			<tr>
-				<td><b>Endelement (&empty;): </b></td>
-				<td>{{el[1].name}}</td>
-			</tr>
+		<tab heading="Duration" active="$parent.durationTab">
+			<table id="outTab">
+				<tr>
+					<th></th>
+					<th></th>
+					<th><b class="pull-right">Exclusive</b></th>
+				</tr>
+				<tr>
+					<td><b>Startelement (&empty;): </b></td>
+					<td>{{el[0].name}}</td>
+					<td><input type="checkbox" ng-model="checkboxModel.exclusive_start" id="exclusive_start" value="exclusive_start" class="pull-right"/></td>
+				</tr>
+				<tr>
+					<td><b>Endelement (&empty;): </b></td>
+					<td>{{el[1].name}}</td>
+					<td><input type="checkbox" ng-model="checkboxModel.exclusive_end" id="exclusive_end" value="exclusive_end" class="pull-right"/></td>
+				</tr>
+				<hr>
+			</table>
 			<hr>
-
-		</table>
-
-		<hr>
-		<b>Duration (&empty;) between:</b>
-		<div id="output">
-			 <span style='text-align: right; display: block;'>{{toDate(endDateSumAvg - startDateSumAvg)}} h</span>
-		</div>
-
-			<div ng-show="info" style="margin-top: 5px;">
-				<ul id = 'howTo'>
-					<li><strong>How To</strong><br>
-
-                    	KPI Selector calculates the Duration between instances of two selectable elements. 
-
-					</li>
-					<li>
-
-						To select an Element, click with your mouse on it - The background-color will change immediately.
-
-					</li>
-					<li>
-
-						If you have two Elements selected, click the 'Calculate' button.
-
-                   	</li>
-				</ul>
+			<b>Duration (&empty;) between:</b>
+			<div id="output">
+				<span style='text-align: right; display: block;'>{{erg}} (dd:hh:mm:ss)</span>
 			</div>
-
-		
 		</tab>
-
-		<a class="pull-right glyphicon glyphicon-question-sign" ng-click="info=!info"></a>
-		
+		<tab heading="Flow Control" active="$parent.flowTab" style="display:none">
+			<table id="outTab">
+				<tr>
+					<th>&Uuml;berschrift 2</th>
+				</tr>
+				<tr>
+					<td>Inhalt 2</td>
+				</tr>
+			<hr>
+			</table>
+			<hr>
+		</tab>
 	</tabset>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 	<button class="pull-left btn btn-warning" ng-click="calculate()">Calculate</button>
 	<button class="pull-left btn btn-warning" ng-click="reset()">Reset</button>
-
-</div>		
+</div>
 </script>

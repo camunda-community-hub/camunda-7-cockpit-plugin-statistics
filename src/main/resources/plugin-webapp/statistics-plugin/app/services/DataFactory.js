@@ -16,6 +16,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.historicActivityCountsDurationByProcDefKey = [];
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
 		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
+		DataFactory.allHistoricActivitiesDataByProcDefId = [];
+		DataFactory.allHistoricActivitiesDataByProcInstId = [];
 		DataFactory.allHistoricActivitiesInformationByProcDefKeyActivityNameActivityType = [];
 		DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange = [];
 		DataFactory.processDefWithFinishedInstances = [];
@@ -176,6 +178,46 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.debug("error in fetching historic activity information");
 			});
 		}
+		
+		
+		
+		
+		/////////////////BBB///////////////////////////////////////////
+		
+		
+		//getAllHistoricActivitiesInformationByProcDefId -> Abgeändert
+		DataFactory.getAllHistoricActivitiesDataByProcDefId = function(procDefId, activityId) {
+			return $http.get(Uri.appUri("engine://engine/:engine/history/activity-instance?processDefinitionId="+procDefId + "&activityId=" + activityId))
+			.success(function(data) {
+				if(procDefId!=undefined) {
+					DataFactory.allHistoricActivitiesDataByProcDefId[procDefId] = data;
+				} else {
+					DataFactory.allHistoricActivitiesDataByProcDefId["data"] = data;
+				}
+			})
+			.error(function(){
+				console.debug("error in fetching historic activity Data");
+			});
+		}
+		
+		DataFactory.getAllHistoricActivitiesDataByProcInstId = function(procInstId, activityId) {
+			return $http.get(Uri.appUri("engine://engine/:engine/history/activity-instance?processInstanceId="+procInstId + "&activityId=" + activityId))
+			.success(function(data) {
+				if(procInstId!=undefined) {
+					DataFactory.allHistoricActivitiesDataByProcInstId[procInstId] = data;
+				} else {
+					DataFactory.allHistoricActivitiesDataByProcInstId["data"] = data;
+				}
+			})
+			.error(function(){
+				console.debug("error in fetching historic activity Data");
+			});
+		}
+
+		//////////BBB/////////////////////////////////////////////////////
+		
+		
+		
 		
 		DataFactory.getAllHistoricActivitiesInformationByProcDefKeyActivityNameActivityType = function(procDefKey,activityName, activityType) {
 		  return $http.get(Uri.appUri("engine://engine/:engine/history/activity-instance?finished=true&processDefinitionKey="+procDefKey+"&activityName="+activityName.replace(" ", "%20")+"&activityType="+activityType))
