@@ -48,7 +48,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				var s = ""; //StartDate
 				var e = "";//EndDate
 				
-			//	console.log("firstElemStartDateSumAvg: " + firstElemStartDateSumAvg + ", firstElemEndDateSumAvg: " + firstElemEndDateSumAvg + ", secondElemStartDateSumAvg: " + secondElemStartDateSumAvg + ", secondElemEndDateSumAvg: " + secondElemEndDateSumAvg);
+				//console.log("firstElemStartDateSumAvg: " + firstElemStartDateSumAvg + ", firstElemEndDateSumAvg: " + firstElemEndDateSumAvg + ", secondElemStartDateSumAvg: " + secondElemStartDateSumAvg + ", secondElemEndDateSumAvg: " + secondElemEndDateSumAvg);
 
 				if(firstElemStartDateSumAvg > 0) {
 					
@@ -100,8 +100,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				var seconds = delta % 60; 
 
 				$scope.erg = days + ":" + hours + ":" + minutes + ":" + Math.floor(seconds);
-				
-				
 			}	
 		}
 		
@@ -144,6 +142,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 			var i = 0;
 			var j = 0;
+			var k = 0;
+			var l = 0;
 			
 			
 			DataFactory.getAllHistoricActivitiesDataByProcDefId(DataFactory.processDefinitionId, $scope.el[1].id).
@@ -170,12 +170,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 							if($scope.checkboxModel.exclusive_end == false) {
 								
 								secondElemEndDateSum += (new Date(activity.endTime) - 0);
-								j++;
+								i++;
 								
 							}else if ($scope.checkboxModel.exclusive_end == true) {
 								
 								secondElemStartDateSum += (new Date(activity.startTime) - 0);
-								i++;
+								j++;
 								
 							}
 						}
@@ -192,35 +192,35 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 								if($scope.checkboxModel.exclusive_start == false) {
 									
 									firstElemStartDateSum += (new Date(act.startTime) - 0);
-									i++;
+									k++;
 									
 								} else if ($scope.checkboxModel.exclusive_start == true)  {
 									
 									firstElemEndDateSum += (new Date(act.endTime) - 0);
-									j++;
+									l++;
 								}
 							}
 						
 						});
 						
-					//console.log("firstElemStartDateSum: " + firstElemStartDateSum + ", firstElemEndDateSum: " + firstElemEndDateSum + ", secondElemStartDateSum: " + secondElemStartDateSum + ", secondElemEndDateSum: " + secondElemEndDateSum);
+					//console.log("firstElemStartDateSum: " + firstElemStartDateSum + ", firstElemEndDateSum: " + firstElemEndDateSum + ", secondElemStartDateSum: " + secondElemStartDateSum + ", secondElemEndDateSum: " + secondElemEndDateSum + "; i: " + i + ", j: " + j + ", k: " + k + ", l: " + l);
 						
-						if((firstElemStartDateSum > 0) && (i != 0)) {
+						if((firstElemStartDateSum > 0) && (k != 0)) {
 							
-							firstElemStartDateSumAvg = firstElemStartDateSum / i;
+							firstElemStartDateSumAvg = firstElemStartDateSum / k;
 							
-						}  else if((firstElemEndDateSum > 0) && (j != 0)) {
+						}  else if((firstElemEndDateSum > 0) && (l != 0)) {
 							
-							firstElemEndDateSumAvg =  firstElemEndDateSum / j; 
+							firstElemEndDateSumAvg =  firstElemEndDateSum / l; 
 						}
 						
-						 if((secondElemStartDateSum > 0) && (i != 0)) {
+						 if((secondElemStartDateSum > 0) && (j != 0)) {
 							
-							secondElemStartDateSumAvg = secondElemStartDateSum / i;
+							secondElemStartDateSumAvg = secondElemStartDateSum / j;
 							
-						} else if((secondElemEndDateSum > 0) && (j != 0)) {
+						} else if((secondElemEndDateSum > 0) && (i != 0)) {
 							
-							secondElemEndDateSumAvg =  secondElemEndDateSum / j; 
+							secondElemEndDateSumAvg =  secondElemEndDateSum / i; 
 						}
 
 						$scope.toDate();
