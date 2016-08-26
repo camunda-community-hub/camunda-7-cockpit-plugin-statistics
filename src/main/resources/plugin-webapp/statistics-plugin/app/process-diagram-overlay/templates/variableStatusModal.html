@@ -46,8 +46,16 @@
 			<tr>
 				<td class="text"></td>
 				<td class="value">
-					<input class="checkbox-inline" type="checkbox" ng-model="completeTimePeriod" ngChange="clickedCompleteTimePeriod()" />
-					<span>all process instances</span>
+					<label class="normal-font-weight"><input class="checkbox-inline" type="checkbox" ng-model="completeTimePeriod" ngChange="clickedCompleteTimePeriod()">all process instances</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="text"></td>
+				<td>
+					<form>
+    					<label class="normal-font-weight"><input class="radio" type="radio" name="startedOrFinished" ng-model="startedOrFinished" value="started">started in time period</label>
+    					<label class="normal-font-weight"><input class="radio" type="radio" name="startedOrFinished" ng-model="startedOrFinished" value="finished">finished in time period</label>
+  					</form>
 				</td>
 			</tr>
 			<tr ng-show="showProcessInstancesCount">

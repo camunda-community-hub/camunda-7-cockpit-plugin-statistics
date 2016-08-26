@@ -109,12 +109,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		}
 		
 		// startDate and endDate have to be in format "yyyy-MM-ddThh:mm:ss"
-		DataFactory.getAllHistoricVariablesOfProcessDefinitionInTimeRange = function(procDefId, procDefKey, startDate, endDate) {
+		DataFactory.getAllHistoricVariablesOfProcessDefinitionInTimeRange = function(procDefId, procDefKey, startDate, endDate, startedOrFinished) {
 			var processInstances = [];
 			DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange = [];
 			procDefId = procDefId ? "&processDefinitionId="+procDefId : "";
 			// get id of all process instances in time range
-			return $http.get(Uri.appUri("engine://engine/:engine/history/process-instance?processDefinitionKey=" + procDefKey + procDefId + "&finished=true&finishedAfter="+startDate+"&finishedBefore="+endDate))
+			return $http.get(Uri.appUri("engine://engine/:engine/history/process-instance?processDefinitionKey=" + procDefKey + procDefId + "&finished=true&" + startedOrFinished + "After="+startDate+"&" + startedOrFinished + "Before="+endDate))
 			.success(function(data) {
 				angular.forEach(data, function(item) {
 					processInstances.push(item.id);
