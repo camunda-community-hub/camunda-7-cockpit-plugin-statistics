@@ -43,7 +43,6 @@ ngDefine('cockpit.plugin.statistics-plugin', ['module:nvd3:./lib/angular-nvd3',
 		});
 		
 		
-		/*Benny*/
 		
 		ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.action', {
 			id: 'process-diagram-kpi',
@@ -61,7 +60,6 @@ ngDefine('cockpit.plugin.statistics-plugin', ['module:nvd3:./lib/angular-nvd3',
 			controller: 'processDiagramKpiCtrl'
 		});
 		
-		/*Benny*/
 	};
 
 	Configuration.$inject = ['ViewsProvider'];
