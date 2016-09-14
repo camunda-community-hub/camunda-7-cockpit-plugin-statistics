@@ -20,8 +20,8 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
       this.broadcastSettings();
     };
     
-    SettingsFactory.broadcastSettings = function() {
-      $rootScope.$broadcast('pluginSettingsChanged');
+    SettingsFactory.broadcastSettings = function(changeId) {
+      $rootScope.$broadcast('pluginSettingsChanged', {changeId:changeId});
     };
     
     $rootScope.$on('chosenTabChangedBroadcast', function() {
@@ -41,6 +41,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
       var settingsToReturn = {
            supported:false,
            overview:{
+             chartType:"showAsBarChartOption",
              runningPI : {
                filterProcessDefKeys:[],
                keysToSkip:[],
@@ -211,12 +212,12 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
       
       var needsToBeSaved = true;
       var settingsToSave = angular.toJson(pluginSettings);
-      
+         
       if(localStorage[settingsPrefixForLocalStorage+loggedInUser]) {
         if(localStorage[settingsPrefixForLocalStorage+loggedInUser]!=settingsToSave) {
           console.debug("stettings changed ==> store new settings");
           localStorage[settingsPrefixForLocalStorage+loggedInUser] = settingsToSave;
-          SettingsFactory.prepForBroadcast(pluginSettings);
+          SettingsFactory.prepForBroadcast(pluginSettings, "general");
         } else {
           console.debug("stettings did not change");
         }
@@ -230,7 +231,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
     var loadPluginSettings = function() {
       SettingsFactory.loadPluginSettings().then(function(settings) {
         SettingsFactory.pluginSettings = settings;
-        SettingsFactory.prepForBroadcast(settings);
+        SettingsFactory.prepForBroadcast(settings, "general");
       });
     }
         

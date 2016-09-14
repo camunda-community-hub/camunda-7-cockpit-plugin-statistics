@@ -5,27 +5,30 @@
         <div class="modal-body" ng-init="init()">
             <div ng-show="pluginSettings.supported">
               <tabset>
-                <tab heading="General" disabled="true">
-                  <form class="form-horizontal">
-                    <div class="form-group">
-                      <label class="control-label">Cache expiration (ms)</label>
-                      <div>
-                        <input type="number" ng-model="pluginSettings.general.cacheExpirationInMillis" required>
-                      </div>
-                    </div>
-                  </form>     
-                </tab>
                 <tab heading="Settings 'Processes'" active="true">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" ng-model="pluginSettings.overview.loadOnTabLoad">
-                      <span ng-mouseover="showTooltipOverview=true" ng-mouseleave="showTooltipOverview=false">auto refresh &nbsp;<small ng-show="showTooltipOverview"><em><br>Plots will be automatically refreshed during tab load or after a settings change</em></small></span>
-                    </label>
+                  <hr>
+                  <div class="row">
+                    <form>
+                      <div class="col-lg-8">
+                        <label class="radio-inline">
+                          <input type="radio" name="inlineRadioOptions" ng-model="pluginSettings.overview.chartType" id="showAsPieChart" value="showAsPieChartOption"> show instances as three pie charts
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio" name="inlineRadioOptions" ng-model="pluginSettings.overview.chartType" id="showAsBarChart" value="showAsBarChartOption"> show instances in multi bar chart
+                        </label>
+                      </div>
+                      <div class="col-lg-4">
+                        <label class="checkbox-inline">
+                          <input type="checkbox" ng-model="pluginSettings.overview.loadOnTabLoad">
+                          <span ng-mouseover="showTooltipOverview=true" ng-mouseleave="showTooltipOverview=false">auto refresh &nbsp;<small ng-show="showTooltipOverview"><em><br>Plots will be automatically refreshed during tab load or after a settings change</em></small></span>
+                        </label>
+                      </div>
+                    </form>
                   </div>
                   <hr>
                   <tabset type="pills" justified="true">
                     <tab heading="Running Instances">
-                      <div class="checkbox">
+                      <div class="checkbox" ng-show="pluginSettings.overview.chartType!='showAsBarChartOption'">
                         <label>
                           <input type="checkbox" ng-model="pluginSettings.overview.runningPI.toPlot"> Show 'Running' Plot
                         </label>
@@ -40,7 +43,7 @@
                       </div>
                     </tab>
                     <tab heading="Ended Instances">
-                      <div class="checkbox">
+                      <div class="checkbox" ng-show="pluginSettings.overview.chartType!='showAsBarChartOption'">
                         <label>
                           <input type="checkbox" ng-model="pluginSettings.overview.endedPI.toPlot"> Show 'Ended' Plot
                         </label>
@@ -55,7 +58,7 @@
                       </div>
                     </tab>
                     <tab heading="Instances with incidents">
-                      <div class="checkbox">
+                      <div class="checkbox" ng-show="pluginSettings.overview.chartType!='showAsBarChartOption'">
                         <label>
                             <input type="checkbox" ng-model="pluginSettings.overview.failedPI.toPlot"> Show 'Incidents' Plot
                         </label>
@@ -70,20 +73,6 @@
                       </div>
                     </tab>
                   </tabset>
-                </tab>
-                <tab heading="Settings 'Analytics'" disabled="true">
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" ng-model="pluginSettings.timing.loadOnTabLoad">
-                      <span ng-mouseover="showTooltipTiming=true" ng-mouseleave="showTooltipTiming=false">auto refresh &nbsp;<small ng-show="showTooltipTiming"><em><br>Plots will be automatically refreshed during tab load or after a settings change</em></small></span>
-                    </label>
-                  </div>
-                  <h3>Process definition keys to consider</h3>
-                  <div ng-repeat="processKey in pluginSettings.timing.processDefKeysToFilter">
-                    <label class="checkbox inline">
-                      <input type="checkbox" ng-model="processKey.plot"> {{processKey.processKey}}
-                    </label>
-                  </div
                 </tab>
               </tabset>
             </div>

@@ -1,14 +1,11 @@
-<div class="row" ng-controller="processDefinitionCtrl">
+<div class="row statistics-plugin" ng-controller="processDefinitionCtrl">
   <div ng-include="'./../../../api/cockpit/plugin/statistics-plugin/static/app/styles/pluginStyles.html'"></div>
 	<div class="col-lg-6 col-md-6 col-sm-6" id="plot1">
-	
-		<nvd3 options="options" data="statesOfDefinition"></nvd3>
+		<nvd3new options="options" data="overallStatesOfDefinition"></nvd3>
 		<p class="text-center">process instances by state</p>
 	</div>
-	<div ng-controller="slaChartCtrl">
-		<div class="col-lg-6 col-md-6 col-sm-6" id="plot2" >
-			<nvd3 options="options" data="activitiesForProcDef"></nvd3>
-			<p class="text-center">finished activities</p>
-		</div>
-	</div>
+  <div class="col-lg-6 col-md-6 col-sm-6" id="plot2">
+    <nvd3new options="options" data="activityStatesOfDefinition"></nvd3>
+    <p class="text-center">process instances by state</p>
+  </div>	
 </div>

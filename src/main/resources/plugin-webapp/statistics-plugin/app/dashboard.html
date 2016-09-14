@@ -1,11 +1,12 @@
 <div ng-controller="dashboardController">
 <div ng-include="'./../../../api/cockpit/plugin/statistics-plugin/static/app/styles/pluginStyles.html'"></div>
 <div ng-include="'./../../../api/cockpit/plugin/statistics-plugin/static/app/templates/pluginSettingsModal.html'"></div>
+<div ng-include="'./../../../api/cockpit/plugin/statistics-plugin/static/app/templates/processDefinitionDetailsModal.html'"></div>
 	<h1>Statistics & Analytics&nbsp;&nbsp;<small><a class="btn btn-link" ng-click="showPluginSettingsModal()">Settings...</a></small></h1>
 	<tabset>
 	 <tab ng-controller="processesChartController" select="handleTabClick('processes')">
 	   <tab-heading ng-mouseover="showRefreshIcon=true" ng-mouseleave="showRefreshIcon=false">
-	     <span >Processes&nbsp;</span><a class="btn btn-link" ng-show="showRefreshIcon" ng-click="applyDataToPlots()"><i class="glyphicon glyphicon-repeat"></i></a>
+	     <span >Processes&nbsp;</span><a class="btn btn-link" ng-show="showRefreshIcon" ng-click="getDataForPlots()"><i class="glyphicon glyphicon-repeat"></i></a>
 	   </tab-heading>
      <div ng-include="'./../../../api/cockpit/plugin/statistics-plugin/static/app/views/processesTab.html'"></div>
 	</tab>
