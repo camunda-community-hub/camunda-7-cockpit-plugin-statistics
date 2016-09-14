@@ -1,78 +1,75 @@
-<div ng-show="showInitialLoadButton">
-	<div class="row">
+<div ng-if="showInitialLoadButton">
+	<div class="row statistics-plugin">
 		<div class="col-lg-2 col-lg-offset-5 col-md-2 col-md-offset-5 col-sm-2 col-sm-offset-5">
-			<button class="btn btn-primary" ng-click="applyDataToPlots()">Load
+			<button class="btn btn-primary" ng-click="getDataForPlots()">Load
 				Plots!</button>
 		</div>
 	</div>
 </div>
-<div ng-show="showApplyChangesAlert">
+<div ng-if="showApplyChangesAlert">
 	<div class="row">
 		<div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
 			<div class="alert alert-info">
 				Your current tab`s settings have changed, you might want to refresh
 				the plot...&nbsp;&nbsp;&nbsp;
-				<button class="btn btn-primary" ng-click="applyDataToPlots()">Refresh</button>
+				<button class="btn btn-primary" ng-click="getDataForPlots()">Refresh</button>
 			</div>
 		</div>
 	</div>
 </div>
 <div id="plotContainer">
-	<div class="row">
-		<div class="{{widthClass}}" state="running"
-			ng-show="myPlotsPluginSettings.runningPI.toPlot">
-			<div ng-show="reload.showReloadProcessRunning">
-				<div class="row">
+	<div class="row statistics-plugin" ng-if="myPlotsPluginSettings.chartType=='showAsPieChartOption'">
+		<div class="{{widthClass}}" state="running"		ng-if="myPlotsPluginSettings.runningPI.toPlot">
+			<div ng-if="reload.showReloadProcessRunning">
+				<div class="row statistics-plugin">
 					<div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
-						<div class="progress">
-							<div class="progress progress-striped active">
-								<div class="bar" style="width: 100%;"></div>
-							</div>
-						</div>
-					</div>
+            <progressbar class="progress-striped active" value="100"><i>refreshing...</i></progressbar>
+          </div>
 				</div>
 			</div>
-			<nvd3 options="runningOptions" data="running" id="running" api="api"></nvd3>
-			<div ng-show="myPlotsPluginSettings.runningPI.toPlot && showPlotDescriptions">
+			<nvd3new ng-if="!reload.showReloadProcessRunning" options="runningOptions" data="running" id="running" api="api"></nvd3new>
+			<div ng-if="myPlotsPluginSettings.runningPI.toPlot && showPlotDescriptions">
         <p class="text-center">{{runningPlotLabel}}</p>
       </div>
 		</div>
-		<div class="{{widthClass}}"
-			ng-show="myPlotsPluginSettings.endedPI.toPlot">
-			<div ng-show="reload.showReloadProcessEnded">
-				<div class="row">
+		<div class="{{widthClass}}" ng-if="myPlotsPluginSettings.endedPI.toPlot">
+			<div ng-if="reload.showReloadProcessEnded">
+				<div class="row statistics-plugin">
 					<div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
-						<div class="progress">
-							<div class="progress progress-striped active">
-								<div class="bar" style="width: 100%;"></div>
-							</div>
-						</div>
+            <progressbar class="progress-striped active" value="100" ><i>refreshing...</i></progressbar>
 					</div>
 				</div>
 			</div>
-			<nvd3 options="endedOptions" data="ended" id="ended"></nvd3>
-			<div ng-show="myPlotsPluginSettings.endedPI.toPlot && showPlotDescriptions">
+			<nvd3new ng-if="!reload.showReloadProcessEnded" options="endedOptions" data="ended" id="ended"></nvd3new>
+			<div ng-if="myPlotsPluginSettings.endedPI.toPlot && showPlotDescriptions">
 	      <p class="text-center">{{endedPlotLabel}}</p>
 	    </div>
 		</div>
-		<div class="{{widthClass}}"
-			ng-show="myPlotsPluginSettings.failedPI.toPlot">
-			<div ng-show="reload.showReloadProcessFailed">
-				<div class="row">
+		<div class="{{widthClass}}"	ng-if="myPlotsPluginSettings.failedPI.toPlot">
+			<div ng-if="reload.showReloadProcessFailed">
+				<div class="row statistics-plugin">
 					<div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
-						<div class="progress">
-							<div class="progress progress-striped active">
-								<div class="bar" style="width: 100%;"></div>
-							</div>
-						</div>
+            <progressbar class="progress-striped active" value="100" ><i>refreshing...</i></progressbar>
 					</div>
 				</div>
 			</div>
-			<nvd3 options="failedOptions" data="failed" id="failed"></nvd3>
-			<div ng-show="myPlotsPluginSettings.failedPI.toPlot && showPlotDescriptions">
+			<nvd3new ng-if="!reload.showReloadProcessFailed" options="failedOptions" data="failed" id="failed"></nvd3new>
+			<div ng-if="myPlotsPluginSettings.failedPI.toPlot && showPlotDescriptions">
 	      <p class="text-center">{{failedPlotLabel}}</p>
 	    </div>
-		</div>
+		</div>		
 	</div>
+  <div class="row statistics-plugin" ng-if="myPlotsPluginSettings.chartType=='showAsBarChartOption'">
+	<div ng-if="reload.showReloadMultibarChartRunning">
+	  <div class="row statistics-plugin">
+	    <div class="col-lg-6 col-lg-offset-3 col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
+        <progressbar class="progress-striped active" value="100" ><i>refreshing...</i></progressbar>
+	    </div>
+	  </div>
+	</div>    
+	<div ng-if="!reload.showReloadMultibarChartRunning" class="col-lg-12">
+		 <nvd3new options="overviewMultibarChartOptions" data="startedEndedRunningPlotData"></nvd3new>
+		</div>    
+	</div>	
 </div>
 </tab>

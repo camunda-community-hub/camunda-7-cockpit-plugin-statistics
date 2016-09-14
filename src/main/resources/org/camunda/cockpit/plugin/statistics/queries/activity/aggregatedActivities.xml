@@ -9,6 +9,7 @@
 		<result property="activityName" column="ACT_NAME" />
 		<result property="count" column="COUNT" />
 		<result property="procDefKey" column="PROC_DEF_KEY" />
+		<result property="procDefId" column="PROC_DEF_ID" />
 		<result property="avgDuration" column="AVG_DURATION" />
 		<result property="minDuration" column="MIN_DURATION" />
 		<result property="maxDuration" column="MAX_DURATION" />
@@ -21,6 +22,7 @@
 	      ACT_NAME_ AS ACT_NAME, 
 	      ACT_TYPE_ AS ACT_TYPE, 
 	      PROC_DEF_KEY_ AS PROC_DEF_KEY,
+	      PROC_DEF_ID_ AS PROC_DEF_ID,
 	      <!-- count, min, max, avg, duration -->
         <include refid="cockpit.statistics.commonAggregations"/>
       FROM ACT_HI_ACTINST A 
@@ -30,7 +32,7 @@
 	      <if test="parameter != null">
 	      AND PROC_DEF_KEY_ = '${parameter}'
 	      </if>
-	      GROUP BY ACT_NAME_, ACT_TYPE_, PROC_DEF_KEY_
+	      GROUP BY ACT_NAME_, ACT_TYPE_, PROC_DEF_KEY_, PROC_DEF_ID_
 	 </select>
 
     <resultMap id="activityNameTypeProcessDefinitionMap"

@@ -1,7 +1,7 @@
 'use strict'; // camunda guys are using strict mode as well, might make sense
 // for us, too
 
-ngDefine('cockpit.plugin.statistics-plugin.controllers', ['../lib/d3','../lib/nv.d3.own'],function(module) {
+ngDefine('cockpit.plugin.statistics-plugin.controllers', ['../lib/d3','../lib/nv.d3.own', 'require'],function(module) {
 
   module.controller('timeChartCtrl', [ '$scope', 'DataFactory',
       function($scope, DataFactory) {

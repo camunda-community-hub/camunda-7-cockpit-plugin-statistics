@@ -25,11 +25,13 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.processDefinitions = [];
 		DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi = [];
 		DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey = [];
+		DataFactory.endedProcessInstanceInformationOrderedByProcessDefinitionKey=[];
 		DataFactory.bpmnElementsToHighlight = {};
 		DataFactory.bpmnElementsToHighlightAsWarning = {};
 		DataFactory.processDefinitionKey = "";
 		DataFactory.activityDurations = {};
 		DataFactory.bpmnElements = [];
+		DataFactory.runningTaskInstancesByProcessDefinitionKey = {};
 		DataFactory.processDefinitionId = "";
 		DataFactory.processInstancesCount = 0;
 
@@ -695,6 +697,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 
 				if(processDefinitionKey) {
 				  DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey[processDefinitionKey] = results;
+				  DataFactory.endedProcessInstanceInformationOrderedByProcessDefinitionKey[processDefinitionKey] = data;
 				} else {
 				  DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey["data"] = results;
 				}
@@ -790,6 +793,16 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 				console.debug("error in fetching ActivityNamesTypesProcDefinition");
 			});
 		};
+		
+		DataFactory.getRunningTaskInstancesByProcessDefinitionKey = function(processDefinitionKey) {
+			return $http.get(Uri.appUri("engine://engine/:engine/history/task?processDefinitionKey="+processDefinitionKey+"&unfinished=true"))
+			.success(function(data) {
+				DataFactory.runningTaskInstancesByProcessDefinitionKey[processDefinitionKey] = data;
+			})
+			.error(function(error){
+				console.debug("error in getting historicTaskInstancesByTaskDefinitionKey");
+			});
+		}
 
 
 		return DataFactory;

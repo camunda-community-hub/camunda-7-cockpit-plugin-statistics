@@ -1,7 +1,10 @@
-ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.d3.own'], function(module) {
-	module.controller('processesChartController',['$scope', '$element', 'Uri', 'DataFactory', 'SettingsFactory', 'UserInteractionFactory', '$http', '$modal', '$interval', '$window',
-	                                  function($scope, element, Uri, DataFactory, SettingsFactory, UserInteractionFactory, $http,$modal, $interval, $window){
+ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.d3.own', 'require'], function(module) {
+	module.controller('processesChartController',['$q', '$filter', '$scope', '$templateCache', '$element', 'Uri', 'DataFactory', 'SettingsFactory', 'UserInteractionFactory', '$http', '$modal', '$interval', '$window',
+	                                  function($q, $filter, $scope, $templateCache, $element, Uri, DataFactory, SettingsFactory, UserInteractionFactory, $http,$modal, $interval, $window){
 	  
+		$scope.myPlotsPluginSettings = null;
+		
+			
 	  $scope.drilledInRunning = false;
 	  $scope.drilledInEnded = false;
 	  $scope.drilledInIncidents = false;
@@ -9,16 +12,23 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 	  $scope.runningProcInstances = [];
 	  $scope.endedProcInstances = [];
 	  $scope.incidentsProcInstances = [];
-	  $scope.processInstanceCounts = [];
+	  $scope.processInstanceCounts = [];	  
+	  $scope.startedEndedRunningPlotData = [];
+    
+    var formattedDataIncidents = [];
+    var formattedDataEnded = [];
+    var formattedDataRunning = [];
+
 	  
-	  $scope.myPlotsPluginSettings = null;
+	  
 	  $scope.showRefreshIcon = false;
 	  $scope.showApplyChangesAlert = false;
 	  $scope.showPlotDescriptions = false;
 	  $scope.reload = {
 	      showReloadProcessRunning:false,
 	      showReloadProcessEnded:false,
-	      showReloadProcessFailed:false
+	      showReloadProcessFailed:false,
+	      showReloadMultibarChartRunning:false
 	  };
 	  
 	  $scope.widthClass = "col-lg-4 col-md-4 col-sm-4";
@@ -32,7 +42,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 	  $scope.endedPlotLabel = "Ended Instances";
 	  $scope.failedPlotLabel = "Instances with Incidents";
 	  
-	  
+	  var resetPieChartData = function() {
+		  $scope.runningProcInstances = [];
+		  $scope.endedProcInstances = [];
+		  $scope.incidentsProcInstances = [];
+		  $scope.processInstanceCounts = [];
+		  $scope.startedEndedRunningPlotData = [];		  
+	  }
+		
 	  $scope.$on('heightChanged', function() {
 	    changePlotsHeight();
 	  });
@@ -49,19 +66,21 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
           if($scope.drilledInRunning) {
             drillOut("", "running");
           }
-          $scope.applyDataToPlots();
+          resetPieChartData();
+          $scope.getDataForPlots();
         }
       }
     });
     
-    $scope.$on('pluginSettingsChanged', function() {
+    $scope.$on('pluginSettingsChanged', function(event, change) {
       
       /*
        * gets called every time settings are changing, includes first time
        * By that, plots will be rendered with the right settings
        */
       
-      
+    	console.debug("settings changed ("+change.changeId+")");
+    	      
            
       if($scope.myPlotsPluginSettings!=SettingsFactory.pluginSettings.overview) {
         
@@ -79,7 +98,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
           if($scope.myPlotsPluginSettings.loadOnTabLoad) {
             
             //just do the reload
-            $scope.applyDataToPlots();
+          	
+          	resetPieChartData();
+            $scope.getDataForPlots();
+
+            //refresh plots
+            
             $scope.showPlotDescriptions = true;
             
           } else {
@@ -112,12 +136,419 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
       
       $interval.cancel($scope.cacheKiller);
     }
+    
+    var getDetailData = function(processDefinitionKey) {
 
+      //get data for plot
+      
+      var result = [];
+      processDefinitionDetails = {
+          "name": processDefinitionKey,
+          "children": [],
+          size: 0
+        };      
+      
+      DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi()
+      .then(function() {
+                
+        var data = DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi;
+
+        for(var i in data) {
+          
+          /*
+           * look only for information for respective process definition and directly push running, failed jobs and incidents information as they are
+           * already ordered by version and require no aggregation
+           */
+          
+          if(data[i].definition.key==processDefinitionKey) {
+            var versionDetails = {
+                "name": "Version "+data[i].definition.version,
+                "size": 0,
+                "children": []
+            };
+
+            if(data[i].instances && data[i].instances>0) {
+              versionDetails.children.push({
+                "name":"running",
+                "size":data[i].instances
+                });
+              
+              versionDetails.size+=data[i].instances;
+              processDefinitionDetails.size+=data[i].instances;
+            }
+            
+            if(data[i].failedJobs && data[i].failedJobs>0) {
+              versionDetails.children.push({
+                "name":"failedJobs",
+                "size":data[i].failedJobs
+                });
+              
+              versionDetails.size+=data[i].failedJobs;
+              processDefinitionDetails.size+=data[i].failedJobs;
+              
+            }
+            
+            
+            if(data[i].incidents.length && data[i].incidents.length>0) {
+              
+              versionDetails.children.push({
+                "name":"incidents",
+                "children":[]
+              });
+              
+              for(var j=0; j<data[i].incidents.length; j++) {
+                
+                versionDetails.children[versionDetails.children.length-1].children.push({
+                  "name":data[i].incidents[j].incidentType,
+                  "size":data[i].incidents[j].incidentCount
+                });
+                
+              }              
+            }
+            
+                     
+            processDefinitionDetails.children.push(versionDetails);
+            
+          }
+
+        }
+
+      }).then(function(){
+        return DataFactory.getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey(processDefinitionKey); 
+      }).then(function(){
+        
+        /*
+         * now..add missing information for finished instances
+         */
+        var data = DataFactory.endedProcessInstanceInformationOrderedByProcessDefinitionKey[processDefinitionKey];
+        
+        for(var i in data) {
+          
+          var version = data[i].processDefinitionId.split(":")[1];
+          //check if information for respective version of process definition already exists
+          var versionFound = false;
+          var versionIndex = -1;
+
+          for(var j=0; j<processDefinitionDetails.children.length; j++) {
+            //version found
+            if(processDefinitionDetails.children[j].name
+                && processDefinitionDetails.children[j].name==="Version "+version) {
+              versionFound = true;
+              versionIndex = j;
+              
+              //check if finished already exists
+              var finishedFound = false;
+              
+              for(var k=0; k<processDefinitionDetails.children[versionIndex].children.length; k++) {
+                if(processDefinitionDetails.children[versionIndex].children[k].name==="finished") {
+                  //finished found
+                  finishedFound = true;
+                }
+              }
+              
+              if(!finishedFound) {
+                processDefinitionDetails.children[j].children.push({
+                  "name":"finished",
+                  "size":0
+                });
+              }
+
+            }
+          }
+
+          console.debug("found version for "+"Version "+version+"?"+versionFound);
+          
+          //if version not found create initial information for version
+          if(!versionFound) {
+            processDefinitionDetails.children.push({
+              "name": "Version "+data[i].definition.version,
+              "children": [{
+                "name":"finished",
+                "size":0
+              }]
+            });
+            
+            versionIndex = processDefinitionDetails.children.length-1;
+            
+          }
+          
+          
+          /*
+           * basic information for version exist, either they got created or the already existed
+           * Now add count information for finished instances
+           */
+          
+          
+          for(var j=0; j<processDefinitionDetails.children[versionIndex].children.length;j++) {
+            if(processDefinitionDetails.children[versionIndex].children[j].name==="finished") {
+              processDefinitionDetails.children[versionIndex].children[j].size+=1;
+              processDefinitionDetails.children[versionIndex].size+=1;
+              processDefinitionDetails.size+=1;
+            }
+          }          
+        }
+        
+        result.push(processDefinitionDetails);
+        
+      }).then(function() {
+      	//Get running user task instances
+      	return DataFactory.getRunningTaskInstancesByProcessDefinitionKey(processDefinitionKey);
+      }).then(function() {
+      	//Get finished activity instances
+      	return DataFactory.getHistoricActivityCountsDurationByProcDefKey(processDefinitionKey);
+      }).then(function(){
+
+
+      	//analyze running user tasks and add to data
+      	
+      	var runningTaskInstances = DataFactory.runningTaskInstancesByProcessDefinitionKey[processDefinitionKey];
+      	var finishedActivityInstances = DataFactory.historicActivityCountsDurationByProcDefKey[processDefinitionKey];
+      	
+      	for(var i in runningTaskInstances) {
+      		//get relevant user task information
+      		var version = runningTaskInstances[i].processDefinitionId.split(":")[1];
+      		var assigned = (runningTaskInstances[i].assignee == null);
+      		
+      		//add to children of respective version's running details
+      		for(var j in result[0].children) {
+
+      			if(result[0].children[j].name=="Version "+version) {
+      				
+      				//direct access to running structure (which has to exist, otherwise no usertasks would exist)	
+      				if(!result[0].children[j].children[0].children) {
+      					result[0].children[j].children[0].children = [];
+      				}
+      				
+      				//check if information for task exist
+      				var userTaskInformationFound  = false;
+      				var userTaskIndex = -1;
+      				
+      				if(!result[0].children[j].children[0].children) {
+      					result[0].children[j].children[0].children = [];
+      				}
+      				
+      				for(var k in result[0].children[j].children[0].children) {
+	      					if(result[0].children[j].children[0].children[k].taskDefinitionKey==runningTaskInstances[i].taskDefinitionKey) {
+	      						userTaskInformationFound = true;
+	      						userTaskIndex = k;
+	      					}
+      				}
+      				
+      				//if information exist, increase counter
+      				//if not, create base information
+      				if(userTaskInformationFound) {
+      					result[0].children[j].children[0].children[userTaskIndex].size++;
+      				} else {
+      					result[0].children[j].children[0].children.push({
+      						name:runningTaskInstances[i].name,
+      						taskDefinitionKey:runningTaskInstances[i].taskDefinitionKey,
+      						size:1
+      					});
+      					userTaskIndex = result[0].children[j].children[0].children.length-1;
+      				}
+      				
+      				//check if assigned children exist
+  						if(!result[0].children[j].children[0].children[userTaskIndex].children) {
+  							result[0].children[j].children[0].children[userTaskIndex].children = [
+  							                                                                       {name: "assigned",
+  							                                                                      	size: 0},
+  							                                                                       {name: "not assigned",
+  							                                                                      	size: 0}
+  							                                                                       ];
+  						}
+  						
+      				//add assigned information
+      				if(assigned) {
+    						result[0].children[j].children[0].children[userTaskIndex].children[0].size++;
+    					} else {
+    						result[0].children[j].children[0].children[userTaskIndex].children[1].size++;
+    					} 
+      				
+      			}
+      		}
+      	}
+      	
+      	//remove assigned/unassigned
+      	for(var i in result[0].children) {
+      		if(result[0].children[i].children[0].children) {
+	      		for(var j in result[0].children[i].children[0].children) {
+	      			//remove assigned/unassigned if size == 0
+	      			var removeUnassigned = false;
+	      			var removeAssigned = false;
+	      			
+	      			if(result[0].children[i].children[0].children[j].children[0].size==0) {
+	      				removeAssigned = true;
+	      			}
+	      			if(result[0].children[i].children[0].children[j].children[1].size==0) {
+	      				removeUnassigned = true;
+	      			}
+	      			
+	      			if(removeAssigned) {
+	      				result[0].children[i].children[0].children[j].children = [result[0].children[i].children[0].children[j].children[1]];
+	      			}
+	      			if(removeUnassigned) {
+	      				result[0].children[i].children[0].children[j].children = [result[0].children[i].children[0].children[j].children[0]];
+	      			}
+	      		}
+      		}
+      	}
+      	
+      	//analyze finished user tasks and activities and add to data
+      	
+      	
+      	for(var i in finishedActivityInstances) {
+      		var version = finishedActivityInstances[i].procDefId.split(":")[1];
+      		var activityName = finishedActivityInstances[i].activityName;
+      		var type = finishedActivityInstances[i].type;
+      		
+      		//add to children of respective version's ended details
+      		for(var j in result[0].children) {
+
+      			if(result[0].children[j].name=="Version "+version) {
+      				
+      				//determine finished index
+      				var finishedInstancesIndex = -1;
+      				
+      				for(var m in result[0].children[j].children) {
+      					if(result[0].children[j].children[m].name=="finished") {
+      						finishedInstancesIndex = m;
+      						break;
+      					}
+      				}
+      			
+      				
+      				//direct access to running structure (which has to exist, otherwise no usertasks would exist)	
+      				if(!result[0].children[j].children[finishedInstancesIndex].children) {
+      					result[0].children[j].children[finishedInstancesIndex].children = [];
+      				}
+      				
+      				//check if information for task exist
+      				var activityInformationFound  = false;
+      				var activityIndex = -1;
+      				
+      				if(!result[0].children[j].children[finishedInstancesIndex].children) {
+      					result[0].children[j].children[finishedInstancesIndex].children = [];
+      				}
+      				
+      				for(var k in result[0].children[j].children[finishedInstancesIndex].children) {
+	      					if(result[0].children[j].children[finishedInstancesIndex].children[k].activityName==activityName) {
+	      						activityInformationFound = true;
+	      						activityIndex = k;
+	      					}
+      				}
+      				
+      				//if information exist, increase counter
+      				//if not, create base information
+      				if(activityInformationFound) {
+      					result[0].children[j].children[finishedInstancesIndex].children[activityIndex].size+=finishedActivityInstances[i].count;
+      					result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max
+      						=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].maxDuration)/2;
+      					result[0].children[j].children[finishedInstancesIndex].children[activityIndex].min
+    							=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].minDuration)/2;
+      					result[0].children[j].children[finishedInstancesIndex].children[activityIndex].avg
+    							=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].avgDuration)/2;      					
+      				} else {
+      					result[0].children[j].children[finishedInstancesIndex].children.push({
+      						name:activityName,
+      						size:finishedActivityInstances[i].count,
+      						avg:finishedActivityInstances[i].avgDuration,
+      						min:finishedActivityInstances[i].minDuration,
+      						max:finishedActivityInstances[i].maxDuration,
+      						actType:finishedActivityInstances[i].type
+      					});
+      					activityIndex = result[0].children[j].children[0].children.length-1;
+      				}
+
+      			}
+      		}
+      	}
+      	
+      	//pass data to modal an open it!
+        //console.debug("Sunburst detail data: "+JSON.stringify(result));
+        
+        //prepare data for detail tab per sion
+        var versionsDetails = [];
+        for(var i in result[0].children) {
+        	
+        	var versionDetails = {
+        			name:result[0].children[i].name,
+        			overall:result[0].children[i].size,
+        			running:0,
+        			runningDetails: {},
+        			finished:0,
+        			finishedDetails: {},
+        			withIncidents:0,
+        			withIncidentsDetails: {}
+        	};
+        	
+        	for(var j in result[0].children[i].children) {
+        		if(result[0].children[i].children[j].name=="running") {
+        			versionDetails.running = result[0].children[i].children[j].size;
+        			versionDetails.runningDetails = result[0].children[i].children[j].children;
+        		}
+        		if(result[0].children[i].children[j].name=="finished") {
+        			versionDetails.finished = result[0].children[i].children[j].size;
+        			versionDetails.finishedDetails = result[0].children[i].children[j].children;
+        		}
+        		if(result[0].children[i].children[j].name=="incidents") {
+        			versionDetails.withIncidents = result[0].children[i].children[j].size;
+        			versionDetails.withIncidentsDetails = result[0].children[i].children[j].children;
+        		}
+        	}
+        	
+        	versionsDetails.push(
+        		versionDetails
+        	);
+        };
+        
+        //version detail data
+        //console.debug("per version detail data: "+JSON.stringify(versionsDetails));
+        
+        var modalInstance = $modal.open({
+          templateUrl: 'processDefinitionDetailsModal.html',
+          controller: 'processDefinitionDetailsCtrlSunburst',
+          size: 'lg',
+          resolve: {
+            processDefinitionKey : function() {
+              return processDefinitionKey;
+            }, 
+            data : function() {
+              return result;
+            },
+            versionsDetails : function() {
+            	return versionsDetails;
+            }
+          }
+        });
+        
+        modalInstance.result.then(function () {
+
+        }, function () {
+          
+        });
+      	
+      });
+    
+      
+    }
+
+    var showInstancesDetailsModal = function(processDefinitionKey) {
+      
+      getDetailData(processDefinitionKey);
+
+    }
 
     var changePlotsHeight = function() {
       $scope.runningOptions.chart.height = UserInteractionFactory.plotHeight;
       $scope.failedOptions.chart.height = UserInteractionFactory.plotHeight;
-      $scope.endedOptions.chart.height = UserInteractionFactory.plotHeight;
+      $scope.finishedInstancesOptions.chart.height = UserInteractionFactory.plotHeight;
+      
+      if(UserInteractionFactory.currentHeight/6>100) {
+        $scope.overviewMultibarChartOptions.chart.height = UserInteractionFactory.currentHeight/6;
+      } else {
+        $scope.overviewMultibarChartOptions.chart.height = 100;
+      }
+       
     }
     
 
@@ -132,10 +563,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
                 x: function(d){return d.key;},
                 y: function(d){return d.y;},
                 showLabels: true,
-                tooltipContent: function(key, y, e, graph){
-                  return '<div id="tooltipRunning"><h3>' + key + '</h3>' +
-                  '<p>count:<b>' +  y + '</b></p></div>';
-                  },
+                tooltip: {
+                	contentGenerator: function(click) {
+	              		return '<div id="tooltipRunning"><h3>' + click.data.key + '</h3>' +
+	                  '<p>count:<b>' +  click.data.y + '</b>'+
+	                  (click.data.assigned ? "<br/>assigned: <b>"+click.data.assigned+"</b>" : "") +
+	                  '</p></div>';
+                  }
+              	},
                 transitionDuration: 1500.0,
                 labelThreshold: 0.01,
                 pie: {   
@@ -155,7 +590,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
                   }
                 },
                 tooltips: true,
-                noData:"No process instances met the requirements",
                 legend: {
                     margin: {
                         top: 5,
@@ -171,7 +605,16 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
      * overwrite respective attributes per plot
      */
 		
+		/*
+		 * pie chart showing running instances is a copy
+		 */
+		
 		$scope.runningOptions = angular.copy(options);
+		
+		
+		/*
+		 * overwrite options for pie chart showing instances with incidents
+		 */    
 		
     $scope.failedOptions = angular.copy(options);
     $scope.failedOptions.chart.pie.dispatch.elementClick = function(t, u) {
@@ -187,16 +630,15 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
     };
 		
     $scope.endedOptions = angular.copy(options);
-    $scope.endedOptions.chart.tooltipContent = function(key, y, e, graph){
-      
-      return '<h3>' + key + '</h3>' +
-      '<p>count:<b>' +  y + '</b><br/>average Duration:<b>'+
-      (e.point.avg/1000/60).toFixed(2)+
-      ' min</b><br/>minimal Duration:<b>'+
-      (e.point.min/1000/60).toFixed(2)+
-      ' min</b><br/>maximal Duration:<b>'+
-      (e.point.max/1000/60).toFixed(2)+
-      ' min</b></p>'
+    $scope.endedOptions.chart.tooltip.contentGenerator = function(click) {
+      return '<h3>' + click.data.key + '</h3>' +
+      '<p>count:<b>' +  click.data.y + '</b><br/>stats (dd:hh:MM:ss.mmm)<br/>avg:<b>'+
+      $filter('formatTime')(click.data.avg)+
+      '</b><br/>min:<b>'+
+      $filter('formatTime')(click.data.min)+
+      '</b><br/>max:<b>'+
+      $filter('formatTime')(click.data.max)+
+      '</b></p>'
       
     };
     
@@ -214,17 +656,76 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
       
     };
     
-		function drillIn(event, plot) {
-		  
+    /*
+     * overwrite options for different type of chart - multibarchart
+     */
+    
+    $scope.overviewMultibarChartOptions = angular.copy(options);
+    $scope.overviewMultibarChartOptions.chart.type="multiBarChart";
+    $scope.overviewMultibarChartOptions.chart.x = function (d) {
+                                                    "use strict";
+                                                  return d.x };
+    $scope.overviewMultibarChartOptions.chart.y = function (d) {
+                                                    "use strict";
+                                                  return d.y };
+    $scope.overviewMultibarChartOptions.chart.height = UserInteractionFactory.currentHeight/6;   
+    $scope.overviewMultibarChartOptions.chart.showControls = false;
+    
+    $scope.overviewMultibarChartOptions.chart.tooltip.contentGenerator = function(d) {
+      var tooltip = '<h3>' + d.data.x + '</h3>';
+        if(d.data.avg) {
+          tooltip += '<p>finished instances:<b>' +  d.data.y + '</b><br/>avg:<b>'+
+            $filter('formatTime')(d.data.avg)+
+            '</b><br/>min: Duration:<b>'+
+            $filter('formatTime')(d.data.min)+
+            '</b><br/>max: Duration:<b>'+
+            $filter('formatTime')(d.data.max)+
+            '</b></p>'
+        } else {
+          tooltip+="<p>";
+          if(d.data.key=="running instances") {
+            tooltip+="running";
+          } else {
+            tooltip+="failed";
+          }
+          tooltip+=" instances: "+d.data.y+"</p>";
+        }
+      
+      return tooltip;
+      
+    };
+    
+    $scope.overviewMultibarChartOptions.chart.multibar = {
+        dispatch: {
+          elementClick : function(t,u) {
+          	showInstancesDetailsModal(t.data.x);
+          }
+        }
+    }
+
+    /*
+     * drill in / out for pie charts
+     */
+
+    
+		function drillIn(event, plot, originatorIsMultiBarChart) {
+		        
+      var keyForDataQuery = "";
+      if(originatorIsMultiBarChart && originatorIsMultiBarChart==true) {
+        keyForDataQuery = event.point.x;
+      } else {
+        keyForDataQuery = event.data.key;
+      }
+      
 		  switch(plot) {
 		    case "running":
 		      DataFactory
-		      .getAggregatedUserTasksByProcDefinition(event.label)
+		      .getAggregatedUserTasksByProcDefinition(keyForDataQuery)
 		      .then(function() {
-		        if(DataFactory.aggregatedUsertasksByProcDef[event.point.key].length>0) {
-		          refreshRunning(DataFactory.aggregatedUsertasksByProcDef[event.point.key]);
-	            $scope.runningPlotLabel="Running User Tasks of '"+event.point.key+"'";
-	            $scope.drilledInRunning=true;
+		        if(DataFactory.aggregatedUsertasksByProcDef[keyForDataQuery].length>0) {
+	            drillInRunning(DataFactory.aggregatedUsertasksByProcDef[keyForDataQuery]);
+              $scope.runningPlotLabel="Running User Tasks of '"+keyForDataQuery+"'";
+              $scope.drilledInRunning=true;
 		        } else {
 		          alert('No running user tasks available for process definition '+event.point.key+'.');
 		        }
@@ -232,12 +733,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		      break;
 		    case "ended":
 		      DataFactory
-		      .getHistoricActivityCountsDurationByProcDefKey(event.point.key)
+		      .getHistoricActivityCountsDurationByProcDefKey(keyForDataQuery)
 		      .then(function() {
-		        if(DataFactory.historicActivityCountsDurationByProcDefKey[event.point.key].length>0) {
-		          refreshEnded(DataFactory.historicActivityCountsDurationByProcDefKey[event.point.key]);
-	            $scope.endedPlotLabel= "Ended Activities of '"+event.point.key+"'";
-	            $scope.drilledInEnded=true;
+		        if(DataFactory.historicActivityCountsDurationByProcDefKey[keyForDataQuery].length>0) {
+		            drillInEnded(DataFactory.historicActivityCountsDurationByProcDefKey[keyForDataQuery]);
+                $scope.endedPlotLabel= "Ended Activities of '"+keyForDataQuery+"'";
+                $scope.drilledInEnded=true;
 		        } else {
 		          alert('No finished activities available for process definition '+event.point.key+'.');
 		        }
@@ -245,8 +746,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		      break;
 		    case "incidents":
 		      $scope.drilledInIncidents = true;
-		      setIncidentsDetailsByProcessDefinitionKey(event.point.key);
-		      $scope.failedPlotLabel = "Incidents of '"+event.point.key+"'";
+		      setIncidentsDetailsByProcessDefinitionKey(keyForDataQuery);
+		      $scope.failedPlotLabel = "Incidents of '"+keyForDataQuery+"'";
 		      break;
 		     default:
 		       break;
@@ -259,25 +760,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		  switch(plot) {
         case "running":
           $scope.running = $scope.runningProcInstances;
-          $scope.runningOptions.chart.tooltipContent = function(key, y, e, graph){
-            return '<h3>' + key + '</h3>' +
-            '<p>count:<b>' +  y + '</b></p>'
-            };
           $scope.runningPlotLabel="Running Instances";
           $scope.drilledInRunning = false;
           break;
         case "ended":
           $scope.ended = $scope.endedProcInstances;
-          $scope.endedOptions.chart.tooltipContent = function(key, y, e, graph){
-            return '<h3>' + key + '</h3>' +
-            '<p>count:<b>' +  y + '</b><br/>average Duration:<b>'+
-            (e.point.avg/1000/60).toFixed(2)+
-            ' min</b><br/>minimal Duration:<b>'+
-            (e.point.min/1000/60).toFixed(2)+
-            ' min</b><br/>maximal Duration:<b>'+
-            (e.point.max/1000/60).toFixed(2)+
-            ' min</b></p>'
-            };
           $scope.endedPlotLabel = "Ended Instances";
           $scope.drilledInEnded=false;
           break;
@@ -292,62 +779,71 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		  
 		}
 		
-		function refreshRunning(newDataArray) {
-		  var newRunning = [];
+		function drillInRunning(newDataArray) {
+		  
+		  var newPieChartRunning = [];
+		  
 		  for(i in newDataArray){
 		    if(newDataArray[i].count) {
-		      newRunning.push({"key":newDataArray[i].activityName,"y":newDataArray[i].count, "assigned":newDataArray[i].assigned});
+		      newPieChartRunning.push({"key":newDataArray[i].activityName,"y":newDataArray[i].count, "assigned":newDataArray[i].assigned});
 		    }
 		  }
 		  
-		  $scope.running = newRunning;
-		  $scope.runningOptions.chart.tooltipContent = function(key, y, e, graph){
-        return '<h3>' + key + '</h3>' +
-        '<p>count:<b>' +  y + '</b><br/>assigned:<b>'+
-        e.point.assigned+
-        '</b></p>'
-        };
+		  $scope.running = newPieChartRunning;
       
 		}
 		
-		function refreshEnded(newDataArray) {
+		function drillInEnded(newDataArray) {
 		  var activitiesToPlotForPieChart=[];
       for(i in newDataArray){
         if(newDataArray[i].count) {
-          activitiesToPlotForPieChart.push({
-            "key":newDataArray[i].activityName,
-            "y":newDataArray[i].count,
-            "type":newDataArray[i].type,
-            "avg":newDataArray[i].avgDuration,
-            "min":newDataArray[i].minDuration,
-            "max":newDataArray[i].maxDuration
-            });               
+        	//check if information for version do exist
+        	var versionInformationExist = false;
+        	var versionInformationIndex = -1;
+        	
+        	for(var j in activitiesToPlotForPieChart) {
+        		if(activitiesToPlotForPieChart[j].key==newDataArray[i].activityName) {
+        			versionInformationExist = true;
+        			versionInformationIndex = j;
+        		}
+        	}
+        	
+        	if(versionInformationExist) {
+        		activitiesToPlotForPieChart[j].y+=newDataArray[i].count;
+        		activitiesToPlotForPieChart[j].avg=(activitiesToPlotForPieChart[j].avg+newDataArray[i].avgDuration)/2
+        		activitiesToPlotForPieChart[j].min=(activitiesToPlotForPieChart[j].min+newDataArray[i].maxDuration)/2
+        		activitiesToPlotForPieChart[j].max=(activitiesToPlotForPieChart[j].max+newDataArray[i].maxDuration)/2
+        	} else {
+	          activitiesToPlotForPieChart.push({
+	            "key":newDataArray[i].activityName,
+	            "y":newDataArray[i].count,
+	            "type":newDataArray[i].type,
+	            "avg":newDataArray[i].avgDuration,
+	            "min":newDataArray[i].minDuration,
+	            "max":newDataArray[i].maxDuration
+	            });
+        	}
          }
         }
       $scope.ended = activitiesToPlotForPieChart;
-      $scope.endedOptions.chart.tooltipContent = function(key, y, e, graph){
-          return '<h3>' + key + '</h3>' +
-          '<p>count:<b>' +  y + '</b><br/>type:<b>'+
-          e.point.type+ 
-          '</b><br/>average Duration:<b>'+
-          (e.point.avg/1000/60).toFixed(2)+
-          'min</b><br/>minimal Duration:<b>'+
-          (e.point.min/1000/60).toFixed(2)+
-          'min</b><br/>maximal Duration:<b>'+
-          (e.point.max/1000/60).toFixed(2)+
-          'min</b></p>'
-        }
 		}
 				
 	
-		var setEndedPlotData = function(endedData) {
+		var setFinishedInstancesPlotData = function(endedData) {
 		  
+		  formattedDataEnded = [];
 		  var e = [];
 		  
       for(var i=0; i<endedData.length; i++){
         if($scope.myPlotsPluginSettings.endedPI.toPlot) {
           if(endedData[i].y) {
             if($scope.myPlotsPluginSettings.endedPI.keysToSkip.indexOf(endedData[i].key)==-1) {
+              formattedDataEnded.push({"x":endedData[i].key,
+                "y":endedData[i].y,
+                "avg":endedData[i].avg,
+                "min":endedData[i].min,
+                "max":endedData[i].max}
+              );
               e.push({"key":endedData[i].key,
                 "y":endedData[i].y,
                 "avg":endedData[i].avg,
@@ -358,19 +854,23 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
         }
       }
       
+
+      $scope.ended = e;      
       $scope.endedProcInstances = e;
-      $scope.ended = e;
+      $scope.finishedInstances = e;
       
 		}
 		
 		var setRunningPlotData = function(runningData) {
 		  
+		  formattedDataRunning = [];
 		  var r = [];
 		  
 		  for(key in runningData) {
 		    if($scope.myPlotsPluginSettings.runningPI.toPlot) {
 	        if(runningData.hasOwnProperty(key) && runningData[key]) {
 	          if($scope.myPlotsPluginSettings.runningPI.keysToSkip.indexOf(key)==-1) {
+	            formattedDataRunning.push({"x":key, "y":runningData[key]});
 	            r.push({"key":key,"y":runningData[key]});
 	          }
 	        }
@@ -384,12 +884,14 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		
 		var setIncidentPlotData = function(incidentData) {
 		  
+		  formattedDataIncidents = [];
 		  var f = [];
 		  
 		  for(key in incidentData) {
         if($scope.myPlotsPluginSettings.failedPI.toPlot) {
           if(incidentData.hasOwnProperty(key) && incidentData[key]) {
             if($scope.myPlotsPluginSettings.failedPI.keysToSkip.indexOf(key)==-1) {
+              formattedDataIncidents.push({"x":key, "y":incidentData[key]});
               f.push({"key":key,"y":incidentData[key]});
             }
           }
@@ -453,7 +955,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		
 		
 		
-		$scope.applyDataToPlots = function() {
+		$scope.getDataForPlots = function() {
 		  
 		  
 		  if($scope.showApplyChangesAlert) {
@@ -467,7 +969,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		  $scope.reload.showReloadProcessRunning = true;
 		  $scope.reload.showReloadProcessEnded = true;
 		  $scope.reload.showReloadProcessFailed = true;
-		  
+		  $scope.reload.showReloadMultibarChartRunning = true;
 		  
 		  
 		  /*
@@ -478,63 +980,97 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers',['../lib/d3','../lib/nv.
 		   * aggregated data for ended plot
 		   */
 		  
-		  DataFactory
-		  .getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey()
-		  .then(function(){
-        $scope.reload.showReloadProcessEnded = false;
-        $scope.showPlotDescriptions = true;
-        setEndedPlotData(DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey["data"]);
-		  });
-      
-      /*
-       * data for running and incidents
-       * TODO: failed jobs
-       * 
-       */
-      
-      DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi()
-      .then(function() {
-        
-        $scope.reload.showReloadProcessFailed = false;
-        $scope.reload.showReloadProcessRunning = false;
-        
-        var data = DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi;
-        
-        var resultRunning = {};
-        var resultIncidents = {};
-        
-        for(i in data) {
-          
-          if(!resultRunning[data[i].definition.key]) {
-            resultRunning[data[i].definition.key]=0;
-          }
-          
-          resultRunning[data[i].definition.key]+=data[i].instances;
-          
-          
-          if(!resultIncidents[data[i].definition.key]) {
-            resultIncidents[data[i].definition.key] = 0;
-          }
-            
-          if(data[i].incidents && data[i].incidents.length>0) {
-            for(j in data[i].incidents) {
-              resultIncidents[data[i].definition.key]+=data[i].incidents[j].incidentCount;  
-            }  
-          }
+		  $q.all([
+  		          DataFactory
+  		          .getAggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey()
+  		          .then(function(){
+  		            $scope.reload.showReloadProcessEnded = false;
+  		            $scope.showPlotDescriptions = true;
+  		            
+  		            setFinishedInstancesPlotData(DataFactory.aggregatedEndedProcessInstanceInformationOrderedByProcessDefinitionKey["data"]);
+  		            
+  		          }),
+  		          DataFactory.getAllProcessInstanceRunningIncidentsCountOByProcDefRestApi()
+  		          .then(function() {
+  		            
+  		            $scope.reload.showReloadProcessFailed = false;
+  		            $scope.reload.showReloadProcessRunning = false;
+  		            
+  		            var data = DataFactory.processInstanceRunningIncidentsCountOByProcDefRestApi;
+  		            
+  		            var resultRunning = {};
+  		            var resultIncidents = {};
+  		            
+  		            for(i in data) {
+  		              
+  		              if(!resultRunning[data[i].definition.key]) {
+  		                resultRunning[data[i].definition.key]=0;
+  		              }
+  		              
+  		              resultRunning[data[i].definition.key]+=data[i].instances;
+  		              
+  		              
+  		              if(!resultIncidents[data[i].definition.key]) {
+  		                resultIncidents[data[i].definition.key] = 0;
+  		              }
+  		                
+  		              if(data[i].incidents && data[i].incidents.length>0) {
+  		                for(j in data[i].incidents) {
+  		                  resultIncidents[data[i].definition.key]+=data[i].incidents[j].incidentCount;  
+  		                }  
+  		              }
+  
+  		              
+  		            }
+  		            
+  		            setRunningPlotData(resultRunning);
+  		            setIncidentPlotData(resultIncidents);
+  		            
+  		          })	          		          
+		          ]).then(function() {
+		            console.debug("got running, finished and incident data! - prepare multibarchart");
+		            
+		            $scope.startedEndedRunningPlotData = [];
+		            
+		            if(formattedDataRunning.length
+		                 && formattedDataRunning.length>0) {
+		              
+		              $scope.startedEndedRunningPlotData.push({
+	                  values : formattedDataRunning,
+	                  key:"running instances"
+	                });
+		              
+		            }
+		            
+		            if(formattedDataEnded.length
+                    && formattedDataEnded.length>0) {
+		              
+		              $scope.startedEndedRunningPlotData.push({
+                    values : formattedDataEnded,
+                    key:"finished instances"
+                  });
+                 
+               }
+		            
+		            if(formattedDataIncidents.length
+                    && formattedDataIncidents.length>0) {
+                 
+		              $scope.startedEndedRunningPlotData.push({
+                    values : formattedDataIncidents,
+                    key:"instances with incidents"
+                  });
+		              
+               }
+		            
+		    	      $scope.reload.showReloadProcessFailed=false;
+		    	      $scope.reload.showReloadMultibarChartRunning=false;
+		            
+		    	      console.debug($scope.startedEndedRunningPlotData);
 
-          
+		            
+		          });
+
         }
-        
-        setRunningPlotData(resultRunning);
-        setIncidentPlotData(resultIncidents);
-        
-      });
-		  
-      if($scope.cacheKiller) {
-        $scope.stopCacheKiller();
-      }
-		  		  
-		}
 
 	}])
 });
