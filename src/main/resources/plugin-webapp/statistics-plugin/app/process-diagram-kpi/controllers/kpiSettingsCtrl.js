@@ -20,7 +20,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		var secondElemStartDateSumAvg = 0;
 		var secondElemEndDateSumAvg = 0;
-
+		
+		
 		$scope.erg = "00:00:00:00";
 		
 		$scope.checkboxModel = {
@@ -45,10 +46,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	
 			if(calculating == true) {
 				
-				var s = ""; //StartDate
-				var e = "";//EndDate
+				var s = ""; 
+				var e = "";
 				
-				//console.log("firstElemStartDateSumAvg: " + firstElemStartDateSumAvg + ", firstElemEndDateSumAvg: " + firstElemEndDateSumAvg + ", secondElemStartDateSumAvg: " + secondElemStartDateSumAvg + ", secondElemEndDateSumAvg: " + secondElemEndDateSumAvg);
+				
 
 				if(firstElemStartDateSumAvg > 0) {
 					
@@ -82,7 +83,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				
 
 				
-			//	console.log("s: " + s + ", e: " + e);
+			
 				
 				var start = new Date(s);
 				var end = new Date(e);
@@ -162,10 +163,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					DataFactory.getAllHistoricActivitiesDataByProcInstId(activity.processInstanceId, $scope.el[0].id).
 					then(function(){
 						
-						//EndElement
+						
 						if(activity.endTime != null) {
 							
-						//	console.log(activity.activityId + ": " + activity.startTime + ", " + activity.endTime + ", " + activity.processInstanceId);
 							
 							if($scope.checkboxModel.exclusive_end == false) {
 								
@@ -184,10 +184,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						
 						angular.forEach(dat, function(act, ind, li){
 							
-							//StartElement
+						
 							if(activity.endTime != null) {
 								
-							//	console.log(act.activityId + ": " +  act.startTime + ", " + act.endTime + ", " + act.processInstanceId);
+							
 								
 								if($scope.checkboxModel.exclusive_start == false) {
 									
@@ -203,7 +203,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						
 						});
 						
-					//console.log("firstElemStartDateSum: " + firstElemStartDateSum + ", firstElemEndDateSum: " + firstElemEndDateSum + ", secondElemStartDateSum: " + secondElemStartDateSum + ", secondElemEndDateSum: " + secondElemEndDateSum + "; i: " + i + ", j: " + j + ", k: " + k + ", l: " + l);
 						
 						if((firstElemStartDateSum > 0) && (k != 0)) {
 							
