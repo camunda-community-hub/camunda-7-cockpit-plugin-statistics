@@ -6,7 +6,7 @@
 	#outTab tr {height: 40px}
 	#outTab th {}
 	#outTab td {}
-	#outTab td:first-of-type {width:135px;}
+	#outTab td:first-of-type {width:136px;}
 	#outTab td, th {padding: 5px;}
 
 	#bad {fill: #7BCEFF;}
@@ -50,19 +50,34 @@
 <div class="modal-body">
 	<tabset>
 		<tab heading="Duration" active="$parent.durationTab">
+			<div ng-show="infoUp" style="margin-top: 5px;">
+				<ul>
+					<li><strong>Inclusive</strong><br>
+						If you like to take account of an activity, don't select the box next to it.
+                   	</li>
+					<li><strong>Exclusive</strong><br>
+                    	If you don't like to take account of an activity, then select the box next to it. 
+					</li>
+					<li>
+						<br/>
+						Are both boxes unchecked, they are inclusive.  
+					</li>
+				</ul>
+			
+			</div>
 			<table id="outTab">
 				<tr>
 					<th></th>
 					<th></th>
-					<th><b class="pull-right">Exclusive</b></th>
+					<th><div><a style="margin-top: 3px; margin-left: 5px;" class="pull-right glyphicon glyphicon-question-sign" ng-click="infoUp=!infoUp"></a><b class="pull-right">Exclusive</b></div></th>
 				</tr>
 				<tr>
-					<td><b>Startelement (&empty;): </b></td>
+					<td><b>Start Element (&empty;): </b></td>
 					<td>{{el[0].name}}</td>
 					<td><input type="checkbox" ng-model="checkboxModel.exclusive_start" id="exclusive_start" value="exclusive_start" class="pull-right"/></td>
 				</tr>
 				<tr>
-					<td><b>Endelement (&empty;): </b></td>
+					<td><b>End Element &nbsp;(&empty;): </b></td>
 					<td>{{el[1].name}}</td>
 					<td><input type="checkbox" ng-model="checkboxModel.exclusive_end" id="exclusive_end" value="exclusive_end" class="pull-right"/></td>
 				</tr>
@@ -71,7 +86,21 @@
 			<hr>
 			<b>Duration (&empty;) between:</b>
 			<div id="output">
+			<div><a class="pull-left glyphicon glyphicon-question-sign" ng-click="infoBottom=!infoBottom"></a></div>
 				<span style='text-align: right; display: block;'>{{erg}} (dd:hh:mm:ss)</span>
+			</div>
+	
+			<div ng-show="infoBottom" style="margin-top: 5px;">
+				
+						<table style="padding:0">
+							<tr><th>Start Element</th><th>End Element</th><th>Start Element - End Element</th></tr>
+							<tr><td>Exclusive</td><td>Inclusive</td><td>Start Date - Start Date</td></tr>
+							<tr><td>Exclusive</td><td>Exclusive</td><td>Start Date - End Date</td></tr>
+							<tr><td>Inclusive</td><td>Exclusive</td><td>End Date - End Date</td></tr>
+							<tr><td>Inclusive</td><td>Inclusive</td><td>End Date - Start Date</td></tr>
+						</table>
+                 
+				<hr>
 			</div>
 		</tab>
 		<tab heading="Flow Control" active="$parent.flowTab" style="display:none">
@@ -85,6 +114,7 @@
 			<hr>
 			</table>
 			<hr>
+
 		</tab>
 	</tabset>
 </div>

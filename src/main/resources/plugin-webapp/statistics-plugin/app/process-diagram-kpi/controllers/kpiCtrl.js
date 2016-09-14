@@ -25,6 +25,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 					animation: false,
 					backdrop: false
 				});
+				
+				StateService.resetSelectedElement();
 												
 			} else {
 				StateService.setMenuState(false);
