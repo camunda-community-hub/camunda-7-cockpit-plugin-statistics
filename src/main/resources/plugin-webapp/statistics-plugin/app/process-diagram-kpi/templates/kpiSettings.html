@@ -14,6 +14,7 @@
 
 	#howTo {}
 	#howTo li {padding: 5px;}
+	#infoTable th {padding:0}
 
 /*
 
@@ -49,20 +50,30 @@
 </div>
 <div class="modal-body">
 	<tabset>
-		<tab heading="Duration" active="$parent.durationTab">
+		<tab heading="Average duration between two Elements" active="$parent.durationTab">
 			<div ng-show="infoUp" style="margin-top: 5px;">
-				<ul>
-					<li><strong>Inclusive</strong><br>
-						If you like to take account of an activity, don't select the box next to it.
-                   	</li>
-					<li><strong>Exclusive</strong><br>
-                    	If you don't like to take account of an activity, then select the box next to it. 
-					</li>
+
+					<ul>
 					<li>
-						<br/>
-						Are both boxes unchecked, they are inclusive.  
+						It is necessary to know the difference between inclusive and exclusive, because Camunda needs to know,
+						which selected element you like to include in your calculation.
+						<br><br>
+						<strong>Inclusive</strong><br>
+						If you like to take account of an activity, don't select the box next to it. <br>
+						<strong>Exclusive</strong><br>
+						If you don't like to take account of an activity, then select the box next to it. <br><br>
+
+						Are both boxes unchecked, they are inclusive and will be included in your calculation.
 					</li>
-				</ul>
+					</ul>
+						<table id="infoTable">
+							<tr><th>Start Element</th><th>End Element</th><th>End Element - Start Element</th></tr>
+							<tr><td>Exclusive</td><td>Inclusive</td><td>End Datetime - End Datetime</td></tr>
+							<tr><td>Exclusive</td><td>Exclusive</td><td>Start Datetime - End Datetime</td></tr>
+							<tr><td>Inclusive</td><td>Exclusive</td><td>Start Datetime - Start Datetime</td></tr>
+							<tr><td>Inclusive</td><td>Inclusive</td><td>End Datetime - Start Datetime</td></tr>
+						</table>
+				
 			
 			</div>
 			<table id="outTab">
@@ -92,13 +103,19 @@
 	
 			<div ng-show="infoBottom" style="margin-top: 5px;">
 				
-						<table style="padding:0">
-							<tr><th>Start Element</th><th>End Element</th><th>Start Element - End Element</th></tr>
-							<tr><td>Exclusive</td><td>Inclusive</td><td>Start Date - Start Date</td></tr>
-							<tr><td>Exclusive</td><td>Exclusive</td><td>Start Date - End Date</td></tr>
-							<tr><td>Inclusive</td><td>Exclusive</td><td>End Date - End Date</td></tr>
-							<tr><td>Inclusive</td><td>Inclusive</td><td>End Date - Start Date</td></tr>
-						</table>
+			
+
+Camunda calculates the average duration by accumulating all equivalent Datetimes of their instances of 
+each selected Activity. 
+<br><br>
+It depends on which Mode you have selected (see top level, Inclusive/Exlusive).
+After that, each of these two Date sums will divide by their quantity to get the average Datetime. 
+<br><br>
+Now, Camunda can substract them eachother to get the final Result.It is important in which order you select your activities. The KPI-Extension will subtract the start date time of the end date time. If you switch them, you will get a wrong result.
+<br><br>
+The Result predicates the time interval between your selected activities.
+
+
                  
 				<hr>
 			</div>
