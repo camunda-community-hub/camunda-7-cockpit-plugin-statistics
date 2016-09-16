@@ -37,7 +37,7 @@
 					<form name="timePeriodSettings"><input date-range-picker class="form-control date-picker width-300" type="text" ng-model="timePeriod" options="timePeriodOptions" required style="width:200px; display: inline; margin-right: 10px;" ng-disabled="completeTimePeriod"/></form>
 				</td>
 				<td class="loading">
-					<img ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/loading.gif">
+					<img class="loading-gif" ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/styles/loading.gif">
 				</td>
 				<td class="apply">
 					<button class="btn btn-primary" ng-click="applyTimePeriodSelection()">Apply</button>
@@ -83,7 +83,7 @@
 					<form name="variableSettings"><select ng-model="variable" ng-options="name as (name + ' [' + type + ']') for (name, type) in variableOptions" required class="width-300"/></form>
 				</td>
 				<td class="loading">
-					<img ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/process-diagram-overlay/templates/loading.gif">
+					<img class="loading-gif" ng-show="isLoadingVariables" src="../../../api/cockpit/plugin/statistics-plugin/static/app/styles/loading.gif">
 				</td>
 				<td class="apply">
 					<button class="btn btn-primary" ng-click="applyVariableSelection()">Apply</button>
