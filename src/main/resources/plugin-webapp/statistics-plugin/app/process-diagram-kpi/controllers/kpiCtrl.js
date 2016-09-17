@@ -1,7 +1,7 @@
 'use strict'
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('kpiCtrl', ['$scope', '$modal','StateService', function($scope, $modal, StateService){
+	module.controller('kpiCtrl', ['$scope', '$modal','StateService', 'DataFactory', function($scope, $modal, StateService, DataFactory){
 
 		var modalInstance = null;
 		
@@ -30,8 +30,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 												
 			} else {
 				StateService.setMenuState(false);
-				modalInstance.close();
-				modalInstance = null;				
+				closeModal();
 			}
 		};
 		

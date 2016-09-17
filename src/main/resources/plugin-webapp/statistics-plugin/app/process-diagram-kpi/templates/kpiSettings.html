@@ -15,6 +15,7 @@
 	#howTo {}
 	#howTo li {padding: 5px;}
 	#infoTable th {padding:0}
+    .bold {font-weight: bold;}
 
 /*
 
@@ -51,8 +52,9 @@
 <div class="modal-body">
 	<tabset>
 		<tab heading="Average duration between two Elements" active="$parent.durationTab">
-			<div ng-show="infoUp" style="margin-top: 5px;">
 
+<b style="font-size: 12pt">Select the start and end element from process definiton</b>
+<div ng-show="infoUp" style="margin-top: 5px;">
 					<ul>
 					<li>
 						It is necessary to know the difference between inclusive and exclusive, because Camunda needs to know,
@@ -76,6 +78,8 @@
 				
 			
 			</div>
+
+			
 			<table id="outTab">
 				<tr>
 					<th></th>
@@ -96,9 +100,10 @@
 			</table>
 			<hr>
 			<b>Duration (&empty;) between:</b>
+			
 			<div id="output">
 			<div><a class="pull-left glyphicon glyphicon-question-sign" ng-click="infoBottom=!infoBottom"></a></div>
-				<span style='text-align: right; display: block;'>{{erg}} (dd:hh:mm:ss)</span>
+				<span style='text-align: right; display: block;height:16px;'><div class="text-danger bold" ng-show="isDataMissing">Failure: Please select only elements within the same path.</div><p ng-show="showDurationResult"> {{erg}} (dd:hh:mm:ss)</p></span>
 			</div>
 	
 			<div ng-show="infoBottom" style="margin-top: 5px;">
