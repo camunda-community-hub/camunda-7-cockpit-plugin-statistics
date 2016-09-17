@@ -21,6 +21,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		var secondElemStartDateSumAvg = 0;
 		var secondElemEndDateSumAvg = 0;
 		
+		$scope.showDurationResult = false;
+		$scope.isDataMissing = false;
 		
 		$scope.erg = "00:00:00:00";
 		
@@ -48,7 +50,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				
 				var s = ""; 
 				var e = "";
-				
 				
 
 				if(firstElemStartDateSumAvg > 0) {
@@ -83,8 +84,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				
 
 				
-			
-				
 				var start = new Date(s);
 				var end = new Date(e);
 
@@ -101,6 +100,11 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				var seconds = delta % 60; 
 
 				$scope.erg = days + ":" + hours + ":" + minutes + ":" + Math.floor(seconds);
+				
+				if($scope.erg.indexOf("NaN") == -1)
+				$scope.showDurationResult = true;
+				else
+				$scope.isDataMissing = true;
 			}	
 		}
 		
@@ -112,17 +116,25 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.reset = function() {
 			
 			calculating = false;
-			
-			$scope.el = [];
+			StateService.resetSelectedElement();
+			//$scope.el = [];
+			$scope.el = StateService.getSelectedElement();
 			firstElemStartDateSumAvg = 0;
 			firstElemEndDateSumAvg = 0;
 			
 			secondElemStartDateSumAvg = 0;
 			secondElemEndDateSumAvg = 0;
 			$scope.erg =  "00:00:00:00";
+			$scope.showDurationResult = false;
+			$scope.isDataMissing = false;
 	
+			$scope.checkboxModel = {
+					 
+					 exclusive_start : false,
+					 exclusive_end : false
+			 };
 
-			StateService.resetSelectedElement();
+			
 			
 			$(".kpiElements").click(function(){
 				
