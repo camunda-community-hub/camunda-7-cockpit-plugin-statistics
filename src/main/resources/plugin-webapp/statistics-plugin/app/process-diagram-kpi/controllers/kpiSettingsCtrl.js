@@ -23,6 +23,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.showDurationResult = false;
 		$scope.isDataMissing = false;
+		$scope.isStillLoading = false;
 		
 		$scope.erg = "00:00:00:00";
 		
@@ -45,7 +46,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 		$scope.toDate = function() {
 			
-	
+			
 			if(calculating == true) {
 				
 				var s = ""; 
@@ -101,10 +102,16 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 				$scope.erg = days + ":" + hours + ":" + minutes + ":" + Math.floor(seconds);
 				
-				if($scope.erg.indexOf("NaN") == -1)
-				$scope.showDurationResult = true;
-				else
-				$scope.isDataMissing = true;
+				if($scope.erg.indexOf("NaN") == -1) {
+					
+					$scope.isStillLoading = false;
+					$scope.showDurationResult = true;
+				}
+				else {
+					
+				   $scope.isStillLoading = false;
+				   $scope.isDataMissing = true;
+				}
 			}	
 		}
 		
@@ -144,6 +151,8 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.calculate = function() {
 			
+			$scope.isStillLoading = true;
+			
 			firstElemStartDateSumAvg = 0;
 			firstElemEndDateSumAvg = 0;
 			
@@ -169,15 +178,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				var secondElemEndDateSum = 0;
 				
 				var data = DataFactory.allHistoricActivitiesDataByProcDefId[DataFactory.processDefinitionId];
-				
+
 				angular.forEach(data, function(activity, index, list) {
 					
 					DataFactory.getAllHistoricActivitiesDataByProcInstId(activity.processInstanceId, $scope.el[0].id).
 					then(function(){
 						
-						
 						if(activity.endTime != null) {
-							
 							
 							if($scope.checkboxModel.exclusive_end == false) {
 								
@@ -193,27 +200,27 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 						}
 						
 						var dat = DataFactory.allHistoricActivitiesDataByProcInstId[activity.processInstanceId];
-						
-						angular.forEach(dat, function(act, ind, li){
+
+						if(dat.length > 0) {
 							
-						
-							if(activity.endTime != null) {
-								
+							angular.forEach(dat, function(act, ind, li){
 							
+								if(activity.endTime != null) {
 								
-								if($scope.checkboxModel.exclusive_start == false) {
+									if($scope.checkboxModel.exclusive_start == false) {
 									
-									firstElemStartDateSum += (new Date(act.startTime) - 0);
-									k++;
+										firstElemStartDateSum += (new Date(act.startTime) - 0);
+										k++;
 									
-								} else if ($scope.checkboxModel.exclusive_start == true)  {
+									} else if ($scope.checkboxModel.exclusive_start == true)  {
 									
-									firstElemEndDateSum += (new Date(act.endTime) - 0);
-									l++;
+										firstElemEndDateSum += (new Date(act.endTime) - 0);
+										l++;
+									}
 								}
-							}
 						
-						});
+							});
+						}
 						
 						
 						if((firstElemStartDateSum > 0) && (k != 0)) {
