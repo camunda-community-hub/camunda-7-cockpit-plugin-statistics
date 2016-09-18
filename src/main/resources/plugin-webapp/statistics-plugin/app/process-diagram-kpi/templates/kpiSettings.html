@@ -53,7 +53,7 @@
 	<tabset>
 		<tab heading="Average duration between two Elements" active="$parent.durationTab">
 
-<div>Select start and end element from process definiton.</div>
+			<div>Select start and end element from process definiton.</div>
 			
 			<table id="outTab">
 				<tr>
@@ -98,7 +98,11 @@
 			
 			<div id="output">
 			<div><a class="pull-left glyphicon glyphicon-question-sign" ng-click="infoBottom=!infoBottom"></a></div>
-				<span style='text-align: right; display: block;height:16px;'><div class="text-danger bold" ng-show="isDataMissing">Failure: Please select only elements within the same path.</div><p ng-show="showDurationResult"> {{erg}} (dd:hh:mm:ss)</p><img class="loading-gif" ng-show="isStillLoading" style="margin-top:-4px"  src="../../../api/cockpit/plugin/statistics-plugin/static/app/styles/loading.gif"></span>
+				<span style='text-align: right; display: block;height:16px;'>
+					<div class="text-danger" ng-show="isDataMissing">Please select only elements within the same path.</div>
+					<p ng-show="showDurationResult"> {{erg}} (dd:hh:mm:ss)</p>
+					<img class="loading-gif" ng-show="isCalculatingResult" src="../../../api/cockpit/plugin/statistics-plugin/static/app/styles/loading.gif" style="margin-top: -5px;">
+				</span>
 			</div>
 	
 			<div ng-show="infoBottom" style="margin-top: 5px;">
@@ -127,7 +131,7 @@
 </div>
 <div class="modal-footer">
 	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-	<button class="pull-left btn btn-warning" ng-click="calculate()">Calculate</button>
+	<button class="pull-left btn btn-warning" ng-click="calculate()" ng-disabled="!areElementsSelected()">Calculate</button>
 	<button class="pull-left btn btn-warning" ng-click="reset()">Reset</button>
 </div>
 </script>
