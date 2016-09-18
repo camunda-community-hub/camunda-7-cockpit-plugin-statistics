@@ -23,7 +23,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.showDurationResult = false;
 		$scope.isDataMissing = false;
-		$scope.isStillLoading = false;
+		$scope.isCalculatingResult = false;
 		
 		$scope.erg = "00:00:00:00";
 		
@@ -43,6 +43,13 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			return (leftOrRight == 'right') ? type_short.substring(0,1).toLowerCase()+type_short.substring(1) : type_short.substring(0,0).toLowerCase()+type_short.substring(0);
 		}
 		
+		$scope.areElementsSelected = function() {
+			if(StateService.getSelectedElement().length === 2) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 
 		$scope.toDate = function() {
 			
@@ -102,14 +109,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
 				$scope.erg = days + ":" + hours + ":" + minutes + ":" + Math.floor(seconds);
 				
-				if($scope.erg.indexOf("NaN") == -1) {
-					
-					$scope.isStillLoading = false;
+				if($scope.erg.indexOf("NaN") == -1) {					
 					$scope.showDurationResult = true;
 				}
-				else {
-					
-				   $scope.isStillLoading = false;
+				else {			
 				   $scope.isDataMissing = true;
 				}
 			}	
@@ -151,7 +154,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.calculate = function() {
 			
-			$scope.isStillLoading = true;
+			$scope.isCalculatingResult = true;
 			
 			firstElemStartDateSumAvg = 0;
 			firstElemEndDateSumAvg = 0;
@@ -240,13 +243,17 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 							
 							secondElemEndDateSumAvg =  secondElemEndDateSum / i; 
 						}
-
+						
+						if(data.length-1 === index) {
+							calculating = true;
+							$scope.isCalculatingResult = false;
+						}
+						
 						$scope.toDate();
+						
 					});
 				});
 			});
-			
-			calculating = true;
 		};
 		
 		
