@@ -98,7 +98,7 @@
 			
 			<div id="output">
 			<div><a class="pull-left glyphicon glyphicon-question-sign" ng-click="infoBottom=!infoBottom"></a></div>
-				<span style='text-align: right; display: block;height:16px;'><div class="text-danger bold" ng-show="isDataMissing">Failure: Please select only elements within the same path.</div><p ng-show="showDurationResult"> {{erg}} (dd:hh:mm:ss)</p></span>
+				<span style='text-align: right; display: block;height:16px;'><div class="text-danger bold" ng-show="isDataMissing">Failure: Please select only elements within the same path.</div><p ng-show="showDurationResult"> {{erg}} (dd:hh:mm:ss)</p><img class="loading-gif" ng-show="isStillLoading" style="margin-top:-4px"  src="../../../api/cockpit/plugin/statistics-plugin/static/app/styles/loading.gif"></span>
 			</div>
 	
 			<div ng-show="infoBottom" style="margin-top: 5px;">
