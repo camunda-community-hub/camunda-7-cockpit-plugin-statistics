@@ -1,7 +1,7 @@
 'use strict'
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('kpiCtrl', ['$scope', '$modal','StateService', 'DataFactory', function($scope, $modal, StateService, DataFactory){
+	module.controller('kpiCtrl', ['$scope', '$modal', '$modalStack', 'StateService', 'DataFactory', function($scope, $modal, $modalStack, StateService, DataFactory){
 
 		var modalInstance = null;
 		
@@ -16,6 +16,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		$scope.toggleMenu = function() {
 			
 			if(!modalInstance) {
+				// close other modals
+				$modalStack.dismissAll('opened another modal');
+				
 				StateService.setMenuState(true);
 				modalInstance = $modal.open({
 					templateUrl: 'kpiSettings.html',
