@@ -1,7 +1,7 @@
 'use strict'
 ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 
-	module.controller('overlayMenuCtrl', ['$scope', '$rootScope', '$modal', 'DataFactory', function($scope, $rootScope, $modal, DataFactory){
+	module.controller('overlayMenuCtrl', ['$scope', '$rootScope', '$modal', '$modalStack', 'DataFactory', function($scope, $rootScope, $modal, $modalStack, DataFactory){
 
 		var menuInstance = null;
 
@@ -13,6 +13,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		$scope.toggleMenu = function() {
 			if(!menuInstance) {
+				// close other modals
+				$modalStack.dismissAll('opened another modal');
+				
 				menuInstance = $modal.open({
 					templateUrl: 'processDiagramSettingsModal.html',
 					controller: 'processDiagramSettingsCtrl',
@@ -31,6 +34,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		};
 		
 		$scope.toggleVariableStatusModal = function() {
+			
 			$modal.open({
 				templateUrl: 'variableStatusModal.html',
 				controller: 'variableStatusModalCtrl',

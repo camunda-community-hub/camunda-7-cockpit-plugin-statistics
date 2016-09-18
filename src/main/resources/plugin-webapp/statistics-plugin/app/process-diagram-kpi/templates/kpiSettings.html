@@ -14,7 +14,7 @@
 
 	#howTo {}
 	#howTo li {padding: 5px;}
-	#infoTable th {padding:0}
+	#infoTable tr {height:20px}
     .bold {font-weight: bold;}
 
 /*
@@ -53,38 +53,33 @@
 	<tabset>
 		<tab heading="Average duration between two Elements" active="$parent.durationTab">
 
-<b style="font-size: 12pt">Select the start and end element from process definiton</b>
-<div ng-show="infoUp" style="margin-top: 5px;">
-					<ul>
-					<li>
-						It is necessary to know the difference between inclusive and exclusive, because Camunda needs to know,
-						which selected element you like to include in your calculation.
-						<br><br>
-						<strong>Inclusive</strong><br>
-						If you like to take account of an activity, don't select the box next to it. <br>
-						<strong>Exclusive</strong><br>
-						If you don't like to take account of an activity, then select the box next to it. <br><br>
-
-						Are both boxes unchecked, they are inclusive and will be included in your calculation.
-					</li>
-					</ul>
-						<table id="infoTable">
-							<tr><th>Start Element</th><th>End Element</th><th>End Element - Start Element</th></tr>
-							<tr><td>Exclusive</td><td>Inclusive</td><td>End Datetime - End Datetime</td></tr>
-							<tr><td>Exclusive</td><td>Exclusive</td><td>Start Datetime - End Datetime</td></tr>
-							<tr><td>Inclusive</td><td>Exclusive</td><td>Start Datetime - Start Datetime</td></tr>
-							<tr><td>Inclusive</td><td>Inclusive</td><td>End Datetime - Start Datetime</td></tr>
-						</table>
-				
-			
-			</div>
-
+<div>Select start and end element from process definiton.</div>
 			
 			<table id="outTab">
 				<tr>
 					<th></th>
 					<th></th>
 					<th><div><a style="margin-top: 3px; margin-left: 5px;" class="pull-right glyphicon glyphicon-question-sign" ng-click="infoUp=!infoUp"></a><b class="pull-right">Exclusive</b></div></th>
+				</tr>
+				<tr ng-show="infoUp">
+					<td colspan="3">
+						<div style="margin-top: 5px;">
+							<ul>
+								<li>
+								If the box next to an element is checked, the element is excluded, i.e. the duration of the element itself is not taken into account for the calculation. <br />
+								If the box is unchecked, the element is included and therefore its duration is taken into account.
+								</li>
+							</ul>
+							<table id="infoTable">
+								<tr><th>Start Element</th><th>End Element</th><th>End Element - Start Element</th></tr>
+								<tr><td>Exclusive</td><td>Inclusive</td><td>End Datetime - End Datetime</td></tr>
+								<tr><td>Exclusive</td><td>Exclusive</td><td>Start Datetime - End Datetime</td></tr>
+								<tr><td>Inclusive</td><td>Exclusive</td><td>Start Datetime - Start Datetime</td></tr>
+								<tr><td>Inclusive</td><td>Inclusive</td><td>End Datetime - Start Datetime</td></tr>
+							</table>
+							<hr />
+						</div>
+					</td>
 				</tr>
 				<tr>
 					<td><b>Start Element (&empty;): </b></td>
@@ -108,21 +103,11 @@
 	
 			<div ng-show="infoBottom" style="margin-top: 5px;">
 				
-			
+				The average duration between two elements is calculated by accumulating all datetimes of the instances of each selected element - if 'exclusive' is not selected for that element.<br/> 
+				After that, each of these two sums is divided by their quantity to get the average datetime for the start and for the end element.<br/> 
+				Now, the difference is calculated and the result represents the average time interval between the two elements.<br/>
+				It is important in which order you select your elements. The datetime of the start element will be substracted from the datetime of the end element. If you switch them, you will get a wrong result.
 
-Camunda calculates the average duration by accumulating all equivalent Datetimes of their instances of 
-each selected Activity. 
-<br><br>
-It depends on which Mode you have selected (see top level, Inclusive/Exlusive).
-After that, each of these two Date sums will divide by their quantity to get the average Datetime. 
-<br><br>
-Now, Camunda can substract them eachother to get the final Result.It is important in which order you select your activities. The KPI-Extension will subtract the start date time of the end date time. If you switch them, you will get a wrong result.
-<br><br>
-The Result predicates the time interval between your selected activities.
-
-
-                 
-				<hr>
 			</div>
 		</tab>
 		<tab heading="Flow Control" active="$parent.flowTab" style="display:none">
