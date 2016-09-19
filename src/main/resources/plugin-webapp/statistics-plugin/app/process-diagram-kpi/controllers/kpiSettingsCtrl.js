@@ -9,39 +9,21 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 	});
 		
 	module.controller('kpiSettingsCtrl', ['$scope', '$location', '$http', 'Uri', '$modalInstance', 'DataFactory', 'SettingsFactory','$modal', '$filter','StateService', function($scope, $location, $http, Uri, $modalInstance, DataFactory, SettingsFactory,$modal, $filter, StateService){
-		
-		var bpmnElements = [];
-		
-		$scope.types = [];
+			
 		$scope.el = StateService.getSelectedElement();
-		
-		var firstElemStartDateSumAvg = 0;
-		var firstElemEndDateSumAvg = 0;
-		
-		var secondElemStartDateSumAvg = 0;
-		var secondElemEndDateSumAvg = 0;
-		
+			
 		$scope.showDurationResult = false;
 		$scope.isDataMissing = false;
+		$scope.isIncorrectSequence = false;
 		$scope.isCalculatingResult = false;
 		
 		$scope.erg = "00:00:00:00";
 		
-		$scope.checkboxModel = {
-				 
+		$scope.checkboxModel = {				 
 				 exclusive_start : false,
 				 exclusive_end : false
 		 };
 		
-		var calculating = false;
-		
-
-		function getShortType(type_long, leftOrRight) {
-			
-			var type_short =  (leftOrRight == 'right') ? $filter('split')(type_long, ':', 1) : $filter('split')(type_long, ':', 0) ;
-			
-			return (leftOrRight == 'right') ? type_short.substring(0,1).toLowerCase()+type_short.substring(1) : type_short.substring(0,0).toLowerCase()+type_short.substring(0);
-		}
 		
 		$scope.areElementsSelected = function() {
 			if(StateService.getSelectedElement().length === 2) {
@@ -50,212 +32,6 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 				return false;
 			}
 		}
-
-		$scope.toDate = function() {
-			
-			
-			if(calculating == true) {
-				
-				var s = ""; 
-				var e = "";
-				
-
-				if(firstElemStartDateSumAvg > 0) {
-					
-					s = firstElemStartDateSumAvg;
-				}
-				else if(secondElemStartDateSumAvg > 0) {
-					
-					s = secondElemStartDateSumAvg;
-				}
-				
-				 if(firstElemEndDateSumAvg > 0) {
-					
-					e = firstElemEndDateSumAvg;
-				}
-				 else if(secondElemEndDateSumAvg > 0) {
-					
-					e = secondElemEndDateSumAvg;
-				}
-				
-				if(((firstElemStartDateSumAvg <= 0) && (secondElemStartDateSumAvg <= 0)) && ( (firstElemEndDateSumAvg > 0) && (secondElemEndDateSumAvg > 0))) {
-					
-					s = firstElemEndDateSumAvg;
-					e = secondElemEndDateSumAvg;
-				}
-				
-				else if(((firstElemStartDateSumAvg > 0) && (secondElemStartDateSumAvg > 0)) && ( (firstElemEndDateSumAvg <= 0) && (secondElemEndDateSumAvg <= 0))) {
-					
-					s = firstElemStartDateSumAvg;
-					e = secondElemStartDateSumAvg;
-				}
-				
-
-				
-				var start = new Date(s);
-				var end = new Date(e);
-
-				var delta = Math.abs(end - start) / 1000;
-				var days = Math.floor(delta / 86400);
-				delta -= days * 86400;
-
-				var hours = Math.floor(delta / 3600) % 24;
-				delta -= hours * 3600;
-
-				var minutes = Math.floor(delta / 60) % 60;
-				delta -= minutes * 60;
-
-				var seconds = delta % 60; 
-
-				$scope.erg = days + ":" + hours + ":" + minutes + ":" + Math.floor(seconds);
-				
-				if($scope.erg.indexOf("NaN") == -1) {					
-					$scope.showDurationResult = true;
-				}
-				else {			
-				   $scope.isDataMissing = true;
-				}
-			}	
-		}
-		
-		$scope.abs = function(value) {
-			
-			return Math.abs(value);
-		}
-
-		$scope.reset = function() {
-			
-			calculating = false;
-			StateService.resetSelectedElement();
-			//$scope.el = [];
-			$scope.el = StateService.getSelectedElement();
-			firstElemStartDateSumAvg = 0;
-			firstElemEndDateSumAvg = 0;
-			
-			secondElemStartDateSumAvg = 0;
-			secondElemEndDateSumAvg = 0;
-			$scope.erg =  "00:00:00:00";
-			$scope.showDurationResult = false;
-			$scope.isDataMissing = false;
-	
-			$scope.checkboxModel = {
-					 
-					 exclusive_start : false,
-					 exclusive_end : false
-			 };
-
-			
-			
-			$(".kpiElements").click(function(){
-				
-				$scope.el = StateService.getSelectedElement();
-			});
-		};
-		
-		$scope.calculate = function() {
-			
-			$scope.isCalculatingResult = true;
-			
-			firstElemStartDateSumAvg = 0;
-			firstElemEndDateSumAvg = 0;
-			
-			secondElemStartDateSumAvg = 0;
-			secondElemEndDateSumAvg = 0;
-			$scope.erg =  "00:00:00:00";
-			
-			if($scope.el.length < 2) return;
-
-			var i = 0;
-			var j = 0;
-			var k = 0;
-			var l = 0;
-			
-			
-			DataFactory.getAllHistoricActivitiesDataByProcDefId(DataFactory.processDefinitionId, $scope.el[1].id).
-			then(function(){
-
-				var firstElemStartDateSum = 0;
-				var firstElemEndDateSum = 0;
-				
-				var secondElemStartDateSum = 0;
-				var secondElemEndDateSum = 0;
-				
-				var data = DataFactory.allHistoricActivitiesDataByProcDefId[DataFactory.processDefinitionId];
-
-				angular.forEach(data, function(activity, index, list) {
-					
-					DataFactory.getAllHistoricActivitiesDataByProcInstId(activity.processInstanceId, $scope.el[0].id).
-					then(function(){
-						
-						if(activity.endTime != null) {
-							
-							if($scope.checkboxModel.exclusive_end == false) {
-								
-								secondElemEndDateSum += (new Date(activity.endTime) - 0);
-								i++;
-								
-							}else if ($scope.checkboxModel.exclusive_end == true) {
-								
-								secondElemStartDateSum += (new Date(activity.startTime) - 0);
-								j++;
-								
-							}
-						}
-						
-						var dat = DataFactory.allHistoricActivitiesDataByProcInstId[activity.processInstanceId];
-
-						if(dat.length > 0) {
-							
-							angular.forEach(dat, function(act, ind, li){
-							
-								if(activity.endTime != null) {
-								
-									if($scope.checkboxModel.exclusive_start == false) {
-									
-										firstElemStartDateSum += (new Date(act.startTime) - 0);
-										k++;
-									
-									} else if ($scope.checkboxModel.exclusive_start == true)  {
-									
-										firstElemEndDateSum += (new Date(act.endTime) - 0);
-										l++;
-									}
-								}
-						
-							});
-						}
-						
-						
-						if((firstElemStartDateSum > 0) && (k != 0)) {
-							
-							firstElemStartDateSumAvg = firstElemStartDateSum / k;
-							
-						}  else if((firstElemEndDateSum > 0) && (l != 0)) {
-							
-							firstElemEndDateSumAvg =  firstElemEndDateSum / l; 
-						}
-						
-						 if((secondElemStartDateSum > 0) && (j != 0)) {
-							
-							secondElemStartDateSumAvg = secondElemStartDateSum / j;
-							
-						} else if((secondElemEndDateSum > 0) && (i != 0)) {
-							
-							secondElemEndDateSumAvg =  secondElemEndDateSum / i; 
-						}
-						
-						if(data.length-1 === index) {
-							calculating = true;
-							$scope.isCalculatingResult = false;
-						}
-						
-						$scope.toDate();
-						
-					});
-				});
-			});
-		};
-		
 		
 		$scope.cancel = function() {
 			
@@ -266,6 +42,172 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			DataFactory.activityDurations = {};
 			
 			$modalInstance.dismiss('cancel');
+		}
+
+		$scope.reset = function() {
+			
+			StateService.resetSelectedElement();
+			$scope.el = StateService.getSelectedElement();
+
+			$scope.erg =  "00:00:00:00";
+			$scope.showDurationResult = false;
+			$scope.isDataMissing = false;
+			$scope.isIncorrectSequence = false;
+			$scope.isCalculatingResult = false;
+	
+			$scope.checkboxModel = {			 
+					 exclusive_start : false,
+					 exclusive_end : false
+			 };	
+			
+			$(".kpiElements").click(function(){			
+				$scope.el = StateService.getSelectedElement();
+			});
 		};
+		
+		$scope.calculate = function() {
+			
+			calculation: {
+			
+  			$scope.isCalculatingResult = true;
+  			
+  			$scope.isDataMissing = false;
+  			$scope.showDurationResult = false;
+  			$scope.isIncorrectSequence = false;
+  			
+  			$scope.erg =  "00:00:00:00";
+  			
+  			var startElemId = $scope.el[0].id;
+  			var endElemId = $scope.el[1].id;
+  			
+  			/*** step 1: get historic data for selected start and end element for current process definition ***/
+  			
+  			DataFactory.getAllHistoricActivitiesByProcDefId(DataFactory.processDefinitionId).
+  			then(function(){
+  				
+  				/*** step 2: store instances of activities separated by process instance id in list ***/
+  				
+  				var data = {};
+  				
+  				var data_REST = DataFactory.allHistoricActivitiesByProcDefId[DataFactory.processDefinitionId];
+  				var item;
+  				
+  				for(var i=0; i < data_REST.length; i++) {
+  					
+  					item = data_REST[i];
+  					
+  					// check if current item is start element --> store start end end time
+  					if(item.activityId === startElemId) {
+  						if(data[item.processInstanceId]) {
+  							data[item.processInstanceId].startElem = [ item.startTime, item.endTime ]
+  						} else {
+  							data[item.processInstanceId] = {
+  								"startElem": [ item.startTime, item.endTime ]
+  							}
+  						}
+  					// same for end element
+  					} else if(item.activityId === endElemId) {
+  						if(data[item.processInstanceId]) {
+  							data[item.processInstanceId].endElem = [ item.startTime, item.endTime ]
+  						} else {
+  							data[item.processInstanceId] = {
+  								"endElem": [ item.startTime, item.endTime ]
+  							}
+  						}
+  					}
+  					
+  				}	// end for-loop
+  								
+  				/*** step 3: get time difference for each process instance (for which both activities have been finished) ***/
+  				
+  				var differences = [];
+  				var startTimeId, endTimeId;
+  				var value;
+  				
+  				for(var processInstanceId in data) {
+  					
+  					value = data[processInstanceId];
+  					
+  					// check if start element has been finished for current process instance
+  					if(value.startElem && value.startElem.length === 2) {
+  						
+  						// check if end element has been finished for current process instance
+  						if(value.endElem && value.endElem.length === 2) {
+  							
+  							// check if elements were selected in correct order
+  							if(isIncorrectSequence(value.startElem[1], value.endElem[0])) {
+  								$scope.isIncorrectSequence = true;
+  								$scope.isCalculatingResult = false;
+  								break;
+  							}
+  							
+    						startTimeId = getStartTimeId();
+    						endTimeId = getEndTimeId();
+    							
+    						differences.push(new Date(value.endElem[endTimeId]) - new Date(value.startElem[startTimeId]));
+  						}
+  					}
+  					
+  				} // end for-loop
+  								
+  				/*** step 4: check if data for both elements was found ***/
+  				
+  				if(!$scope.isIncorrectSequence) {
+  				
+    				if(differences.length === 0) {
+    					
+    					$scope.isDataMissing = true;
+    					
+    				} else {
+    									
+      				/*** step 5: get the average of all differences ***/
+      				
+      				var sum = 0;
+      				
+        			angular.forEach(differences, function(item, index) {
+        				sum += item;
+        			}); // end forEach
+    				
+        			$scope.erg = toTimeString(sum / differences.length);
+        			
+        			$scope.showDurationResult = true;
+    				}
+    				
+    				$scope.isCalculatingResult = false;
+  				}
+  			});
+			}
+		}
+		
+		function getStartTimeId() {
+			if($scope.checkboxModel.exclusive_start) {
+				return 1;	// exclusive start element --> end time of start element
+			} else {
+				return 0;	// inclusive start element --> start time of start event
+			}
+		}
+		
+		function getEndTimeId() {
+			if($scope.checkboxModel.exclusive_end) {
+				return 0;	// exclusive end element --> start time of end element
+			} else {
+				return 1;	// inclusive end element --> end time of end event
+			}
+		}
+		
+		function isIncorrectSequence(start, end) {
+			console.log(start + " ... " + end);
+			console.log(new Date(start) + " ... " + new Date(end))
+			return new Date(start) > new Date(end);
+		}
+		
+		function toTimeString(millis) {
+    	var s  = Math.floor( millis /     1000 %   60 );
+    	var m  = Math.floor( millis /    60000 %   60 );
+    	var h  = Math.floor( millis /  3600000 %   24 );
+    	var d  = Math.floor( millis / 86400000        );
+    	return d + ":" + h + ":" + m + ":" + s;
+		}
+	
 	}]);
 });

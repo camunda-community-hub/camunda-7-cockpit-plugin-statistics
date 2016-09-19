@@ -132,9 +132,12 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 		
 		function getVariableOptions() {
 			$scope.variableOptions = {};
-			angular.forEach(DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange, function(item) {
+			var data = DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange;
+			var item;
+			for(var i = 0; i < data.length; i++) {
+				item = data[i];
 				$scope.variableOptions[item.name] = item.type;
-			});
+			}
 		}
 		
 		function loadBarChart() {
@@ -196,7 +199,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			
 			// count variables
 			var valueCount = {};
-			angular.forEach(data, function(item) {
+			var item;
+			for(var i = 0; i < data.length; i++) {
+				item = data[i];
 				if(item.name.valueOf() == variableName) {
   				if(valueCount[item.value]) {
   					valueCount[item.value]++;
@@ -204,7 +209,7 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
   					valueCount[item.value] = 1;
   				}
 				}
-			});
+			}
 			
 			// sort variables by count
 			var sortedValueCount = [];

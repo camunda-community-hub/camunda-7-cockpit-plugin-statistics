@@ -15,6 +15,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 		DataFactory.allEndedUserTasksCountOByProcDefKey = [];
 		DataFactory.historicActivityCountsDurationByProcDefKey = [];
 		DataFactory.allUserTasksByProcDefKeyAndDateSpecification =[];
+		DataFactory.allHistoricActivitiesByProcDefId = [];
 		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
 		DataFactory.allHistoricActivitiesDataByProcDefId = [];
 		DataFactory.allHistoricActivitiesDataByProcInstId = [];
@@ -165,6 +166,22 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			return {}.toString.call(variable).split(' ')[1].slice(0, -1);
 		}
 
+		
+		DataFactory.getAllHistoricActivitiesByProcDefId = function(procDefId) {
+			DataFactory.allHistoricActivitiesByProcDefId[procDefId] = null;
+			return $http.get(Uri.appUri("engine://engine/:engine/history/activity-instance?processDefinitionId="+procDefId+"&finished=true"))
+			.success(function(data) {
+				if(procDefId!=undefined) {
+					DataFactory.allHistoricActivitiesByProcDefId[procDefId] = data;
+				} else {
+					DataFactory.allHistoricActivitiesByProcDefId["data"] = data;
+				}
+			})
+			.error(function(){
+				console.debug("error in fetching historic activity information");
+			});
+		}	
+		
 
 		// call to REST API (see: http://docs.camunda.org/latest/api-references/rest/#history-get-activity-instances-historic)
 		DataFactory.getAllHistoricActivitiesInformationByProcDefId = function(procDefId, activityId, activityType) {
@@ -179,9 +196,7 @@ ngDefine('cockpit.plugin.statistics-plugin.services', function(module) {
 			.error(function(){
 				console.debug("error in fetching historic activity information");
 			});
-		}
-		
-		
+		}	
 		
 		
 		/////////////////BBB///////////////////////////////////////////

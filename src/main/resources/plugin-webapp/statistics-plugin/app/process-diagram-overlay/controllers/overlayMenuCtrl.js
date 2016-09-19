@@ -15,6 +15,9 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
 			if(!menuInstance) {
 				// close other modals
 				$modalStack.dismissAll('opened another modal');
+				DataFactory.bpmnElementsToHighlight = {};
+				DataFactory.bpmnElementsToHighlightAsWarning = {};
+				DataFactory.activityDurations = {};
 				
 				menuInstance = $modal.open({
 					templateUrl: 'processDiagramSettingsModal.html',
