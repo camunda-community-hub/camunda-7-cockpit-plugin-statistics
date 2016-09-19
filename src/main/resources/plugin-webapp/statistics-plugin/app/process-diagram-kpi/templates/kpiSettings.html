@@ -99,7 +99,8 @@
 			<div id="output">
 			<div><a class="pull-left glyphicon glyphicon-question-sign" ng-click="infoBottom=!infoBottom"></a></div>
 				<span style='text-align: right; display: block;height:16px;'>
-					<div class="text-danger" ng-show="isDataMissing">Please select only elements within the same path.</div>
+					<div class="text-danger" ng-show="isDataMissing">Elements are not on the same path or no historic data found</div>
+					<div class="text-danger" ng-show="isIncorrectSequence">Incorrect sequence: Start element must be selected before end element</div>
 					<p ng-show="showDurationResult"> {{erg}} (dd:hh:mm:ss)</p>
 					<img class="loading-gif" ng-show="isCalculatingResult" src="../../../api/cockpit/plugin/statistics-plugin/static/app/styles/loading.gif" style="margin-top: -5px;">
 				</span>
