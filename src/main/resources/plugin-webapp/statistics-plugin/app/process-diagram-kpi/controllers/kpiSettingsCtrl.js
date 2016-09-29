@@ -206,6 +206,10 @@ ngDefine('cockpit.plugin.statistics-plugin.controllers', function(module) {
     	var m  = Math.floor( millis /    60000 %   60 );
     	var h  = Math.floor( millis /  3600000 %   24 );
     	var d  = Math.floor( millis / 86400000        );
+    	// format with 2 digits
+    	s = (s > 9) ? s : "0" + s;
+    	m = (m > 9) ? m : "0" + m;
+    	h = (h > 9) ? h : "0" + h;
     	return d + ":" + h + ":" + m + ":" + s;
 		}
 	
