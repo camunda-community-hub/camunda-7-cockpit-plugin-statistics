@@ -1,0 +1,13 @@
+<!-- modal for highlighting settings -->
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/highlighting/highlightingSettingsModalView.html'"></ng-include>
+
+<div ng-controller="highlightingProcessDefinitionDiagramCtrl">
+	<div ng-show="highlight()">
+		<div class="badge badge-bottom badge-bad"
+			ng-hide="instancesExceededLimit == null">{{
+			instancesExceededLimit }}</div>
+		<div class="badge badge-top badge-good"
+			ng-hide="showOnlyBad() || instancesMetLimit == null">{{
+			instancesMetLimit }}</div>
+	</div>
+</div>

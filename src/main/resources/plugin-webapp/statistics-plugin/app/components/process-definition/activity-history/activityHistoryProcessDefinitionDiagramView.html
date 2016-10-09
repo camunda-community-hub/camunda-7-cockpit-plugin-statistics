@@ -1,0 +1,16 @@
+<!-- style for navigator -->
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/shared/assets/css/navigatorDirectiveStyles.html'"></ng-include>
+
+<!-- modals for activity history -->
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/activity-history/activityHistoryModalView.html'"></ng-include>
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/activity-history/noHistoryModalView.html'"></ng-include>
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/activity-history/loadingModalView.html'"></ng-include>
+
+<div ng-controller="activityHistoryProcessDefinitionDiagramCtrl">
+	<a class="badge badge-bottom-middle" type="button" ng-show="showTaskHistory()" ng-click="showActivityHistoryInformation()">
+		<span class="glyphicon glyphicon-stats"></span>
+	</a>
+	<a class="badge badge-event" type="button" ng-show="showEventHistory()" ng-click="showActivityHistoryInformation()">
+		<span class="glyphicon glyphicon-stats"></span>
+	</a>
+</div>
