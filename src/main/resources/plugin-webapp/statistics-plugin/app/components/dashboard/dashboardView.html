@@ -1,0 +1,41 @@
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/shared/assets/css/pluginStyles.html'"></ng-include>
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/dashboard/settings/settingsModalView.html'"></ng-include>
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/dashboard/statistics/statisticsDetailsModalView.html'"></ng-include>
+
+<h1>
+	Statistics & Analytics&nbsp;&nbsp;
+	<small><a class="btn btn-link" ng-click="showPluginSettingsModal()">Settings...</a></small>
+</h1>
+<tabset>
+	<tab ng-controller="processesChartCtrl" select="handleTabClick('processes')">
+		<tab-heading ng-mouseover="showRefreshIcon=true" ng-mouseleave="showRefreshIcon=false">
+			<span>Processes&nbsp;</span>
+			<a class="btn btn-link" ng-show="showRefreshIcon" ng-click="getDataForPlots()"><i class="glyphicon glyphicon-repeat"></i></a>
+		</tab-heading>
+		<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/dashboard/statistics/processesTab.html'"></ng-include>
+	</tab>
+	<!-- <tab ng-controller="casesChartCtrl" select="handleTabClick('cases')">
+	   <tab-heading ng-mouseover="showRefreshIcon=true" ng-mouseleave="showRefreshIcon=false">
+	     <span>Cases&nbsp;</span><a class="btn btn-link" ng-show="showRefreshIcon" ng-click="applyDataToPlots()"><i class="icon-repeat"></i></a>
+	   </tab-heading>
+	   <div ng-include="'/camunda/api/cockpit/plugin/statistics-plugin/static/app/components/dashboard/statistics/casesTab.html'"></div>
+	</tab> -->
+	<tab heading="Analytics" select="handleTabClick('startEnd')">
+		<div class="row" ng-controller="plotConfigCtrl">
+			<div class="col-xs-12 col-lg-7">
+				<div id="timingChartDiv" ng-if="chosenOptions.propertyToPlot=='startEndTime'||chosenOptions.propertyToPlot=='distribution'">
+					<nvd3 options="options" data="data" api="$parent.api"></nvd3>
+				</div>
+				<div id="regPlotDiv" ng-if="chosenOptions.propertyToPlot=='regression'">
+					<sp-regression-plot data="data" options="options" parse-x="parseX(x)" parse-y="parseY(y)" legend="false"></sp-regression-plot>
+				</div>
+			</div>
+			<div class="col-xs-12 col-lg-5 well">
+				<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/dashboard/analytics/plotConfigView.html'"></ng-include>
+			</div>
+		</div>
+	</tab>
+	<tab heading="Feedback" ng-controller="feedbackCtrl">
+		<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/dashboard/feedback/feedbackView.html'"></ng-include>
+	</tab>
+</tabset>

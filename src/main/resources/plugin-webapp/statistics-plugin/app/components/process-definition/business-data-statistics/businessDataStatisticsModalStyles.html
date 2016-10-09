@@ -1,0 +1,91 @@
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/shared/assets/css/daterangepickerStyles.html'"></ng-include>
+
+<style>
+
+/* bar chart for variable statistics */
+
+#barchart .nv-y {
+  display:none;
+}
+  
+line {
+  display:none;
+} 
+   
+#barchart .nv-legend {
+  display:none;
+}
+
+.scrollable-container {
+	overflow: auto;
+	max-height: 300px;
+}
+
+#barchart svg {
+	margin-top: -20px;
+}
+
+
+
+/* long text in tooltips */
+
+.wrap {
+	white-space: normal;
+	word-break: break-all;
+	width: 300px;
+}
+
+
+
+/* table design */
+
+table {
+	width:100%;
+}
+
+td.text {
+	text-align: right;
+	width: 150px;
+	padding-right: 10px;
+	padding-top: 5px;
+}
+
+td.value {
+	text-align: left;
+}
+
+td.loading {
+	text-align: center;
+	width: 30px;
+}
+
+td.apply {
+	text-align: right;
+	width: 50px;
+}
+
+
+/* checkbox */
+
+input.checkbox-inline {
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+/* other */
+.width-300 {
+	width: 300px !important;
+}
+
+label.normal-font-weight {
+	font-weight: unset;
+	display: block;
+}
+
+input.radio {
+	margin-right: 5px;
+	display: inline;
+	margin-bottom: 5px;
+}
+
+</style>

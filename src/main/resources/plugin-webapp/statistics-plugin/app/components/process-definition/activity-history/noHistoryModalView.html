@@ -1,0 +1,11 @@
+<script type="text/ng-template" id="noHistoryModalView">
+<div class="modal-header" id="modalHeader">
+	<h3 class="modal-title">Activity History  for "{{ activityName }}"</h3>
+</div>
+<div class="modal-body" ng-init="init()">
+		<div>There is no historical information available for this activity.</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-warning" ng-click="closeModal()">Close</button>
+</div>
+</script>
