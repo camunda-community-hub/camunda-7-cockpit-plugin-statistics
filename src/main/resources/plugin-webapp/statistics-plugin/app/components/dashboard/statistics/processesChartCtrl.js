@@ -256,8 +256,6 @@ ngDefine('cockpit.plugin.statistics-plugin.dashboard', function(module) {
 						}
 					}
 
-					console.debug("found version for "+"Version "+version+"?"+versionFound);
-
 					//if version not found create initial information for version
 					if(!versionFound) {
 						processDefinitionDetails.children.push({
@@ -307,7 +305,7 @@ ngDefine('cockpit.plugin.statistics-plugin.dashboard', function(module) {
 				for(var i in runningTaskInstances) {
 					//get relevant user task information
 					var version = runningTaskInstances[i].processDefinitionId.split(":")[1];
-					var assigned = (runningTaskInstances[i].assignee == null);
+					var assigned = (runningTaskInstances[i].assignee != null);
 
 					//add to children of respective version's running details
 					for(var j in result[0].children) {
@@ -368,7 +366,118 @@ ngDefine('cockpit.plugin.statistics-plugin.dashboard', function(module) {
 					}
 				}
 
-				//remove assigned/unassigned
+				//analyze finished user tasks and activities and add to data
+				for(var i in finishedActivityInstances) {
+					var version = finishedActivityInstances[i].procDefId.split(":")[1];
+					var activityName = finishedActivityInstances[i].activityName;
+					var type = finishedActivityInstances[i].type;
+
+					//add to children of respective version's ended details
+					for(var j in result[0].children) {
+
+						if(result[0].children[j].name=="Version "+version) {
+
+							//determine finished index
+							var finishedInstancesIndex = -1;
+
+							for(var m in result[0].children[j].children) {
+								if(result[0].children[j].children[m].name=="finished") {
+									finishedInstancesIndex = m;
+									break;
+								}
+							}
+
+							//only add information on finished instances if any exist for a version
+							if(finishedInstancesIndex>-1) {
+
+								
+								//access finished information	
+								if(!result[0].children[j].children[finishedInstancesIndex].children) {
+									result[0].children[j].children[finishedInstancesIndex].children = [];
+								}
+	
+								//check if information for task exist
+								var activityInformationFound  = false;
+								var activityIndex = -1;
+	
+								if(!result[0].children[j].children[finishedInstancesIndex].children) {
+									result[0].children[j].children[finishedInstancesIndex].children = [];
+								}
+	
+								for(var k in result[0].children[j].children[finishedInstancesIndex].children) {
+									if(result[0].children[j].children[finishedInstancesIndex].children[k].activityName==activityName) {
+										activityInformationFound = true;
+										activityIndex = k;
+									}
+								}
+	
+								//if information exist, increase counter
+								//if not, create base information
+								if(activityInformationFound) {
+									result[0].children[j].children[finishedInstancesIndex].children[activityIndex].size+=finishedActivityInstances[i].count;
+									result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max
+									=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].maxDuration)/2;
+									result[0].children[j].children[finishedInstancesIndex].children[activityIndex].min
+									=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].minDuration)/2;
+									result[0].children[j].children[finishedInstancesIndex].children[activityIndex].avg
+									=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].avgDuration)/2;      					
+								} else {
+									result[0].children[j].children[finishedInstancesIndex].children.push({
+										name:activityName,
+										size:finishedActivityInstances[i].count,
+										avg:finishedActivityInstances[i].avgDuration,
+										min:finishedActivityInstances[i].minDuration,
+										max:finishedActivityInstances[i].maxDuration,
+										actType:finishedActivityInstances[i].type
+									});
+									activityIndex = result[0].children[j].children[0].children.length-1;
+								}
+								
+							}
+						}
+					}
+				}
+								
+				//prepare data for accordion showing detail container per version
+				var dataForStatisticalInformation = angular.copy(result);
+				
+				var versionsDetails = [];
+				
+				for(var i in dataForStatisticalInformation[0].children) {
+
+					var versionDetails = {
+							name:dataForStatisticalInformation[0].children[i].name,
+							overall:dataForStatisticalInformation[0].children[i].size,
+							running:0,
+							runningDetails: {},
+							finished:0,
+							finishedDetails: {},
+							withIncidents:0,
+							withIncidentsDetails: {}
+					};
+
+					for(var j in dataForStatisticalInformation[0].children[i].children) {
+						if(dataForStatisticalInformation[0].children[i].children[j].name=="running") {
+							versionDetails.running = dataForStatisticalInformation[0].children[i].children[j].size;
+							versionDetails.runningDetails = dataForStatisticalInformation[0].children[i].children[j].children;
+						}
+						if(dataForStatisticalInformation[0].children[i].children[j].name=="finished") {
+							versionDetails.finished = dataForStatisticalInformation[0].children[i].children[j].size;
+							versionDetails.finishedDetails = dataForStatisticalInformation[0].children[i].children[j].children;
+						}
+						if(dataForStatisticalInformation[0].children[i].children[j].name=="incidents") {
+							versionDetails.withIncidents = dataForStatisticalInformation[0].children[i].children[j].size;
+							versionDetails.withIncidentsDetails = dataForStatisticalInformation[0].children[i].children[j].children;
+						}
+					}
+
+					versionsDetails.push(
+							versionDetails
+					);
+					
+				};
+
+				//finally, remove assigned/unassigned for sunburst representation
 				for(var i in result[0].children) {
 					if(result[0].children[i].children[0].children) {
 						for(var j in result[0].children[i].children[0].children) {
@@ -392,117 +501,6 @@ ngDefine('cockpit.plugin.statistics-plugin.dashboard', function(module) {
 						}
 					}
 				}
-
-				//analyze finished user tasks and activities and add to data
-
-
-				for(var i in finishedActivityInstances) {
-					var version = finishedActivityInstances[i].procDefId.split(":")[1];
-					var activityName = finishedActivityInstances[i].activityName;
-					var type = finishedActivityInstances[i].type;
-
-					//add to children of respective version's ended details
-					for(var j in result[0].children) {
-
-						if(result[0].children[j].name=="Version "+version) {
-
-							//determine finished index
-							var finishedInstancesIndex = -1;
-
-							for(var m in result[0].children[j].children) {
-								if(result[0].children[j].children[m].name=="finished") {
-									finishedInstancesIndex = m;
-									break;
-								}
-							}
-
-
-							//direct access to running structure (which has to exist, otherwise no usertasks would exist)	
-							if(!result[0].children[j].children[finishedInstancesIndex].children) {
-								result[0].children[j].children[finishedInstancesIndex].children = [];
-							}
-
-							//check if information for task exist
-							var activityInformationFound  = false;
-							var activityIndex = -1;
-
-							if(!result[0].children[j].children[finishedInstancesIndex].children) {
-								result[0].children[j].children[finishedInstancesIndex].children = [];
-							}
-
-							for(var k in result[0].children[j].children[finishedInstancesIndex].children) {
-								if(result[0].children[j].children[finishedInstancesIndex].children[k].activityName==activityName) {
-									activityInformationFound = true;
-									activityIndex = k;
-								}
-							}
-
-							//if information exist, increase counter
-							//if not, create base information
-							if(activityInformationFound) {
-								result[0].children[j].children[finishedInstancesIndex].children[activityIndex].size+=finishedActivityInstances[i].count;
-								result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max
-								=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].maxDuration)/2;
-								result[0].children[j].children[finishedInstancesIndex].children[activityIndex].min
-								=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].minDuration)/2;
-								result[0].children[j].children[finishedInstancesIndex].children[activityIndex].avg
-								=(result[0].children[j].children[finishedInstancesIndex].children[activityIndex].max+finishedActivityInstances[i].avgDuration)/2;      					
-							} else {
-								result[0].children[j].children[finishedInstancesIndex].children.push({
-									name:activityName,
-									size:finishedActivityInstances[i].count,
-									avg:finishedActivityInstances[i].avgDuration,
-									min:finishedActivityInstances[i].minDuration,
-									max:finishedActivityInstances[i].maxDuration,
-									actType:finishedActivityInstances[i].type
-								});
-								activityIndex = result[0].children[j].children[0].children.length-1;
-							}
-
-						}
-					}
-				}
-
-				//pass data to modal an open it!
-				//console.debug("Sunburst detail data: "+JSON.stringify(result));
-
-				//prepare data for detail tab per sion
-				var versionsDetails = [];
-				for(var i in result[0].children) {
-
-					var versionDetails = {
-							name:result[0].children[i].name,
-							overall:result[0].children[i].size,
-							running:0,
-							runningDetails: {},
-							finished:0,
-							finishedDetails: {},
-							withIncidents:0,
-							withIncidentsDetails: {}
-					};
-
-					for(var j in result[0].children[i].children) {
-						if(result[0].children[i].children[j].name=="running") {
-							versionDetails.running = result[0].children[i].children[j].size;
-							versionDetails.runningDetails = result[0].children[i].children[j].children;
-						}
-						if(result[0].children[i].children[j].name=="finished") {
-							versionDetails.finished = result[0].children[i].children[j].size;
-							versionDetails.finishedDetails = result[0].children[i].children[j].children;
-						}
-						if(result[0].children[i].children[j].name=="incidents") {
-							versionDetails.withIncidents = result[0].children[i].children[j].size;
-							versionDetails.withIncidentsDetails = result[0].children[i].children[j].children;
-						}
-					}
-
-					versionsDetails.push(
-							versionDetails
-					);
-				};
-
-				//version detail data
-				//console.debug("per version detail data: "+JSON.stringify(versionsDetails));
 
 				var modalInstance = $modal.open({
 					templateUrl: 'statisticsDetailsModalView',
@@ -1064,9 +1062,6 @@ ngDefine('cockpit.plugin.statistics-plugin.dashboard', function(module) {
 
 					        	$scope.reload.showReloadProcessFailed=false;
 					        	$scope.reload.showReloadMultibarChartRunning=false;
-
-					        	console.debug($scope.startedEndedRunningPlotData);
-
 
 					        });
 
