@@ -1,0 +1,230 @@
+<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/dashboard/analytics/plotConfigStyles.html'"></ng-include>
+
+<div class="row" collapse = "legendView" >
+  <div class="col-lg-12 col-md-12 col-sm-12">
+    <tabset justified="true">
+      <tab heading="data">
+        <div class="row">
+          <div ng-class="widthDependingClass">
+            <sp-menu></sp-menu>
+          </div>
+          <div ng-class="widthDependingClass">
+            <sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "true" show-slider = "false"></sp-show-selected-data>
+          </div>
+        </div>
+     </tab>
+     
+     <tab heading="time-window">
+       <div class="row">
+       
+         <div ng-class="widthDependingClass">
+           <accordion>
+             <accordion-group heading = "specify start date" ng-init="isOpen = true" is-open="isOpen">
+               <div class = "col-md-12">
+                 <sp-input type = "radio" value = "" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">no start date</sp-input>
+                 <sp-input type = "radio" value = "startedBefore" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">started before</sp-input>
+                 <sp-input type = "radio" value = "startedAfter" sp-model = "chosenOptions.timeWindow.start" sp-change = "changeRequestToDataBase()">started after</sp-input>
+                 <div collapse="chosenOptions.timeWindow.start==''">
+                   <div class="alert alert-info">{{chosenOptions.timeWindow.startDate | date: 'MMM d, y h:mm a'}}</div>
+                   <datepicker show-weeks="true" class="well well-sm" ng-model="chosenOptions.timeWindow.startDate" ng-change="changeRequestToDataBase()"></datepicker>
+                   <div ng-if="chosenOptions.timeWindow.startDate!=null">
+                     <br>
+                     <h4>Time (optional)</h4>
+                     <timepicker ng-model="chosenOptions.timeWindow.startDate" ng-change="changeRequestToDataBase()"></timepicker>
+                   </div>
+                 </div>
+               </div>
+             </accordion-group>
+           </accordion>
+         </div>
+         
+         <div ng-class="widthDependingClass">
+           <accordion>
+             <accordion-group heading = "specify end date" ng-init="isOpen = true" is-open="isOpen">
+               <div class = "col-md-12">
+                 <sp-input type = "radio" value = "" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">no end date</sp-input>
+                 <sp-input type = "radio" value = "finishedBefore" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">finished before</sp-input>
+                 <sp-input type = "radio" value = "finishedAfter" sp-model = "chosenOptions.timeWindow.end" sp-change = "changeRequestToDataBase()">finished after</sp-input>
+                 <div collapse="chosenOptions.timeWindow.end==''">
+                   <div class="alert alert-info">{{chosenOptions.timeWindow.endDate | date: 'MMM d, y h:mm a'}}</div>
+                   <datepicker show-weeks="true" class="well well-sm" ng-model="chosenOptions.timeWindow.endDate" ng-change="changeRequestToDataBase()"></datepicker>
+                   <div ng-if="chosenOptions.timeWindow.endDate!=null">
+                     <br>
+                     <h4>Time (optional)</h4>
+                     <timepicker ng-model="chosenOptions.timeWindow.endDate" ng-change="changeRequestToDataBase()"></timepicker>
+                   </div>
+                 </div>
+               </div>
+             </accordion-group>
+           </accordion>
+         </div>
+       </div>
+     </tab>
+     
+     <tab heading="properties to be plotted">
+       <accordion>
+       
+         <div ng-class = "{'custom':propertiesBoolean.startEndTime}">
+           <accordion-group is-open ="propertiesBoolean.startEndTime">
+             <accordion-heading >
+               <a class="pull-left glyphicon"
+                  ng-class="{'glyphicon-unchecked': !propertiesBoolean.startEndTime, 'glyphicon-check': propertiesBoolean.startEndTime}"
+                  ng-style="{color : 'black'}">
+               </a>&nbsp;
+               <span style="text-decoration: underline;">start time / end time</span>
+             </accordion-heading>
+             <div class = "row"><a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.startEndTimeInfo=!info.startEndTimeInfo"></a></div>
+             <div class = "row" collapse = "showClusterMenu.show">
+               <div id="innerAccordion" class= "col-md-6" >
+                 <accordion>
+                   <accordion-group heading = "time">
+                     <div class = "col-md-12">
+                       <sp-input type="radio" value ="startTime" sp-model = "chosenOptions.time">start time</sp-input>
+                       <sp-input type="radio" value ="endTime" sp-model = "chosenOptions.time">end time</sp-input>
+                     </div>
+                   </accordion-group>
+                   <accordion-group heading = "timeframe">
+                     <div class = "col-md-12">
+                       <sp-input type="radio" value ="noFrame" sp-model = "chosenOptions.timeFrame">no time frame</sp-input>
+<!--                          <div collapse = "chosenOptions.timeFrame!='noFrame'"> -->
+<!--                            <label>Format:</label> <select class="form-control" ng-model="chosenOptions.noFrameFormat" ng-options="f for f in noFrameFormats"><option></option></select> -->
+<!--                          </div> -->
+                       <sp-input type="radio" value ="daily" sp-model = "chosenOptions.timeFrame">daily</sp-input>
+                       <sp-input type="radio" value ="weekly" sp-model = "chosenOptions.timeFrame">weekly</sp-input>
+                     </div>
+                   </accordion-group>
+                   <accordion-group heading = "clustering">
+                     <div class = "col-md-12">
+                       <sp-input type="radio" value ="noClustering" sp-model = "chosenOptions.cluster.algo">no clustering</sp-input>
+                       <sp-input type="radio" value ="kmeans" sp-model = "chosenOptions.cluster.algo" sp = "">k means Algo</sp-input>
+                       <button class="btn btn-default" ng-click="showClusterMenu.show = getDataForClusterSlider()">edit number of clusters</button>
+                     </div>
+                   </accordion-group>
+                 </accordion>
+               </div>
+             </div>
+             <div class = "row" collapse = "!showClusterMenu.show" >
+               <div class= "col-md-12">
+                 <sp-show-selected-data selected-data = "selected"
+                                        show-slider="true" show-legend = "false" number-of-instances-map = "numberOfInstancesMap"
+                                        time = chosenOptions.time >
+                </sp-show-selected-data>
+                <button class="btn btn-default" ng-click="showClusterMenu.show=!showClusterMenu.show">back to menu</button>
+              </div>
+            </div>
+            <div class = "row">
+              <div class = "col-md-12">
+                <sp-plot-info sp-show = "info.startEndTimeInfo">
+                  <span transclude-to="plot">The start times or end times of the process/activity instances</span>
+                  <span transclude-to="purpose">To identify patterns in the starting or ending times of the instances. e.g. accumulations of starting instances</span>
+                  <span transclude-to="xAxis">
+                    <ol class = "dl-horizontal">
+                      <li><strong>no timeframe</strong><br>
+                           The start or end time of the instances. The format is here YYYY-mm-dd-hh
+                      </li>
+                      <li><strong>daily</strong><br>
+                           Only the time of day of starting or ending time is viewed. Year, month and day get cut off. So in the plot it will not
+                           possible to see a difference between instances starting at the same time of day but at a different day.
+                      </li>
+                      <li><strong>weekly</strong><br>
+	  				       Only the weekday and the time of day will be displayed. Year and month get cut off.
+	  			      </li>
+	  			    </ol>
+	  		      </span>
+	  		      <span transclude-to="yAxis">All the processes/activities instances belonging to the same key will be plotted at the same y value</span>
+	  		      <span transclude-to="options">
+	  		        <dt>timeframe</dt>
+	  		        <dd>see the description above</dd>
+	  		        <dt>clustering</dt>
+	  		        <dd>To get a better impression over the data the k-means clustering algorithm can be used.
+	  		            The number of clusters k is an input parameter: an inappropriate choice of k may yield poor results.
+	  		            It gets initialized with a rule of thumb. The result may not exactly have the chosen number of Clusters.
+	  		            This happens since the algorithm may return empty clusters which will be ignored here.
+	  		       </dd>
+	  		     </span>
+	  		   </sp-plot-info>
+	  		 </div>
+           </div>
+         </accordion-group>
+       </div>
+       
+       <div ng-class = "{'custom':propertiesBoolean.regression}">
+         <accordion-group is-open ="propertiesBoolean.regression">
+           <accordion-heading >
+             <a class="pull-left glyphicon" ng-class="{'glyphicon-unchecked': !propertiesBoolean.regression, 'glyphicon-check': propertiesBoolean.regression}"
+				ng-style="{color : 'black'}">
+			</a>&nbsp;
+			<span style="text-decoration: underline;">time series of duration</span>
+          </accordion-heading>
+          <div class = "row">
+            <a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.regressionInfo=!info.regressionInfo"></a>
+          </div>
+          <div clas = "row">
+          <!-- need this div so that the checkboxes stay away from the side -->
+            <div class = "col-lg-12 col-md-12 col-sm-5">
+              <sp-input type = "checkbox" sp-model = "chosenOptions.showScatter">show scatter plot</sp-input>
+              <sp-input type = "checkbox" sp-model = "chosenOptions.showSplines">show splines</sp-input>
+              <sp-input type = "checkbox" sp-model = "chosenOptions.showRegression">draw regression</sp-input>
+              <sp-plot-info sp-show = "info.regressionInfo">
+                <span transclude-to="plot">The time series of the durations of the chosen processes/activites</span>
+                <span transclude-to="purpose">To assess the change over time of the durations</span>
+                <span transclude-to="xAxis">The start time of the instances</span>
+                <span transclude-to="yAxis">The duration of the instances</span>
+                <span transclude-to="options">
+                  <dt>show scatter plot</dt>
+                  <dd>Shows the instances as circles</dd>
+                  <dt>show splines</dt>
+                  <dd>Linearly interpolates the discrete data to get a continuous plot</dd>
+                  <dt>draw regression</dt>
+                  <dd>Shows a linear regression line to observe a trend in the time series. <mark>This only makes sense if there really is a linear trend!</mark></dd>
+                </span>
+              </sp-plot-info>
+            </div>
+          </div>
+        </accordion-group>
+      </div>
+      
+      <div ng-class = "{'custom':propertiesBoolean.distribution}">
+        <accordion-group is-open ="propertiesBoolean.distribution">
+          <accordion-heading >
+            <a class="pull-left glyphicon" ng-class="{'glyphicon-unchecked': !propertiesBoolean.distribution, 'glyphicon-check': propertiesBoolean.distribution}"
+               ng-style="{color : 'black'}">
+            </a>&nbsp;
+            <span style="text-decoration: underline;">distribution of duration</span>
+          </accordion-heading>
+          <div class = "row">
+            <a class="pull-right glyphicon glyphicon-question-sign" ng-click="info.distributionInfo=!info.distributionInfo"></a>
+          </div>
+          <h4>adjust number of bins</h4>
+          <input type="number" min="1" step="1" ng-model="chosenOptions.numberOfBins">
+          <sp-plot-info sp-show = "info.distributionInfo">
+            <span transclude-to="plot">The durations of the chosen processes/activites</span>
+            <span transclude-to="purpose">To roughly assess the probability distribution of the durations by depicting the frequencies of observations occurring in certain ranges of values</span>
+            <span transclude-to="xAxis">The durations of the chosen process/activity instances starting with their minimal duration and ending with their maximum. 
+            This range of durations is divided into @number_of_bins bins. The end and start values of these bins are given in percent of the range.</span>
+            <span transclude-to="yAxis">The absolute frequencies of the process/activity instances</span>
+            <span transclude-to="options">
+              <dt>number of bins</dt>
+              <dd>Changing the number of bins affects the width of the range of the bins. Choosing more bins results in smaller bins and thus a higher accuracy</dd>
+            </span>
+          </sp-plot-info>
+        </accordion-group>
+      </div>
+    </accordion>
+  </tab>
+</tabset>
+</div>
+</div>
+<div class="row" collapse = "!legendView" >
+  <div class="col-lg-10 col-md-10 col-sm-10">
+    <sp-show-selected-data selected-data = "selected" remove-fct = "removeFromList(process, activityType, activity)" show-legend = "true" show-slider = "false"></sp-show-selected-data>
+  </div>
+</div>
+<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+<br>
+<br>
+<div>
+  <button class="btn btn-primary" ng-click="applyChanges()">Apply changes</button>
+  <button ng-if = "!legendView" class="btn btn-primary" ng-click="changeView()">show Legend</button>
+  <button ng-if = "legendView" class="btn btn-primary" ng-click="changeView()">Menu</button>
+</div>
