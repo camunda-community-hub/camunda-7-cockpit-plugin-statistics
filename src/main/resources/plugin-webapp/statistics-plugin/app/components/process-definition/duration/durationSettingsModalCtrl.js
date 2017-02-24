@@ -11,7 +11,7 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 	module.controller('durationSettingsModalCtrl', ['$scope', '$location', '$http', 'Uri', '$modalInstance', 'DataFactory', 'SettingsFactory','$modal', '$filter','ElementStateService', function($scope, $location, $http, Uri, $modalInstance, DataFactory, SettingsFactory,$modal, $filter, ElementStateService){
 			
 		$scope.el = ElementStateService.getSelectedElement();
-			
+		
 		$scope.showDurationResult = false;
 		$scope.isDataMissing = false;
 		$scope.isIncorrectSequence = false;
@@ -24,6 +24,7 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 				 exclusive_end : false
 		 };
 		
+		ElementStateService.setCheckboxModel($scope.checkboxModel);
 		
 		$scope.areElementsSelected = function() {
 			if(ElementStateService.getSelectedElement().length === 2) {
@@ -33,6 +34,31 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 			}
 		}
 		
+		$scope.active = function(type) {
+			
+			
+			if(type == "flow") {
+				
+				ElementStateService.setDisabledElements(false);
+				$scope.reset();
+			}
+			
+			if(type == "duration") {
+				
+				ElementStateService.setDisabledElements(true);
+				$scope.resetEndEventCalculation();
+			}
+			
+			
+			$scope.disabledElements = ElementStateService.getDisabledElements();
+		};
+		
+		$scope.changeGradient = function() {
+			
+			ElementStateService.setCheckboxModel($scope.checkboxModel);
+			ElementStateService.changeGradient($scope.el);
+		}
+		
 		$scope.cancel = function() {
 			
 			ElementStateService.setMenuState(false);
@@ -40,6 +66,7 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 			ElementStateService.resetSelectedElement();
 			
 			$modalInstance.dismiss('cancel');
+			DataFactory.highlighting = false;
 		}
 
 		$scope.reset = function() {
@@ -61,6 +88,8 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 			$(".kpiElements").click(function(){			
 				$scope.el = ElementStateService.getSelectedElement();
 			});
+			
+			ElementStateService.setCheckboxModel($scope.checkboxModel);
 		};
 		
 		$scope.calculate = function() {
@@ -210,6 +239,66 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
     	h = (h > 9) ? h : "0" + h;
     	return d + ":" + h + ":" + m + ":" + s;
 		}
-	
+		
+		
+		
+		/********* EndEvent-Feature **********/
+		
+		$scope.endEventList = {};
+		$scope.calculatingEndEventListHasBeenFinished = false;
+		$scope.isEndEventDataMissing = false;
+		
+		$scope.getEndEventSum = function() {
+
+			var JSONObj = {};
+			var JSONArr = [];
+			
+			DataFactory.getAllHistoricEndEventActivitiesDataByProcDefId(DataFactory.processDefinitionId).
+			then(function(){
+				
+				var data_REST = DataFactory.allHistoricEndEventActivitiesDataByProcDefId[DataFactory.processDefinitionId];
+				
+				if(data_REST.length <= 0) $scope.isEndEventDataMissing = true;
+				else $scope.isEndEventDataMissing = false;
+				
+				for(var i = 0; i < data_REST.length; i++) {
+			  		
+					JSONArr[i] = {"name": data_REST[i].activityName, "id": data_REST[i].activityId, "count": data_REST[i].activityId};
+				}
+				
+				JSONArr.forEach(function(obj) {
+				    
+					JSONObj[obj.value] = (JSONObj[obj.value] || 0) + 1
+					$scope.endEventList[obj.id] = {"name": obj.name, "count": JSONObj[obj.value]};
+					
+					HighlightEndEvents(obj.id, "noneEndEvent", JSONObj[obj.value]);
+				})
+				
+				$scope.calculatingEndEventListHasBeenFinished = true;
+			});
+		}
+		
+		function HighlightEndEvents(id, type, limit) {
+			
+			DataFactory.bpmnElementsToHighlightAsWarning[id] = {
+					instancesExceededLimit: null,
+					instancesMetLimit: limit,
+					type: type
+				};
+			DataFactory.highlighting = true;
+		}
+		
+		$scope.resetEndEventCalculation = function() {
+			
+			$scope.endEventList = {};
+			DataFactory.bpmnElementsToHighlight = {};
+			DataFactory.bpmnElementsToHighlightAsWarning = {};
+			DataFactory.highlighting = false;
+			
+			$scope.calculatingEndEventListHasBeenFinished = false;
+			$scope.isEndEventDataMissing = false;
+		}
+		
+		/********* EndEvent-Feature **********/
 	}]);
 });

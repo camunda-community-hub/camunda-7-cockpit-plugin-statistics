@@ -4,7 +4,7 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 	module.controller('durationProcessDefinitionMenuCtrl', ['$scope', '$modal', '$modalStack', 'ElementStateService', 'DataFactory', function($scope, $modal, $modalStack, ElementStateService, DataFactory){
 
 		var modalInstance = null;
-		
+
 		$scope.$on("$routeChangeStart", function(args){
 
 			if(modalInstance) {
@@ -12,13 +12,13 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 				closeModal();
 			}
 		});
-		
+
 		$scope.toggleMenu = function() {
-			
+
 			if(!modalInstance) {
 				// close other modals
 				$modalStack.dismissAll('opened another modal');
-				
+
 				ElementStateService.setMenuState(true);
 				modalInstance = $modal.open({
 					templateUrl: 'durationSettingsModalView',
@@ -28,20 +28,24 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 					animation: false,
 					backdrop: false
 				});
-				
+
 				ElementStateService.resetSelectedElement();
-												
+
 			} else {
-				ElementStateService.resetSelectedElement();
 				ElementStateService.setMenuState(false);
 				closeModal();
 			}
 		};
-		
+
 		function closeModal() {
 
+			ElementStateService.setDisabledElements(true);
 			modalInstance.close();
 			modalInstance = null;
+			DataFactory.bpmnElementsToHighlight = {};
+			DataFactory.bpmnElementsToHighlightAsWarning = {};
+			DataFactory.activityDurations = {};
+			DataFactory.highlighting = false;
 		}
 	}]);
 });

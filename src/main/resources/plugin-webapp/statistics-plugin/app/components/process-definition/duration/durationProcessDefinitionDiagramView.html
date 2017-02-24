@@ -1,12 +1,13 @@
-<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/duration/durationProcessDefinitionDiagramStyles.html'"></ng-include>
+<ng-include	src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/duration/durationProcessDefinitionDiagramStyles.html'"></ng-include>
 
-<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/duration/durationSettingsModalStyles.html'"></ng-include>
-<ng-include src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/duration/durationSettingsModalView.html'"></ng-include>
+<ng-include	src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/duration/durationSettingsModalStyles.html'"></ng-include>
+<ng-include	src="'./../../../api/cockpit/plugin/statistics-plugin/static/app/components/process-definition/duration/durationSettingsModalView.html'"></ng-include>
 
 <div ng-controller="durationProcessDefinitionDiagramCtrl">
-	<a ng-show="type" ng-model="states.state" ng-model-options="{ getterSetter: true }"
-		id="{{bpmnElement.id}}" ng-if="states.state()" class="kpiElements"
-		style="width: 100%;height: 100%; position: absolute;" ng-click="setMaster()">
-			<div ng-show = "false" ng-bind="states.state()"></div>
-	</a>
+	<div ng-model="disabledElements.elem" ng-model-options="{ getterSetter: true }" ng-if="disabledElements.elem()">
+		<a ng-show="type" ng-model="states.state" ng-model-options="{ getterSetter: true }" id="{{bpmnElement.id}}"
+			ng-if="states.state()" class="kpiElements" style="width: 100%; height: 100%; position: absolute;" ng-click="setMaster(section)">
+			<div ng-show="false" ng-bind="states.state()"></div>
+		</a>
+	</div>
 </div>
