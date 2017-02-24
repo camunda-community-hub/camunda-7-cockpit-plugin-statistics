@@ -34,6 +34,32 @@
 	      </if>
 	      GROUP BY ACT_NAME_, ACT_TYPE_, PROC_DEF_KEY_, PROC_DEF_ID_
 	 </select>
+	 
+	 <resultMap id="activityInstanceCountEndEventMap"
+		type="org.camunda.cockpit.plugin.statistics.dto.activity.ActivityInstanceCountEndEventDto">
+		<result property="procDefId" column="PROC_DEF_ID" />
+		<result property="activityName" column="ACT_NAME" />
+		<result property="count" column="COUNT" />
+		<result property="procDefKey" column="PROC_DEF_KEY" />
+		<result property="avgDuration" column="AVG_DURATION" />
+		<result property="minDuration" column="MIN_DURATION" />
+		<result property="maxDuration" column="MAX_DURATION" />
+		<result property="type" column="ACT_TYPE" />
+		<result property="activityId" column="ACT_ID" />
+	</resultMap>
+	
+	  <select id="selectEndEventsProcessDefinition" resultMap="activityInstanceCountEndEventMap">
+   	  SELECT
+	      ACT_NAME_ AS ACT_NAME, 
+	      ACT_TYPE_ AS ACT_TYPE, 
+	      ACT_ID_ AS ACT_ID,
+	      PROC_DEF_KEY_ AS PROC_DEF_KEY,
+	      PROC_DEF_ID_ AS PROC_DEF_ID
+      FROM ACT_HI_ACTINST  
+      WHERE
+	  	PROC_DEF_ID_ = '${parameter}'
+	  	AND ACT_TYPE_ LIKE '%End%'
+   	</select>
 
     <resultMap id="activityNameTypeProcessDefinitionMap"
     type="org.camunda.cockpit.plugin.statistics.dto.activity.ActivityInstanceCountDto">
@@ -61,5 +87,4 @@
     GROUP BY A.ACT_NAME_, A.ACT_TYPE_, A.PROC_DEF_ID_, VERSION_, NAME_, PROC_DEF_KEY_
     ORDER BY A.PROC_DEF_KEY_, A.ACT_NAME_
    </select>
-	 
 </mapper>

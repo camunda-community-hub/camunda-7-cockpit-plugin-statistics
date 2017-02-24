@@ -19,6 +19,7 @@ ngDefine('cockpit.plugin.statistics-plugin.shared-services', function(module) {
 		DataFactory.allHistoricActivitiesInformationByProcDefId = [];
 		DataFactory.allHistoricActivitiesDataByProcDefId = [];
 		DataFactory.allHistoricActivitiesDataByProcInstId = [];
+		DataFactory.allHistoricEndEventActivitiesDataByProcDefId = [];
 		DataFactory.allHistoricActivitiesInformationByProcDefKeyActivityNameActivityType = [];
 		DataFactory.allHistoricVariablesOfProcessDefinitionInTimeRange = [];
 		DataFactory.processDefWithFinishedInstances = [];
@@ -224,6 +225,22 @@ ngDefine('cockpit.plugin.statistics-plugin.shared-services', function(module) {
 					DataFactory.allHistoricActivitiesDataByProcInstId[procInstId] = data;
 				} else {
 					DataFactory.allHistoricActivitiesDataByProcInstId["data"] = data;
+				}
+			})
+			.error(function(){
+				console.debug("error in fetching historic activity Data");
+			});
+		}
+		
+		//EndEvent-Feature
+		
+		DataFactory.getAllHistoricEndEventActivitiesDataByProcDefId = function(procDefId) {
+			return $http.get(Uri.appUri("plugin://statistics-plugin/:engine/activity-end-events?procDefId="+procDefId))
+			.success(function(data) {
+				if(procDefId!=undefined) {
+					DataFactory.allHistoricEndEventActivitiesDataByProcDefId[procDefId] = data;
+				} else {
+					DataFactory.allHistoricEndEventActivitiesDataByProcDefId["data"] = data;
 				}
 			})
 			.error(function(){
