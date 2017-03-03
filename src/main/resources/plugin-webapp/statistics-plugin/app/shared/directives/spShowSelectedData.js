@@ -36,7 +36,7 @@ ngDefine('cockpit.plugin.statistics-plugin.shared-directives', function(module) 
 			},
 			controller: controller,
 			link: link,
-			templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/shared/directives/views/sp-show-selected-data.html'))
+			templateUrl: Uri.appUri('plugin://statistics-plugin/static/app/shared/directives/views/sp-show-selected-data.html')
 		};		
 	});
 });
