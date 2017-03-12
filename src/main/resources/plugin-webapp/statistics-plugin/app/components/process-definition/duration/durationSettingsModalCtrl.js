@@ -65,8 +65,12 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 			
 			ElementStateService.resetSelectedElement();
 			
-			$modalInstance.dismiss('cancel');
+			DataFactory.bpmnElementsToHighlight = {};
+			DataFactory.bpmnElementsToHighlightAsWarning = {};
+			DataFactory.activityDurations = {};
 			DataFactory.highlighting = false;
+			DataFactory.resetHighlighting = true;
+			$modalInstance.dismiss('cancel');
 		}
 
 		$scope.reset = function() {

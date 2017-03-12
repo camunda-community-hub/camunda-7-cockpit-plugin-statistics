@@ -74,9 +74,9 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 
 				if(selectedElement.length < 2) {
 
-					angular.element('[data-element-id="' + value.id + '"] > .djs-visual rect').attr('id', 'bad');	
-					angular.element('[data-element-id="' + value.id + '"] > .djs-visual circle').attr('id', 'bad');	
-					angular.element('[data-element-id="' + value.id + '"] > .djs-visual polygon').attr('id', 'bad');	
+					angular.element('[data-element-id="' + value.id + '"] > .djs-visual rect').attr('class', 'blue');	
+					angular.element('[data-element-id="' + value.id + '"] > .djs-visual circle').attr('class', 'blue');	
+					angular.element('[data-element-id="' + value.id + '"] > .djs-visual polygon').attr('class', 'blue');	
 
 					selectedElement.push(value);
 				}
@@ -89,9 +89,9 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 					angular.element('#' + selectedElement[i].id).removeClass(classRed2White);
 					angular.element('#' + selectedElement[i].id).removeClass(classWhite2Red);
 
-					angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual rect').attr('id', 'white');	
-					angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual circle').attr('id', 'white');	
-					angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual polygon').attr('id', 'white');	
+					angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual rect').attr('class', 'white');	
+					angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual circle').attr('class', 'white');	
+					angular.element('[data-element-id="' + selectedElement[i].id + '"] > .djs-visual polygon').attr('class', 'white');	
 				}
 
 

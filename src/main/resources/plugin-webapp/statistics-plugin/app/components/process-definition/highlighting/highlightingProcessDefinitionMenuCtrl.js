@@ -1,7 +1,7 @@
 'use strict'
 ngDefine('cockpit.plugin.statistics-plugin.highlighting', function(module) {
 
-	module.controller('highlightingProcessDefinitionMenuCtrl', ['$scope', '$rootScope', '$modal', '$modalStack', 'DataFactory', function($scope, $rootScope, $modal, $modalStack, DataFactory){
+	module.controller('highlightingProcessDefinitionMenuCtrl', ['$scope', '$rootScope', '$modal', '$modalStack', 'DataFactory', 'ElementStateService', function($scope, $rootScope, $modal, $modalStack, DataFactory, ElementStateService){
 
 		var menuInstance = null;
 
@@ -18,6 +18,7 @@ ngDefine('cockpit.plugin.statistics-plugin.highlighting', function(module) {
 				DataFactory.bpmnElementsToHighlight = {};
 				DataFactory.bpmnElementsToHighlightAsWarning = {};
 				DataFactory.activityDurations = {};
+				ElementStateService.resetSelectedElement();
 				
 				menuInstance = $modal.open({
 					templateUrl: 'highlightingSettingsModalView',

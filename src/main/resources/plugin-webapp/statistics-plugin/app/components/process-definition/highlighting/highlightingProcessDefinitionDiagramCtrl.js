@@ -28,14 +28,14 @@ ngDefine('cockpit.plugin.statistics-plugin.highlighting', function(module) {
 			return false;
 		}
 		
-//		$scope.onlyHighlight = function() {
-//			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id);
-//			$scope.type = type;
-//			if(Object.keys(DataFactory.activityDurations).length == 0 && type!=null) {
-//				return true;
-//			}
-//			return false;
-//		}
+		$scope.onlyHighlight = function() {
+			var type = isElementContainedIn(DataFactory.bpmnElementsToHighlight, $scope.bpmnElement.id);
+			$scope.type = type;
+			if(Object.keys(DataFactory.activityDurations).length == 0 && type!=null) {
+				return true;
+			}
+			return false;
+		}
 		
 		function colorElements(className) {
 			var element;

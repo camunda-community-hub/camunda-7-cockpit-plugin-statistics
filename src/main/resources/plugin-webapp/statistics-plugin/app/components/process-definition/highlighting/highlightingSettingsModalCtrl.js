@@ -58,6 +58,7 @@ ngDefine('cockpit.plugin.statistics-plugin.highlighting', function(module) {
 					countInstancesRegardingDurationLimit(element, getMilliseconds($scope.durationLimit, $scope.selectedTimeUnit));
 				}
 			});
+			DataFactory.highlighting = true;
 		}
 		
 		$scope.highlightElements = function() {

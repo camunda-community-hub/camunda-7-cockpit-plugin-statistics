@@ -18,6 +18,9 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 			if(!modalInstance) {
 				// close other modals
 				$modalStack.dismissAll('opened another modal');
+				DataFactory.bpmnElementsToHighlight = {};
+				DataFactory.bpmnElementsToHighlightAsWarning = {};
+				DataFactory.activityDurations = {};
 
 				ElementStateService.setMenuState(true);
 				modalInstance = $modal.open({
@@ -40,12 +43,14 @@ ngDefine('cockpit.plugin.statistics-plugin.duration', function(module) {
 		function closeModal() {
 
 			ElementStateService.setDisabledElements(true);
+			ElementStateService.resetSelectedElement();
 			modalInstance.close();
 			modalInstance = null;
 			DataFactory.bpmnElementsToHighlight = {};
 			DataFactory.bpmnElementsToHighlightAsWarning = {};
 			DataFactory.activityDurations = {};
 			DataFactory.highlighting = false;
+			DataFactory.resetHighlighting = true;
 		}
 	}]);
 });
