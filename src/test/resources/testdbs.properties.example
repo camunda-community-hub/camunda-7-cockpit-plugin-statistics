@@ -26,4 +26,3 @@ mssql.password=sa
 mssql.server=localhost
 mssql.database=camunda
 mssql.selectMethod=cursor
-

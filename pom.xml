@@ -20,7 +20,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<camunda.version>7.4.0</camunda.version>
+		<camunda.version>7.6.0</camunda.version>
 		<!-- This property must be present for the pom.xml to be recognized as 
 			a plugin -->
 		<camunda.plugin.category>Monitoring</camunda.plugin.category>
@@ -49,15 +49,15 @@
 		<dependency>
 			<!-- Cockpit Plugin API, needs to be provided -->
 			<groupId>org.camunda.bpm.webapp</groupId>
-			<artifactId>camunda-webapp-core</artifactId>
-			<!-- not part of camunda bom -->
+			<artifactId>camunda-webapp</artifactId>
 			<version>${camunda.version}</version>
-			<scope>provided</scope>
+			<classifier>classes</classifier>
 		</dependency>
 		<dependency>
 			<!-- process engine, needs to be provided -->
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine</artifactId>
+			<version>${camunda.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
