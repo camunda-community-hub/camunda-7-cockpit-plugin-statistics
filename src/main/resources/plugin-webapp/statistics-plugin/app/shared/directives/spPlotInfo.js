@@ -12,7 +12,7 @@ ngDefine('cockpit.plugin.statistics-plugin.shared-directives', function(module) 
 				spShow: '='
 			},
 			transclude: true,
-			templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/shared/directives/views/sp-plot-info.html')),
+			templateUrl: Uri.appUri('plugin://statistics-plugin/static/app/shared/directives/views/sp-plot-info.html'),
 			link: function(scope, elem, attr, ctrl, transcludeFn) {
 				MultiTranscludeFactory.transclude(elem, transcludeFn);
 			}

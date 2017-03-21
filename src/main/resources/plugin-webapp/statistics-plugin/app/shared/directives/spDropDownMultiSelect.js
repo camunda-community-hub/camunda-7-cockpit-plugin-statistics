@@ -68,7 +68,7 @@ ngDefine('cockpit.plugin.statistics-plugin.shared-directives', function(module) 
 				options: '=',
 				title: '@'
 			},
-			templateUrl: require.toUrl(Uri.appUri('plugin://statistics-plugin/static/app/shared/directives/views/sp-drop-down-multi-select.html')),
+			templateUrl: Uri.appUri('plugin://statistics-plugin/static/app/shared/directives/views/sp-drop-down-multi-select.html'),
 			controller: controller
 		};		
 	});

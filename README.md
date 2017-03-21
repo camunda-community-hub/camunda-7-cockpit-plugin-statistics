@@ -19,17 +19,11 @@ To get an initial overview on the different features please consider the followi
 
 ![Screenshot: Plugin Settings](screenshot_settings_modal.png)
 
-![Screenshot: Activity History](screenshot_overlay_act_history.png)
-
-![Screenshot: Business Data](screenshot_business_data_statistics.png)
-
-![Screenshot: Business Data Date range picker](screenshot_business_data_statistics_daterangepicker.png)
-
-![Screenshot: Diagram Overlays](screenshot_overlay_mean.png)
-
 ![Screenshot: Analytics](screenshot_analytics_tab_start.png)
 
+![Screenshot: Activity History](screenshot_overlay_act_history.png)
 
+![Screenshot: Diagram Overlays](screenshot_overlay_mean.png)
 
 ## Get started
 

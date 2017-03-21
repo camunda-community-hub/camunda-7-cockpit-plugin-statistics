@@ -1,11 +1,10 @@
 <script type="text/ng-template" id="durationSettingsModalView">
-
 <div class="modal-header" id="modalHeader">
 	<h3 class="modal-title">KPI Selector</h3>
 </div>
 <div class="modal-body">
 	<tabset>
-		<tab heading="Average duration between two Elements" active="$parent.durationTab">
+		<tab active="$parent.durationTab" heading="Average duration between two Elements" ng-click="active('duration')">
 
 			<div>Select start and end element from process definiton.</div>
 			
@@ -38,12 +37,12 @@
 				<tr>
 					<td><b>Start Element (&empty;): </b></td>
 					<td>{{el[0].name}}</td>
-					<td><input type="checkbox" ng-model="checkboxModel.exclusive_start" id="exclusive_start" value="exclusive_start" class="pull-right"/></td>
+					<td><input type="checkbox" ng-change="changeGradient()" ng-model="checkboxModel.exclusive_start" id="exclusive_start" value="exclusive_start" class="pull-right"/></td>
 				</tr>
 				<tr>
 					<td><b>End Element &nbsp;(&empty;): </b></td>
 					<td>{{el[1].name}}</td>
-					<td><input type="checkbox" ng-model="checkboxModel.exclusive_end" id="exclusive_end" value="exclusive_end" class="pull-right"/></td>
+					<td><input type="checkbox" ng-change="changeGradient()" ng-model="checkboxModel.exclusive_end" id="exclusive_end" value="exclusive_end" class="pull-right"/></td>
 				</tr>
 				<hr>
 			</table>
@@ -59,7 +58,7 @@
 					<img class="loading-gif" ng-show="isCalculatingResult" src="../../../api/cockpit/plugin/statistics-plugin/static/app/shared/assets/images/loading.gif" style="margin-top: -5px;">
 				</span>
 			</div>
-	
+	<hr>
 			<div ng-show="infoBottom" style="margin-top: 5px;">
 				
 				The average duration between two elements is calculated by accumulating all datetimes of the instances of each selected element - if 'exclusive' is not selected for that element.<br/> 
@@ -68,25 +67,38 @@
 				It is important in which order you select your elements. The datetime of the start element will be substracted from the datetime of the end element. If you switch them, you will get a wrong result.
 
 			</div>
+		<div class="modal-footer noBorder">
+			<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+			<button class="pull-left btn btn-warning" ng-click="calculate()" ng-disabled="!areElementsSelected()">Calculate</button>
+			<button class="pull-left btn btn-warning" ng-click="reset()">Reset</button>
+		</div>
 		</tab>
-		<tab heading="Flow Control" active="$parent.flowTab" style="display:none">
-			<table id="outTab">
+		<tab heading="Flow Control" active="$parent.flowTab" ng-click="active('flow')">
+		<div  style="margin-bottom: 15px;">
+				
+				The flow control calculates the count of through going instances of every single end event in the process.
+				To increase the usability the instance count will additionally displayed on badges. Press the calculate Button to compute the instance count.
+
+			</div>
+			<table class='kpiTable'>
 				<tr>
-					<th>&Uuml;berschrift 2</th>
+					<th>End-Event</th>
+					<th>Count</th>
 				</tr>
-				<tr>
-					<td>Inhalt 2</td>
+				<tr><td><div class="text-danger" ng-show="isEndEventDataMissing">No historic data found</div></td></tr>
+				<tr ng-repeat="x in endEventList">
+					<td>{{x.name }}</td>
+					<td>{{x.count}}</td>
 				</tr>
 			<hr>
 			</table>
 			<hr>
-
+		<div class="modal-footer noBorder">
+			<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+			<button class="pull-left btn btn-warning" ng-click="getEndEventSum()" ng-disabled="calculatingEndEventListHasBeenFinished">Calculate</button>
+			<button class="pull-left btn btn-warning" ng-click="resetEndEventCalculation()" ng-disabled="!calculatingEndEventListHasBeenFinished">Reset</button>
+		</div>
 		</tab>
 	</tabset>
-</div>
-<div class="modal-footer">
-	<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-	<button class="pull-left btn btn-warning" ng-click="calculate()" ng-disabled="!areElementsSelected()">Calculate</button>
-	<button class="pull-left btn btn-warning" ng-click="reset()">Reset</button>
 </div>
 </script>

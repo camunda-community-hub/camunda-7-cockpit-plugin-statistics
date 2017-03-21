@@ -7,6 +7,7 @@ import javax.ws.rs.QueryParam;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginRootResource;
 import org.camunda.bpm.engine.rest.sub.runtime.ProcessInstanceResource;
 import org.camunda.cockpit.plugin.statistics.StatisticsPlugin;
+import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityEndEventInstances;
 import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityInstanceResource;
 import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityNamesTypesProcDefinitionRessource;
 import org.camunda.cockpit.plugin.statistics.resources.activity.ActivityStatisticInstanceResource;
@@ -68,6 +69,19 @@ public class StatisticsPluginRootResource extends
             @PathParam("engineName") String engineName,
             @QueryParam("procDefKey") String procDefKey) {
         return subResource(new ActivityInstanceResource(engineName, procDefKey), engineName);
+    }
+    
+    /**
+     * This method provides aggregated activity instance information.
+     *
+     * @param engineName Name the selectable engine.
+     * @return
+     */
+    @Path("{engineName}/activity-end-events")
+    public ActivityEndEventInstances getActivityEndEventInstanceResource(
+            @PathParam("engineName") String engineName,
+            @QueryParam("procDefId") String procDefId) {
+        return subResource(new ActivityEndEventInstances(engineName, procDefId), engineName);
     }
     
     /**
@@ -270,4 +284,6 @@ public class StatisticsPluginRootResource extends
     public ActivityNamesTypesProcDefinitionRessource getActivityNamesTypesProcDefinition(@PathParam("engineName") String engineName){
     		return subResource(new ActivityNamesTypesProcDefinitionRessource(engineName), engineName);
     }
+    
+  
 }

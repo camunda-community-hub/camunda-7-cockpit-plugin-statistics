@@ -1,44 +1,97 @@
 <style>
-	#output {background: #e5e5e5; padding:10px; margin-top:5px}
-	#outTab {width:100%;}
-	#outTab tr {height: 40px}
-	#outTab th {}
-	#outTab td {}
-	#outTab td:first-of-type {width:136px;}
-	#outTab td, th {padding: 5px;}
+#output {
+	background: #e5e5e5;
+	padding: 10px;
+	margin-top: 5px
+}
 
-	.selected {fill: #7BCEFF;}
-	.white {fill: white;}
+#outTab {
+	width: 100%;
+}
 
-	#howTo {}
-	#howTo li {padding: 5px;}
-	#infoTable tr {height:20px}
-    .bold {font-weight: bold;}
+#outTab tr {
+	height: 40px
+}
 
-/*
-
-	.selectedKpiElementBlack2White{
-
-      background: black;
-      background: -webkit-linear-gradient(left, black 0% , white 20%);
-      background: -o-linear-gradient(right, black 0%, white 20%);
-      background: -moz-linear-gradient(right, black 20%, white 20%);
-      background: linear-gradient(to right, black 0% , white 20%); 
-      opacity: 0.3;
-      border-radius: 13px;
-	}
+#outTab th {
 	
-	.selectedKpiElementWhite2Black{ lieber rot
+}
 
-      background: white;
-      background: -webkit-linear-gradient(left, white 0% , black 20%);
-      background: -o-linear-gradient(right, white 0%, black 20%);
-      background: -moz-linear-gradient(right, white 0%, black 20%);
-      background: linear-gradient(to right, white 0% , black 20%); 
-      opacity: 0.3;
-      border-radius: 13px;
-	}
-
-*/
+#outTab td {
 	
+}
+
+#outTab td:first-of-type {
+	width: 136px;
+}
+
+#outTab td, th {
+	padding: 5px;
+}
+
+#howTo {
+	
+}
+
+#howTo li {
+	padding: 5px;
+}
+
+#infoTable tr {
+	height: 20px
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.noBorder {
+	border: none;
+}
+
+.modal-footer {
+	background: #e5e5e5;
+}
+
+.kpiTable {
+	min-height: 60px;
+	display: block;
+}
+
+.kpiTable th {
+	padding: 0;
+	width: 92%;
+}
+
+.kpiTable tr {
+	height: 20px
+}
+
+.kpiTable tr td {
+	
+}
+
+.kpiTable tr td:nth-of-type(2) {
+	float: right
+}
+
+.selectedKpiElementRed2White {
+	background: red;
+	background: -webkit-linear-gradient(left, red 0%, white 20%);
+	background: -o-linear-gradient(left, red 0%, white 20%);
+	background: -moz-linear-gradient(left, red 20%, white 20%);
+	background: linear-gradient(to left, red 0%, white 20%);
+	opacity: 0.3;
+	border-radius: 13px;
+}
+
+.selectedKpiElementWhite2Red {
+	background: red;
+	background: -webkit-linear-gradient(right, red 0%, white 20%);
+	background: -o-linear-gradient(right, red 0%, white 20%);
+	background: -moz-linear-gradient(right, red 20%, white 20%);
+	background: linear-gradient(to right, red 0%, white 20%);
+	opacity: 0.3;
+	border-radius: 13px;
+}
 </style>
