@@ -29,7 +29,7 @@ To get an initial overview on the different features please consider the followi
 
 ![Screenshot: End event counts](screenshot_endevent_count.jpg)
 
-![Screenshot: KPIs with flexible boundaries](screenshot_kpi_boundaries.png)
+![Screenshot: KPIs with flexible boundaries](screenshot_kpi_boundaries.jpg)
 
 ![Screenshot: Analytics](screenshot_analytics_tab_start.png)
 
