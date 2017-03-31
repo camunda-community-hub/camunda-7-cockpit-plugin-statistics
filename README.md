@@ -6,7 +6,7 @@ It provides a set of charts helping you to understand what is and what was going
 The current master was successfully tested on Camunda 7.6.0 Final (and 7.6.2 EE) with the H2 database provided by camunda.
 
 Please feel free to share your system's setup for further working scenarios (please share any setup you experience trouble with, too ;) ).
-To get an initial overview on the different features please consider the following links:
+To get an initial overview on the different features please consider the following links or take a quick tour through our [demo deployment](http://camunda-statistics-plugin.novatec.net):
 
 [KPI & Business data statistics](http://blog.novatec-gmbh.de/kpi-functionality-camunda-cockpit-plugin/)
 
