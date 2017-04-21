@@ -485,18 +485,23 @@ ngDefine('cockpit.plugin.statistics-plugin.dashboard', function(module) {
 							var removeUnassigned = false;
 							var removeAssigned = false;
 
-							if(result[0].children[i].children[0].children[j].children[0].size==0) {
-								removeAssigned = true;
-							}
-							if(result[0].children[i].children[0].children[j].children[1].size==0) {
-								removeUnassigned = true;
-							}
-
-							if(removeAssigned) {
-								result[0].children[i].children[0].children[j].children = [result[0].children[i].children[0].children[j].children[1]];
-							}
-							if(removeUnassigned) {
-								result[0].children[i].children[0].children[j].children = [result[0].children[i].children[0].children[j].children[0]];
+							if(result[0].children[i].children[0].children[j].children
+									&& result[0].children[i].children[0].children[j].children[0]) {
+								
+								if(result[0].children[i].children[0].children[j].children[0].size==0) {
+									removeAssigned = true;
+								}
+								if(result[0].children[i].children[0].children[j].children[1].size==0) {
+									removeUnassigned = true;
+								}
+	
+								if(removeAssigned) {
+									result[0].children[i].children[0].children[j].children = [result[0].children[i].children[0].children[j].children[1]];
+								}
+								if(removeUnassigned) {
+									result[0].children[i].children[0].children[j].children = [result[0].children[i].children[0].children[j].children[0]];
+								}
+								
 							}
 						}
 					}
