@@ -1,3 +1,5 @@
+# DEPRECATED! This project is no longer maintained. Use [Camunda Optimize](https://camunda.com/platform/optimize/) instead.
+
 ![Compatible with: Camunda Platform 7](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%207-26d07c)
 
 camunda Cockpit Statistics Plugin
