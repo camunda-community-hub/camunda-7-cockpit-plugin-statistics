@@ -1,9 +1,7 @@
-# DEPRECATED! This project is no longer maintained. Use [Camunda Optimize](https://camunda.com/platform/optimize/) instead.
+# OUTDATED AND DEPRECATED! 
+# This project is no longer maintained. Use [Camunda Optimize](https://camunda.com/platform/optimize/) instead.
 
 ![Compatible with: Camunda Platform 7](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%207-26d07c)
-
-camunda Cockpit Statistics Plugin
-=================================
 
 This plugin is a camunda BPM community extension that provides a statistics plugin for the camunda BPM Cockpit.
 It provides a set of charts helping you to understand what is and what was going on with your engine.
